@@ -1,0 +1,32 @@
+<li class="dropdown-item w-100">
+  <div class="user-data row">
+    <div class="col-md-4">
+      <!-- User Profile Section -->
+      <div class="d-flex align-items-center mb-3">
+        <div class="flex-shrink-0">
+          <img src="./favicon.ico" alt="Profile Image" class="rounded-circle"
+               style="width: 50px; height: 50px;">
+        </div>
+        <div class="flex-grow-1 ms-3">
+          {{user.firstName}} {{user.lastName}}
+          <br>
+          <small>{{user.email}}</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</li>
+<li class="align-items-start underline">
+  <a href="#" class="dropdown-item">{{languages['myCourses']}}</a>
+  <a href="/createCourse" class="dropdown-item" *ngIf="user.roles.includes('TEACHER')">{{languages['createCourse']}}</a>
+</li>
+<li class="align-items-start underline">
+  <a href="#" class="dropdown-item">{{languages['languageDisplay']}}
+    <fa-icon [icon]="faGlobe"></fa-icon>
+    :
+    <span >{{languages['language']}}</span>
+  </a>
+</li>
+<li class="align-items-start">
+  <a class="dropdown-item logout" href="login" (click)="onLogout()">{{languages['logout']}}</a>
+</li>

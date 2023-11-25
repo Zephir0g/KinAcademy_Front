@@ -1,0 +1,73 @@
+<app-menu
+  [pageTitle]="'Create Course'"/>
+<div class="container mt-3">
+  <div class="row align-items-center justify-content-center">
+    <div class="col-3">
+      <h1>Create Course</h1>
+    </div>
+  </div>
+
+  <form (ngSubmit)="onCreate()" #createForm="ngForm">
+    <div class="mb-3">
+      <label for="courseName" class="form-label">Course Name
+        <span class="required-asterisk">*</span>
+      </label>
+      <input type="text" class="form-control" id="courseName" name="courseName" placeholder="Java"
+             [(ngModel)]="courseName">
+    </div>
+    <div class="mb-3">
+      <label for="courseDescription" class="form-label">Course Description
+        <span class="required-asterisk">*</span></label>
+      <!--<input type="text" class="form-control" id="courseDescription" placeholder="The best course">-->
+      <ckeditor [editor]="Editor" id="courseDescription" name="courseDescription"
+                [(ngModel)]="courseDescription"></ckeditor>
+    </div>
+    <div class="input-group mb-3 row">
+      <div class="col-6">
+        <label class="input-group-text col-3" for="courseLanguage">Language
+          <span class="required-asterisk">*</span></label>
+        <select class="form-select col-9" id="courseLanguage" name="courseLanguage" [(ngModel)]="courseLanguage">
+          <option value="1">One</option>
+          <option value="2">Two</option>
+          <option value="3">Three</option>
+        </select>
+      </div>
+      <div class="col-6">
+        <label class="input-group-text col-3" for="courseCategory">Category
+          <span class="required-asterisk">*</span></label>
+        <select class="form-select col-9" id="courseCategory" name="courseCategory" [(ngModel)]="courseCategory">
+          <option value="1">One</option>
+          <option value="2">Two</option>
+          <option value="3">Three</option>
+        </select>
+      </div>
+    </div>
+    <div class="input-group mb-3 row">
+      <div class="col-6">
+        <span class="form-control" aria-label="Text input with checkbox">
+          Is Course Public
+          <span class="required-asterisk">*</span>
+        <input class="form-check-input mt-0" type="checkbox" [checked]="coursePolicy"
+               [(ngModel)]="coursePolicy"
+               aria-label="Checkbox for following text input">
+        </span>
+      </div>
+      <div class="col-6">
+        <label for="courseUrl" class="form-label">
+          Course Url
+        </label>
+        <input type="text" class="form-control" id="courseUrl" name="courseUrl" placeholder="Optional"
+               [(ngModel)]="courseUrl">
+
+      </div>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary float-end">Create</button>
+    </div>
+  </form>
+  <div class="row align-items-center justify-content-center">
+    <div class="col-6" *ngIf="error">
+      <h3 style="color: red">{{error}}</h3>
+    </div>
+  </div>
+</div>

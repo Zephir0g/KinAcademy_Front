@@ -1,0 +1,20 @@
+.dropdown:hover .dropdown-menu{
+  display: block;
+}
+/*.dropdown:not(:hover) .dropdown-menu {
+  display: none;
+}*/
+
+.dropdown{
+  height: 100%;
+}
+
+
+.dropdown-menu {
+  right: 0;
+  left: auto;
+  min-width: 20rem;
+}
+.dropdown-toggle::after {
+  display: none;
+}

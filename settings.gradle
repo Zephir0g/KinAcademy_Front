@@ -1,0 +1,4 @@
+rootProject.name = 'KinAcademy'
+include 'backend'
+include 'frontend'
+
