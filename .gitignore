@@ -38,3 +38,4 @@ out/
 
 ### mode_modules ####
 /frontend/node_modules/
+/frontend/ckeditor5/node_modules/

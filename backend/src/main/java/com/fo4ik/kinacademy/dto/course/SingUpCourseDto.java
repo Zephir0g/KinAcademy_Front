@@ -19,8 +19,9 @@ public record SingUpCourseDto(
         @NotBlank
         String language,
 
-        @Schema(description = "Course image path", example = "https://example.com/image.png")
-        String imagePath,
+        @Schema(description = "Course ulr", example = "java-learning")
+        @NotBlank
+        String url,
 
         @Schema(description = "Course is public", example = "true")
         @NotBlank

@@ -43,23 +43,34 @@ public class CoursesController {
         return courses;
     }
 
-    @Operation(summary = "Create course", description = "Create course by using CourseDto", tags = {"Courses"})
-    @PostMapping("/create/{id}")
-    public ResponseEntity<CourseDto> createCourse(
+    @Operation(summary = "Create course", description = "Create course by using CourseDto, need SECURE_TOKEN", tags = {"Courses"})
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    public ResponseEntity<String> createCourse(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Data for course, see SignUpCourseDto", required = true)
             @RequestBody SingUpCourseDto signUpCourseDto,
             @Parameter(description = "User id", required = true)
-            @PathVariable Long id,
+            @RequestParam Long userId,
             @Parameter(hidden = true)
             @RequestHeader(value = HttpHeaders.AUTHORIZATION) String SECURE_TOKEN
     ) {
 
-        Response response = userService.isUserValid(SECURE_TOKEN, id);
-        if(!response.isSuccess()){
+        Response response = userService.isUserValid(SECURE_TOKEN, userId);
+        if (!response.isSuccess()) {
             throw new AppException(response.getMessage(), response.getHttpStatus());
         }
 
-        CourseDto course = courseService.createCourse(signUpCourseDto, id);
+        CourseDto course = courseService.createCourse(signUpCourseDto, userId);
+        return ResponseEntity.ok(course.getUrl());
+    }
+
+    @RequestMapping(value = "/{url}", method = RequestMethod.GET, produces = "application/json")
+    @Operation(summary = "Get course by url", description = "Get course by url and need SECURE_TOKEN", tags = {"Courses"})
+    public ResponseEntity<CourseDto> getCourse(
+            @Parameter(description = "Course url")
+            @PathVariable String url) {
+
+
+        CourseDto course = courseService.getCourseByUrl(url);
         return ResponseEntity.ok(course);
     }
 }

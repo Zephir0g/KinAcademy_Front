@@ -18,25 +18,50 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CourseService {
 
-   private final CourseRepository courseRepository;
-   private final CourseMapper courseMapper;
+    private final CourseRepository courseRepository;
+    private final CourseMapper courseMapper;
 
 
-   public CourseDto createCourse(SingUpCourseDto singUpCourseDto, Long userId) {
-      Optional<Course> oCourse = courseRepository.findByName(singUpCourseDto.name());
+    public CourseDto createCourse(SingUpCourseDto singUpCourseDto, Long userId) {
+        Optional<Course> oCourse = courseRepository.findByName(singUpCourseDto.name());
 
-      if(oCourse.isPresent()){
-         throw new AppException("Course already exists", HttpStatus.BAD_REQUEST);
-      }
+        if (oCourse.isPresent()) {
+            throw new AppException("Course already exists", HttpStatus.BAD_REQUEST);
+        }
 
-      Course course = courseMapper.singUpCourseDtoToCourse(singUpCourseDto);
-      course.setAuthorId(userId);
-      course.setLastUpdateDate(new Date());
-      course.setStatus(Status.INACTIVE);
+        Course course = courseMapper.singUpCourseDtoToCourse(singUpCourseDto);
+        course.setAuthorId(userId);
+        course.setLastUpdateDate(new Date());
+        course.setStatus(Status.INACTIVE);
 
-      Course savedCourse = courseRepository.save(course);
-      return courseMapper.courseToCourseDto(savedCourse);
+        //if singUpCourseDto.url() is exist in db, throw exception
+        Optional<Course> oCourseByUrl = courseRepository.findByUrl(singUpCourseDto.url());
+        if (oCourseByUrl.isPresent()) {
+            throw new AppException("Course with this url already exists", HttpStatus.BAD_REQUEST);
+        } else {
+            course.setUrl(singUpCourseDto.url());
+        }
 
-   }
 
+        Course savedCourse = courseRepository.save(course);
+        return courseMapper.courseToCourseDto(savedCourse);
+
+    }
+
+    public String deleteCourse(Long id) {
+        try {
+            courseRepository.deleteById(id);
+            return "Course deleted";
+        } catch (Exception e) {
+            throw new AppException(e.getMessage(), HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public CourseDto getCourseByUrl(String url) {
+        Optional<Course> oCourse = courseRepository.findByUrl(url);
+        if (oCourse.isEmpty()) {
+            throw new AppException("Course not found", HttpStatus.NOT_FOUND);
+        }
+        return courseMapper.courseToCourseDto(oCourse.get());
+    }
 }

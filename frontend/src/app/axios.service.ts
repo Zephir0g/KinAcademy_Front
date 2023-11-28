@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable, Input} from '@angular/core';
 import axios from "axios";
 
 @Injectable({
@@ -16,7 +16,7 @@ export class AxiosService {
       method: method,
       url: url,
       data: data
-    })
+    });
   }
 
   requestWithHeaderAuth(method: string, url: string, data: any, header: string): Promise<any> {

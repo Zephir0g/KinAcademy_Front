@@ -1,16 +1,16 @@
 import {Component, OnInit} from '@angular/core';
 import {AxiosService} from "../../axios.service";
+import {Router} from '@angular/router';
+import {DataService} from "../../data.service";
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements  OnInit{
+export class LoginComponent implements OnInit {
 
-  /*  @Output() onSubmitLoginEvent = new EventEmitter();
-    @Output() onSubmitRegisterEvent = new EventEmitter();*/
-  constructor(private axiosService: AxiosService) {
+  constructor(private axiosService: AxiosService, private router: Router, private data: DataService) {
   }
 
   ngOnInit(): void {
@@ -18,7 +18,7 @@ export class LoginComponent implements  OnInit{
     const userLangs = navigator.languages;
 
     // Create a display name object for languages
-    const languageNames = new Intl.DisplayNames(['en'], { type: 'language' });
+    const languageNames = new Intl.DisplayNames(['en'], {type: 'language'});
 
     // Extract and clean the language names and assign the first language name
     this.userLanguage = languageNames.of(userLangs[0]?.split('-')[0]) || 'English';
@@ -32,6 +32,8 @@ export class LoginComponent implements  OnInit{
   firstName: String = "";
   surname: String = "";
   userLanguage: string = "";
+
+  internalization: any = {};
 
   errorMessages: string[] = [];
 
@@ -54,9 +56,16 @@ export class LoginComponent implements  OnInit{
     })
       .then((response) => {
         if (response) {
-          localStorage.setItem("user", JSON.stringify(response.data));
-          // redirect to home page if login is successful
-          window.location.href = "/";
+          localStorage.setItem('user', JSON.stringify(response.data));
+
+          this.data.getInternalizationFromServerWithLanguage(response.data.language).then(() => {
+            this.data.getLanguagesFromServer().then(() => {
+              window.location.href = "/";
+            })
+          })
+
+
+          // window.location.href = "/";
         }
       })
   }

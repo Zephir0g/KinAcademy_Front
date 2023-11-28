@@ -1,14 +1,20 @@
 package com.fo4ik.kinacademy.restControllers;
 
+import com.fo4ik.kinacademy.configuration.Config;
+import com.fo4ik.kinacademy.dto.LanguagesDto;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
@@ -20,32 +26,15 @@ public class Components {
 
     private final MessageSource messageSource;
 
-    @GetMapping("/categories")
-    @Operation(summary = "Get categories", description = "Get categories from file using current language", tags = {"Components"})
-    public ResponseEntity<?> getCategories() {
-        //return List<String>of("1", "2", "3");
-        List<String> list = new ArrayList<String>();
-        list.add("1");
-        list.add("2");
-        return ResponseEntity.ok(list);
 
-    }
-
-    /*@RequestMapping(value = "/languages", method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
-    public ResponseEntity<String> getLanguages(
-            @RequestBody Json requestWords,
-            @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) Locale locale
+    @RequestMapping(value = "/internationalization", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get internationalization language", description = "Get all words as Json to internationalization program", tags = {"Components"})
+    public ResponseEntity<Map<String, String>> getInternationalization(
+            @Parameter(description = "User language", example = "English")
+            @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) String language
     ) {
-        String value = messageSource.getMessage("welcome-message", null, locale != null ? locale : Locale.getDefault());
-
-        return ResponseEntity.ok(requestWords + " : " + locale + " : " + value);
-    }*/
-
-    @RequestMapping(value = "/languages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, String>> getResourceBundleAsJson(
-            @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) Locale locale
-    ) {
-        ResourceBundle resourceBundle = ResourceBundle.getBundle("bundles/language", locale != null ? locale : Locale.getDefault());
+        Locale locale = new Locale(language);
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("bundles/language", locale);
 
         Map<String, String> resourceMap = new HashMap<>();
         for (String key : resourceBundle.keySet()) {
@@ -54,5 +43,33 @@ public class Components {
         }
 
         return ResponseEntity.ok(resourceMap);
+    }
+
+    @RequestMapping(value = "/languages", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get languages", description = "Get languages from file", tags = {"Components"})
+    public ResponseEntity<List<LanguagesDto>> getLanguages() {
+
+        //List<LanguagesDto>
+        List<LanguagesDto> languagesDtoList = new ArrayList<>();
+        //add all languages to list from config.availableLanguages (Map<String, String>)
+        Config.availableLanguages.forEach((key, value) -> languagesDtoList.add(new LanguagesDto(key, value)));
+        System.out.println(languagesDtoList);
+
+
+        return ResponseEntity.ok(languagesDtoList);
+    }
+
+    @RequestMapping(value = "/categories", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Get categories", description = "Get categories from file using current language", tags = {"Components"})
+    public ResponseEntity<?> getCategories(
+            @Parameter(description = "User language", example = "English")
+            @RequestHeader(value = HttpHeaders.ACCEPT_LANGUAGE, required = false) Locale locale
+    ) {
+        ResourceBundle resourceBundle = ResourceBundle.getBundle("bundles/category", locale != null ? locale : Locale.getDefault());
+
+        //TODO make return categories
+
+        return ResponseEntity.ok("");
+
     }
 }

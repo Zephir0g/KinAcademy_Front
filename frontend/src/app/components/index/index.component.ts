@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {AxiosService} from "../../axios.service";
+import {DataService} from "../../data.service";
 
 @Component({
   selector: 'app-index',
@@ -8,26 +9,40 @@ import {AxiosService} from "../../axios.service";
 })
 export class IndexComponent implements OnInit {
   title = 'frontend';
-  user = JSON.parse(localStorage.getItem("user") || "{}");
-  languages = JSON.parse(localStorage.getItem("languages") || "{}");
+  user: any;
+  languages: any;
+  internalization: any;
 
   isLogesIn: boolean = false;
+  isDataLoaded: boolean = false;
 
-  constructor(private axiosService: AxiosService) {
+  constructor(private axiosService: AxiosService, private data: DataService) {
   }
 
   ngOnInit(): void {
-    // console.log("LoginComponent.ngOnInit()");
-    /*this.axiosService.requestWithHeaderLang(
-      "GET",
-      "/components/languages",
-      {},
-      this.user.lang
+    this.checkIsDataLoaded();
+  }
 
-    )*/
+  checkIsDataLoaded(): void {
 
-    this.checkIsTokenValid();
-    this.getLanguages();
+    while (!this.isDataLoaded) {
+      this.getUser();
+      this.getInternalization();
+      this.checkIsTokenValid();
+      if (this.languages === undefined && this.internalization === undefined) {
+        this.isDataLoaded = false;
+      } else {
+        this.isDataLoaded = true;
+      }
+    }
+  }
+
+  getUser() {
+    this.user = this.data.getUser()
+  }
+
+  getInternalization() {
+    this.internalization = this.data.getInternalization()
   }
 
   // Check if the user is logged in and if the token is valid
@@ -46,51 +61,14 @@ export class IndexComponent implements OnInit {
       })
         .catch((error) => {
           console.log(error.response.data.message);
-         this.updateUser();
+         // this.updateUser();
+          this.data.updateUser();
         })
     }
   }
 
 
-  updateUser() {
-    this.axiosService.request(
-      "POST",
-      "/login",
-      {
-        "login": this.user.login,
-        "password": "qwe"
-      },
-    ).then((response) => {
-      if (response) {
-        if (!this.isLogesIn) {
-          console.log("Reloading");
-          this.isLogesIn = true;
-          localStorage.removeItem("user");
-          localStorage.setItem("user", JSON.stringify(response.data));
-          this.user = JSON.parse(localStorage.getItem("user") || "{}");
-          this.checkIsTokenValid();
-        }
-      }
-    }).catch((error) => {
-      console.log("Error while updating user")
-      console.log(error.response.data);
-    })
-  }
 
-  getLanguages() {
-    if (Object.keys(this.languages).length === 0) {
-      this.axiosService.requestWithHeaderLang(
-        "GET",
-        "/components/languages",
-        {},
-        this.user.language || "English"
-      ).then((response) => {
-        // this.userLanguages = response.data;
-        localStorage.setItem("languages", JSON.stringify(response.data));
-        this.languages = JSON.parse(localStorage.getItem("languages") || "{}");
-      }).catch((error) => {
-        console.log(error.response.data.message);
-      })
-    }
-  }
+
+
 }

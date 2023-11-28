@@ -35,7 +35,7 @@ dependencies {
     runtimeOnly 'com.mysql:mysql-connector-j'
 
     //JSON
-    implementation 'com.fasterxml.jackson.core:jackson-core:2.16.0'
+    implementation 'com.google.code.gson:gson:2.10.1'
 
     //Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'

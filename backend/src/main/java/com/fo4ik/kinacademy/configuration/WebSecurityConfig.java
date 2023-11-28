@@ -1,5 +1,6 @@
 package com.fo4ik.kinacademy.configuration;
 
+import com.fo4ik.kinacademy.core.UserAuthProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

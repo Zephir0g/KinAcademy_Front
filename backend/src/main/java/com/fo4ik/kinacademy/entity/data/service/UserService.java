@@ -1,8 +1,8 @@
 package com.fo4ik.kinacademy.entity.data.service;
 
-import com.fo4ik.kinacademy.configuration.PasswordConfig;
-import com.fo4ik.kinacademy.configuration.UserAuthProvider;
+import com.fo4ik.kinacademy.core.PasswordConfig;
 import com.fo4ik.kinacademy.core.Response;
+import com.fo4ik.kinacademy.core.UserAuthProvider;
 import com.fo4ik.kinacademy.dto.user.CredentialDto;
 import com.fo4ik.kinacademy.dto.user.SingUpUserDto;
 import com.fo4ik.kinacademy.dto.user.UserDto;
@@ -32,7 +32,7 @@ public class UserService {
 
     public UserDto login(CredentialDto credentialDTO) {
         User user = userRepository.findByLogin(credentialDTO.login())
-                .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND));
+                .orElseThrow(() -> new AppException("Incorrect Login or Password", HttpStatus.NOT_FOUND));
 
 
         if (user.getPassword().equals(String.valueOf(credentialDTO.password()))) {
@@ -43,7 +43,7 @@ public class UserService {
             return userMapper.userToUserDto(user);
         }
 
-        throw new AppException("Invalid password", HttpStatus.BAD_REQUEST);
+        throw new AppException("Incorrect Login or Password", HttpStatus.BAD_REQUEST);
     }
 
     public UserDto register(SingUpUserDto singUpDto) {
@@ -56,7 +56,7 @@ public class UserService {
 
         //Check if email is already taken
         if (oUserEmail.isPresent()) {
-            throw new AppException("Email already taken", HttpStatus.BAD_REQUEST);
+            throw new AppException("Email is invalid or already taken", HttpStatus.BAD_REQUEST);
         }
 
         User user = userMapper.singUpDtoToUser(singUpDto);
@@ -131,4 +131,12 @@ public class UserService {
                 .build();
     }
 
+    public UserDto updateUser(UserDto userDto) {
+        Optional<User> oUser = userRepository.findById(userDto.getId());
+        if (oUser.isEmpty()) {
+            throw new AppException("User not found", HttpStatus.NOT_FOUND);
+        }
+
+        return saveUser(userDto);
+    }
 }

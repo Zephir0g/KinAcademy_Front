@@ -1,0 +1,9 @@
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-body">
+        <button *ngFor="let language of languages" type="button" class="btn ms-1 language" (click)="changeLanguage(language.code)">{{language.label}}</button>
+      </div>
+    </div>
+  </div>
+</div>

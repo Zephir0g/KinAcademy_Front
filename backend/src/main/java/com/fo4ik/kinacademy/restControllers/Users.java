@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,10 +32,26 @@ public class Users {
             @RequestHeader(value = HttpHeaders.AUTHORIZATION) String SECURE_TOKEN
     ) {
         Response response = userService.isUserValid(SECURE_TOKEN, id);
-        if(!response.isSuccess()){
+        if (!response.isSuccess()) {
             throw new AppException(response.getMessage(), response.getHttpStatus());
         }
         return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @Operation(summary = "Update User", description = "Update User data use UserDto, need SECURE_TOKEN", tags = {"Users"})
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    public ResponseEntity<UserDto> updateUser(
+            @Parameter(hidden = true)
+            @RequestHeader(value = HttpHeaders.AUTHORIZATION) String SECURE_TOKEN,
+            @Parameter(description = "UserDto data", example = "language: English," +
+                    "firstName: John", required = true)
+            @RequestBody UserDto userDto
+    ) {
+        if (!userService.isUserSecureTokenValid(SECURE_TOKEN, userDto.getId())) {
+            throw new AppException("Token is invalid", HttpStatus.UNAUTHORIZED);
+        }
+
+        return ResponseEntity.ok(userService.updateUser(userDto));
     }
 
 }
