@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import Editor from 'ckeditor5-custom-build';
 import {AxiosService} from "../../../axios.service";
 import {DataService} from "../../../data.service";
+import {Title} from "@angular/platform-browser";
 
 @Component({
   selector: 'app-create-course',
@@ -9,7 +10,7 @@ import {DataService} from "../../../data.service";
   styleUrls: ['./create-course.component.css']
 })
 export class CreateCourseComponent implements OnInit {
-  public Editor = Editor;
+  Editor = Editor;
   user: any;
   languages: any;
   courseDescription: String = '';
@@ -21,7 +22,8 @@ export class CreateCourseComponent implements OnInit {
   error: String = '';
 
 
-  constructor(private axiosService: AxiosService, private data: DataService) {
+  constructor(private axiosService: AxiosService, private data: DataService, private titleService: Title) {
+    this.titleService.setTitle("Create course");
   }
 
   ngOnInit(): void {
@@ -59,7 +61,6 @@ export class CreateCourseComponent implements OnInit {
       })
         .then((response) => {
             if (response) {
-              console.log(response.data)
               window.location.href = "/course/" + this.courseUrl + "/edit";
             }
           }

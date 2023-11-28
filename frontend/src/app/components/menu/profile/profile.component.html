@@ -1,4 +1,4 @@
-<li class="dropdown-item w-100">
+<li class="dropdown-item">
   <div class="user-data row">
     <div class="col-md-4">
       <!-- User Profile Section -->
@@ -18,13 +18,15 @@
 </li>
 <li class="align-items-start underline">
   <a href="#" class="dropdown-item">{{internalization['myCourses']}}</a>
-  <a href="/createCourse" class="dropdown-item" *ngIf="user.roles.includes('TEACHER')">{{internalization['createCourse']}}</a>
+  <a href="/createCourse" class="dropdown-item"
+     *ngIf="user.roles.includes('TEACHER')">{{internalization['createCourse']}}</a>
 </li>
 <li class="align-items-start underline">
-  <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#exampleModal">{{internalization['languageDisplay']}}
+  <a href="#" class="dropdown-item" data-bs-toggle="modal"
+     data-bs-target="#exampleModal">{{internalization['languageDisplay']}}
     <fa-icon [icon]="faGlobe"></fa-icon>
     :
-    <span >{{internalization['language']}}</span>
+    <span>{{internalization['language']}}</span>
   </a>
 </li>
 <li class="align-items-start">

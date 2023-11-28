@@ -2,7 +2,106 @@
 </app-menu>
 
 <div *ngIf="isAuthor">
-  Is author
+  <div class="container justify-content-center">
+    <!--Setting menu-->
+    <div class="input-group mt-3">
+      <button class="btn" (click)="changeIsEdit(isEdit)" [ngClass]="{'btn-success': isEdit, 'btn-warning': !isEdit}">
+        {{isEdit ? 'Save' : 'Edit'}}
+      </button>
+      <button class="btn">
+        Edit users
+      </button>
+    </div>
+
+    <!--Edit test of course-->
+    <section class="row mt-2">
+      <div class="col-12 col-md-7 col-xl-8">
+        <!--course name-->
+        <div class="mb-1">
+          <label class="form-label" for="courseName">Name: </label>
+          <input class="form-control" [ngModel]="courseName" name="courseName" id="courseName" disabled>
+        </div>
+        <!--course language and category-->
+        <div class="mb-1 row">
+          <div class="col-6">
+            <label class="form-label" for="courseLanguage">Language: </label>
+            <select class="form-control" name="courseLanguage" id="courseLanguage" [disabled]="!isEdit">
+              <ng-container *ngIf="!isEdit">
+                <option>{{ courseLanguage }}</option>
+              </ng-container>
+              <ng-container *ngIf="isEdit">
+                <option *ngFor="let language of languages" [value]="language.label">
+                  {{ language.label }}
+                </option>
+              </ng-container>
+            </select>
+          </div>
+          <div class="col-6">
+            <label class="form-label" for="courseCategory">Category: </label>
+            <select class="form-control" name="courseCategory" id="courseCategory" [disabled]="!isEdit">
+              <option *ngIf="!isEdit">
+                {{courseCategory}}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!--course picture url-->
+        <div class="mb-1">
+          <label class="form-label" for="coursePicture">Picture URL: </label>
+          <input class="form-control" name="coursePicture" id="coursePicture" [disabled]="!isEdit"
+                 [ngModel]="courseImage == imageNotFound ? '' : courseImage"
+                 (ngModelChange)="courseImage = $event">
+        </div>
+      </div>
+
+      <!--course image-->
+      <div class="col-12 col-md-5 col-xl-4">
+        <img src="{{courseImage}}" class="w-100 img-fluid rounded mt-2" alt="Course image">
+      </div>
+    </section>
+
+    <!--course description-->
+    <section class="row mt-2">
+      <ckeditor [editor]="Editor" id="courseDescription" name="courseDescription" [disabled]="!isEdit"
+                [(ngModel)]="courseDescription"></ckeditor>
+    </section>
+
+    <!--course Sections-->
+    <section class="mt-3">
+      <div class="row sectionsEdit mx-0 d-flex align-items-center justify-content-center">
+        <div class="col-11">
+          <h4>Edit sections</h4>
+        </div>
+        <div class="col-1 ">
+          <h4>
+            <fa-icon [icon]="faPlus" (click)="addSection()" class="addSection"></fa-icon>
+          </h4>
+        </div>
+      </div>
+
+      <div class="row mx-0 mt-2">
+        <div *ngFor="let section of sections" style="background-color: #a9d29d">
+
+          <div class="row">
+            <div class="col-11">
+              <h5>{{section.name}},  {{section.description}}</h5>
+            </div>
+            <div class="col-1">
+              <h5>
+                <fa-icon [icon]="faPlus"></fa-icon>
+              </h5>
+            </div>
+          </div>
+
+          <div>
+            videos
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
 </div>
 
 <div *ngIf="!isAuthor" style="color:red;">

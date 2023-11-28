@@ -44,6 +44,10 @@ export class LoginComponent implements OnInit {
 
   onSubmitLogin(): void {
     this.errorMessages = [];
+    if (this.login == "" || this.password == "") {
+      this.errorMessages.push("Please fill required fields")
+      return;
+    }
     this.axiosService.request(
       "POST",
       "/login",
@@ -52,7 +56,8 @@ export class LoginComponent implements OnInit {
         "password": this.password
       },
     ).catch((error) => {
-      this.errorMessages.push(error.response.data.message)
+      // this.errorMessages.push(error.response.data.message)
+      console.log(error.response)
     })
       .then((response) => {
         if (response) {

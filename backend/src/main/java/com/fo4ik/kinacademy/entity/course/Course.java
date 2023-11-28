@@ -34,7 +34,7 @@ public class Course {
     Long authorId;
 
     String url;
-    String imagePath;
+    String imageUrl;
 
     Status status;
 

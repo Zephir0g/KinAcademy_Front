@@ -1,4 +1,4 @@
-import {Injectable, Input} from '@angular/core';
+import {Injectable} from '@angular/core';
 import axios from "axios";
 
 @Injectable({
@@ -7,7 +7,7 @@ import axios from "axios";
 export class AxiosService {
 
   constructor() {
-    axios.defaults.baseURL = 'http://localhost:8080/api';
+    axios.defaults.baseURL = 'http://192.168.0.104:8080/api';
     axios.defaults.headers.post['Content-Type'] = 'application/json';
   }
 

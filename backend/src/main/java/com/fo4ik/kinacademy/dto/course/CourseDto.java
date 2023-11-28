@@ -1,5 +1,6 @@
 package com.fo4ik.kinacademy.dto.course;
 
+import com.fo4ik.kinacademy.entity.course.Section;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -20,7 +21,6 @@ public class CourseDto {
 
     @Schema(description = "Course id", example = "1")
     @Min(1)
-    @NotBlank
     Long id;
 
     @Schema(description = "Course name", example = "Java")
@@ -54,7 +54,7 @@ public class CourseDto {
     boolean isPublic;
 
     @Schema(description = "Course image", example = "https://example.com/image.png")
-    String imagePath;
+    String imageUrl;
 
     @Schema(description = "Course students count", example = "0")
     int studentsCount;
@@ -66,7 +66,7 @@ public class CourseDto {
     @Schema(description = "Course rating", example = "0.0", accessMode = Schema.AccessMode.READ_ONLY)
     Double rating;
 
-    @Schema(description = "Course sections id", example = "[1, 2, 3]")
-    List<Long> sectionsId;
+    @Schema(description = "Course sections", example = "See SectionDto")
+    List<Section> sections;
 
 }

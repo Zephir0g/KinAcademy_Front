@@ -17,12 +17,15 @@ public class Video {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(nullable=false)
+    @Column(nullable = false)
     private String name;
 
     @ElementCollection
     @Setter(AccessLevel.NONE)
     private List<Long> usersIdWitchWatchedThisVideo;
+
+    @Column(nullable = false)
+    private String urlToVideo;
 
     public void addUserIdWitchWatchedThisVideo(Long id) {
         this.usersIdWitchWatchedThisVideo.add(id);

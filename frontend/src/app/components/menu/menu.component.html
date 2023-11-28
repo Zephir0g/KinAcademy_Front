@@ -82,13 +82,13 @@
   </nav>
   <div class="fullscreen-search" id="fullscreenSearch" *ngIf="showFullscreenSearch">
     <div class="fullscreen-search-content">
-      <form class="d-flex" role="search">
+      <form class="d-flex" style="height: 60px" role="search">
         <button class="btn mt-2 btn-link" disabled>
           <fa-icon [icon]="faMagnifyingGlass"></fa-icon>
         </button>
         <input class="form-control mt-1" type="search" placeholder="Search" aria-label="Search"
                id="search-input-full">
-        <button class="btn mt-2 color-search" id="closeSearch"
+        <button class="btn mt-2 me-2 color-search" id="closeSearch"
                 (click)="toggleFullscreenSearch(false)">
           <fa-icon [icon]="faXmark"></fa-icon>
         </button>

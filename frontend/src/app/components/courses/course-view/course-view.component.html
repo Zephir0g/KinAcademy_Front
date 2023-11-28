@@ -1,2 +1,9 @@
 <app-menu></app-menu>
-<h5>{{courseUrl}}</h5>
+
+<div class="container" *ngIf="!errorMessage">
+  <h5>{{courseUrl}}</h5>
+</div>
+
+<div class="container row justify-content-center" style="color: red" *ngIf="errorMessage">
+  {{errorMessage}}
+</div>
