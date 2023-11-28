@@ -1,10 +1,12 @@
 <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="square-jelly-box" [fullScreen]="true"><p
   style="color: white"> Loading... </p></ngx-spinner>
 
-<app-menu>
-</app-menu>
 
-<div>
+<div *ngIf="!isLoading">
+
+  <app-menu>
+  </app-menu>
+
   <div class="container justify-content-center">
     <!--Setting menu-->
     <div class="input-group mt-3">

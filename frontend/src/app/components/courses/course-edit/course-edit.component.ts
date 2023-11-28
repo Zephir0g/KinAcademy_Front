@@ -19,7 +19,7 @@ export class CourseEditComponent implements OnInit {
   user = JSON.parse(localStorage.getItem('user') || '{}');
   course: any = {};
   languages: any;
-  isAuthor = false;
+  isLoading: boolean = true;
   isEdit: boolean = false;
 
   imageNotFound: string = "https://www.salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled-1150x647.png";
@@ -110,10 +110,12 @@ export class CourseEditComponent implements OnInit {
 
   showSpinner() {
     this.spinner.show().then(r => console.log("Loading..."));
+    this.isLoading = true;
   }
 
   hideSpinner() {
     this.spinner.hide();
+    this.isLoading = false;
   }
 
 }
