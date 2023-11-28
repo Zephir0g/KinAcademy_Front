@@ -17,3 +17,11 @@ npm install
 
 npm run build
 ```
+
+To run frontend
+```
+ng serve
+```
+
+To run backend
+[StartApplication](backend/src/main/java/com/fo4ik/kinacademy/StartApplication.java)

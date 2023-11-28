@@ -1,15 +1,17 @@
 import {Component, OnInit} from '@angular/core';
 import Editor from 'ckeditor5-custom-build';
 import {AxiosService} from "../../../axios.service";
+import {DataService} from "../../../data.service";
 
 @Component({
   selector: 'app-create-course',
   templateUrl: './create-course.component.html',
   styleUrls: ['./create-course.component.css']
 })
-export class CreateCourseComponent implements OnInit{
+export class CreateCourseComponent implements OnInit {
   public Editor = Editor;
-  user = JSON.parse(localStorage.getItem('user') || '{}');
+  user: any;
+  languages: any;
   courseDescription: String = '';
   courseName: String = '';
   courseLanguage: String = '';
@@ -19,16 +21,19 @@ export class CreateCourseComponent implements OnInit{
   error: String = '';
 
 
-  constructor(private axiosService: AxiosService) {
+  constructor(private axiosService: AxiosService, private data: DataService) {
   }
 
   ngOnInit(): void {
+    this.user = this.data.getUser();
+    this.languages = this.data.getLanguages();
     if (this.user.id == null) {
       window.location.href = "/login";
     }
-    if(!this.user.roles.includes("TEACHER")){
+    if (!this.user.roles.includes("TEACHER")) {
       window.location.href = "/";
     }
+    /*console.log(this.languages)*/
   }
 
   onCreate() {
@@ -36,7 +41,7 @@ export class CreateCourseComponent implements OnInit{
     if (this.courseName == '' || this.courseDescription == '' || this.courseLanguage == '' || this.courseCategory == '' || this.courseUrl == '') {
       this.error = "Please fill required fields";
       return;
-    } else{
+    } else {
       this.axiosService.requestWithHeaderAuth(
         "POST",
         "/course/create?userId=" + this.user.id,
@@ -53,14 +58,12 @@ export class CreateCourseComponent implements OnInit{
         this.error = error.response.data.message;
       })
         .then((response) => {
-          if (response) {
-            console.log(response.data)
-             window.location.href = "/course/" + this.courseUrl + "/edit";
+            if (response) {
+              console.log(response.data)
+              window.location.href = "/course/" + this.courseUrl + "/edit";
+            }
           }
-        }
-      )
+        )
     }
   }
-
-
 }

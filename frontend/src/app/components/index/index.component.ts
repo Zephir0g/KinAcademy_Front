@@ -14,27 +14,15 @@ export class IndexComponent implements OnInit {
   internalization: any;
 
   isLogesIn: boolean = false;
-  isDataLoaded: boolean = false;
 
   constructor(private axiosService: AxiosService, private data: DataService) {
   }
 
   ngOnInit(): void {
-    this.checkIsDataLoaded();
-  }
-
-  checkIsDataLoaded(): void {
-
-    while (!this.isDataLoaded) {
-      this.getUser();
-      this.getInternalization();
-      this.checkIsTokenValid();
-      if (this.languages === undefined && this.internalization === undefined) {
-        this.isDataLoaded = false;
-      } else {
-        this.isDataLoaded = true;
-      }
-    }
+    this.getUser();
+    this.getInternalization();
+    this.checkIsTokenValid();
+    this.languages = this.data.getLanguages();
   }
 
   getUser() {
@@ -61,14 +49,11 @@ export class IndexComponent implements OnInit {
       })
         .catch((error) => {
           console.log(error.response.data.message);
-         // this.updateUser();
+          // this.updateUser();
           this.data.updateUser();
         })
     }
   }
-
-
-
 
 
 }

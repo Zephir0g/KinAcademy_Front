@@ -1,8 +1,4 @@
-<div *ngIf="!isDataLoaded">
-  Loading...
-</div>
-
-<div class="app" *ngIf="isDataLoaded">
+<div class="app">
   <app-menu [pageTitle]="'KIN'"
             [logoSrc]="'./assets/images/logo.png'"></app-menu>
 
@@ -15,5 +11,9 @@
 
   <div class="container mt-4">
     <h5>{{user | json}}</h5>
+  </div>
+
+  <div class="container mt-4">
+    <h5>{{languages | json}}</h5>
   </div>
 </div>

@@ -49,12 +49,8 @@ public class Components {
     @Operation(summary = "Get languages", description = "Get languages from file", tags = {"Components"})
     public ResponseEntity<List<LanguagesDto>> getLanguages() {
 
-        //List<LanguagesDto>
         List<LanguagesDto> languagesDtoList = new ArrayList<>();
-        //add all languages to list from config.availableLanguages (Map<String, String>)
         Config.availableLanguages.forEach((key, value) -> languagesDtoList.add(new LanguagesDto(key, value)));
-        System.out.println(languagesDtoList);
-
 
         return ResponseEntity.ok(languagesDtoList);
     }

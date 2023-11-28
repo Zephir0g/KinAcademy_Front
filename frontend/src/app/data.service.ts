@@ -8,7 +8,7 @@ import {Router} from "@angular/router";
 export class DataService {
   public user: any;
   public internalization: any;
-  public languages: any ;
+  public languages: any;
 
   constructor(private axiosService: AxiosService, private router: Router,) {
     /*this.getInternalizationFromServer();
@@ -41,7 +41,7 @@ export class DataService {
       if (response) {
         localStorage.removeItem('internalization');
         localStorage.setItem("internalization", JSON.stringify(response.data));
-        this.internalization = localStorage.getItem('internalization');
+        this.internalization = JSON.parse(localStorage.getItem('internalization') || '{}');
       }
     }).catch((error) => {
       console.log(error.response.data.message);
@@ -58,7 +58,7 @@ export class DataService {
       if (response) {
         localStorage.removeItem('internalization');
         localStorage.setItem("internalization", JSON.stringify(response.data));
-        this.internalization = localStorage.getItem('internalization');
+        this.internalization = JSON.parse(localStorage.getItem('internalization') || '{}')
         return this.internalization;
       }
     }).catch((error) => {
@@ -69,7 +69,7 @@ export class DataService {
 
   public async getLanguagesFromServer() {
     if (localStorage.getItem('languages') === null) {
-      this.axiosService.request(
+      return this.axiosService.request(
         "GET",
         "/components/languages",
         {},
@@ -77,7 +77,8 @@ export class DataService {
         if (response) {
           localStorage.removeItem('languages');
           localStorage.setItem("languages", JSON.stringify(response.data));
-          this.languages = localStorage.getItem('languages');
+          this.languages = JSON.parse(localStorage.getItem('languages') || '{}');
+          return this.languages;
         }
       }).catch((error) => {
         console.log(error.response.data.message);
@@ -85,7 +86,7 @@ export class DataService {
     }
   }
 
- async updateUser() {
+  async updateUser() {
     this.axiosService.request(
       "POST",
       "/login",
@@ -95,9 +96,9 @@ export class DataService {
       },
     ).then((response) => {
       if (response) {
-          localStorage.removeItem("user");
-          localStorage.setItem("user", JSON.stringify(response.data));
-          this.user = JSON.parse(localStorage.getItem("user") || "{}");
+        localStorage.removeItem("user");
+        localStorage.setItem("user", JSON.stringify(response.data));
+        this.user = JSON.parse(localStorage.getItem("user") || "{}");
       }
     }).catch((error) => {
       console.log("Error while updating user")

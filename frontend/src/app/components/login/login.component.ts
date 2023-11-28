@@ -58,8 +58,9 @@ export class LoginComponent implements OnInit {
         if (response) {
           localStorage.setItem('user', JSON.stringify(response.data));
 
-          this.data.getInternalizationFromServerWithLanguage(response.data.language).then(() => {
-            this.data.getLanguagesFromServer().then(() => {
+          this.data.getInternalizationFromServerWithLanguage(response.data.language).then((response) => {
+            console.log(response.data)
+            this.data.getLanguagesFromServer().then((response) => {
               window.location.href = "/";
             })
           })

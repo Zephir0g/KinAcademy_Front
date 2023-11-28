@@ -16,10 +16,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
         bearerFormat = "JWT",
         in = SecuritySchemeIn.HEADER
 )
-public class CourseWorkTestWebAppApplication {
+public class StartApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(CourseWorkTestWebAppApplication.class, args);
+        SpringApplication.run(StartApplication.class, args);
     }
 
 }
