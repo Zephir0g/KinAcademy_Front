@@ -5,6 +5,7 @@ import {AxiosService} from "../../../axios.service";
 import Editor from 'ckeditor5-custom-build';
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {DataService} from "../../../data.service";
+import {NgxSpinnerService} from "ngx-spinner";
 
 @Component({
   selector: 'app-course-edit',
@@ -34,59 +35,63 @@ export class CourseEditComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private titleService: Title,
               private axiosService: AxiosService,
-              private data: DataService) {
+              private data: DataService,
+              private spinner: NgxSpinnerService) {
 
   }
 
   ngOnInit(): void {
     this.getCourseUrl();
+    this.showSpinner();
+    this.loadCourseData();
+  }
 
+  loadCourseData() {
     if (localStorage.getItem("course-" + this.courseUrl) === null) {
-
-      //else get course from server
-      this.getCourseData(this.courseUrl);
+      this.fetchCourseDataFromServer();
     } else {
       this.course = JSON.parse(localStorage.getItem("course-" + this.courseUrl) || '{}');
+      this.hideSpinner();
+      this.loadCourseDetails();
     }
+  }
 
-    //check if user is author of course
+  fetchCourseDataFromServer() {
+    this.getCourseData(this.courseUrl)
+      .then((response) => {
+        if (response) {
+          this.titleService.setTitle(response.data.name + " | Course");
+          localStorage.setItem("course-" + response.data.url, JSON.stringify(response.data));
+          this.course = response.data;
+          this.hideSpinner();
+          this.loadCourseDetails();
+        }
+      })
+      .catch((error) => {
+        console.log(error.response.data.message);
+        this.hideSpinner();
+      });
+  }
+
+  loadCourseDetails() {
     if (!this.userIsAuthor()) {
       window.location.href = '/course/' + this.courseUrl;
     }
     this.languages = this.data.getLanguages();
-
-    //Get data from course
     this.courseImage = this.course.imageUrl || this.imageNotFound;
     this.courseDescription = this.course.description;
     this.courseName = this.course.name;
     this.courseLanguage = this.course.language;
     this.courseCategory = this.course.category;
     this.sections = this.course.sections;
-    console.log(this.course);
   }
 
   userIsAuthor(): boolean {
-    this.isAuthor = this.user.id === this.course.authorId;
-    return this.isAuthor;
+    return this.user.id === this.course.authorId;
   }
 
-  getCourseData(url: string) {
-    this.axiosService.request(
-      "GET",
-      "/course/" + url,
-      null
-    ).catch((error) => {
-      console.log(error.response.data.message);
-    })
-      .then((response) => {
-          if (response) {
-            console.log(response.data)
-            this.titleService.setTitle(response.data.name + " | Course");
-            localStorage.setItem("course-" + response.data.url, JSON.stringify(response.data));
-            this.course = JSON.parse(localStorage.getItem('course-' + response.data.url) || '{}');
-          }
-        }
-      )
+  getCourseData(url: string): Promise<any> {
+    return this.axiosService.request("GET", "/course/" + url, null);
   }
 
   getCourseUrl() {
@@ -96,13 +101,19 @@ export class CourseEditComponent implements OnInit {
   }
 
   addSection() {
-    this.sections.put({name: "", description: "", videos: []});
+    this.sections.push({name: "", description: "", videos: []});
   }
 
-  changeIsEdit(isEdit
-                 :
-                 boolean
-  ) {
+  changeIsEdit(isEdit: boolean) {
     this.isEdit = !isEdit;
   }
+
+  showSpinner() {
+    this.spinner.show().then(r => console.log("Loading..."));
+  }
+
+  hideSpinner() {
+    this.spinner.hide();
+  }
+
 }

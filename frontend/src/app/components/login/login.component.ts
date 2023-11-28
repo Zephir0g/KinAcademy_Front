@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {AxiosService} from "../../axios.service";
 import {Router} from '@angular/router';
 import {DataService} from "../../data.service";
+import {NgxSpinnerService} from "ngx-spinner";
 
 @Component({
   selector: 'app-login',
@@ -10,7 +11,10 @@ import {DataService} from "../../data.service";
 })
 export class LoginComponent implements OnInit {
 
-  constructor(private axiosService: AxiosService, private router: Router, private data: DataService) {
+  constructor(private axiosService: AxiosService,
+              private router: Router,
+              private data: DataService,
+              private spinner: NgxSpinnerService) {
   }
 
   ngOnInit(): void {
@@ -43,6 +47,7 @@ export class LoginComponent implements OnInit {
   }
 
   onSubmitLogin(): void {
+    this.spinner.show();
     this.errorMessages = [];
     if (this.login == "" || this.password == "") {
       this.errorMessages.push("Please fill required fields")
@@ -66,6 +71,7 @@ export class LoginComponent implements OnInit {
           this.data.getInternalizationFromServerWithLanguage(response.data.language).then((response) => {
             console.log(response.data)
             this.data.getLanguagesFromServer().then((response) => {
+              this.spinner.hide();
               window.location.href = "/";
             })
           })

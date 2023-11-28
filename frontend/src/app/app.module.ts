@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 
 import {AppRoutingModule} from './app-routing.module';
@@ -18,6 +18,8 @@ import {CKEditorModule} from '@ckeditor/ckeditor5-angular';
 import {CourseViewComponent} from './components/courses/course-view/course-view.component';
 import {CourseEditComponent} from './components/courses/course-edit/course-edit.component';
 import {LanguagesComponent} from './components/languages/languages.component';
+import {NgxSpinnerModule} from "ngx-spinner";
+import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 @NgModule({
   declarations: [
@@ -41,7 +43,10 @@ import {LanguagesComponent} from './components/languages/languages.component';
     HttpClientModule,
     FormsModule,
     FontAwesomeModule,
+    BrowserAnimationsModule,
+    NgxSpinnerModule
   ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [],
   bootstrap: [AppComponent]
 })

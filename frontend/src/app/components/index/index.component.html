@@ -1,4 +1,7 @@
-<div class="app">
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="square-jelly-box" [fullScreen]="true"><p
+  style="color: white"> Loading... </p></ngx-spinner>
+
+<div *ngIf="!isLoading">
   <app-menu [pageTitle]="'KIN'"
             [logoSrc]="'./assets/images/logo.png'"></app-menu>
 
