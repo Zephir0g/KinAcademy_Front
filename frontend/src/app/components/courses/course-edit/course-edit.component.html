@@ -30,12 +30,14 @@
         <div class="mb-1 row">
           <div class="col-6">
             <label class="form-label" for="courseLanguage">Language: </label>
-            <select class="form-control" name="courseLanguage" id="courseLanguage" [disabled]="!isEdit">
+            <select class="form-control" name="courseLanguage" id="courseLanguage" [disabled]="!isEdit"
+                    [(ngModel)]="courseLanguage">
               <ng-container *ngIf="!isEdit">
                 <option>{{ courseLanguage }}</option>
               </ng-container>
               <ng-container *ngIf="isEdit">
-                <option *ngFor="let language of languages" [value]="language.label">
+                <option value="">Select language</option>
+                <option *ngFor="let language of languages" [value]="language.code">
                   {{ language.label }}
                 </option>
               </ng-container>
@@ -94,13 +96,15 @@
             </div>
             <div class="col-1">
               <h5>
-                <fa-icon [icon]="faPlus"></fa-icon>
+                <fa-icon [icon]="faPlus" (click)="addVideoToSection(section.name)"></fa-icon>
               </h5>
             </div>
           </div>
 
-          <div>
-            videos
+          <div *ngFor="let video of section.videos">
+            <div class="row mx-0 mt-1">
+              {{video.name}}, {{video.urlToVideo}}
+            </div>
           </div>
         </div>
       </div>

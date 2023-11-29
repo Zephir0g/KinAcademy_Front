@@ -118,4 +118,16 @@ export class CourseEditComponent implements OnInit {
     this.isLoading = false;
   }
 
+  addVideoToSection(name: string) {
+    this.sections.forEach((section: any) => {
+      if (section.name === name) {
+        section.videos.push({name: "", urlToVideo: ""});
+      }
+    });
+  }
+
+  changeCourseLanguage(language: string) {
+    console.log("change lang: " + language);
+    this.courseLanguage = language;
+  }
 }

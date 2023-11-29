@@ -13,6 +13,7 @@ export class CreateCourseComponent implements OnInit {
   Editor = Editor;
   user: any;
   languages: any;
+  isUpdate = false;
   courseDescription: String = '';
   courseName: String = '';
   courseLanguage: String = '';
@@ -57,7 +58,14 @@ export class CreateCourseComponent implements OnInit {
         },
         "Bearer " + this.user.secure_TOKEN
       ).catch((error) => {
-        this.error = error.response.data.message;
+        if (error.response.data.message == "Invalid SECURE_TOKEN" && !this.isUpdate) {
+          this.data.updateUser().then(() => {
+            this.onCreate();
+            this.isUpdate = true;
+          })
+        } else {
+          this.error = error.response.data.message;
+        }
       })
         .then((response) => {
             if (response) {
