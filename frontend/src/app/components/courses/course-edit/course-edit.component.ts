@@ -60,7 +60,6 @@ export class CourseEditComponent implements OnInit {
       this.fetchCourseDataFromServer();
     } else {
       this.course = JSON.parse(localStorage.getItem("course-" + this.courseUrl) || '{}');
-      this.hideSpinner();
       this.loadCourseDetails();
     }
   }
@@ -86,6 +85,7 @@ export class CourseEditComponent implements OnInit {
     if (!this.userIsAuthor()) {
       window.location.href = '/course/' + this.courseUrl;
     }
+    this.hideSpinner();
     this.languages = this.data.getLanguages();
     this.courseImage = this.course.imageUrl || this.imageNotFound;
     this.courseDescription = this.course.description;
