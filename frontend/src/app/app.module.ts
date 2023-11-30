@@ -25,6 +25,12 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatDialogModule} from "@angular/material/dialog";
 import {MatInputModule} from "@angular/material/input";
 import {MatButtonModule} from "@angular/material/button";
+import { CourseEditDataComponent } from './components/courses/course-edit/course-edit-data/course-edit-data.component';
+import {VgCoreModule} from "@videogular/ngx-videogular/core";
+import {VgControlsModule} from "@videogular/ngx-videogular/controls";
+import {VgOverlayPlayModule} from "@videogular/ngx-videogular/overlay-play";
+import {VgBufferingModule} from "@videogular/ngx-videogular/buffering";
+import { VideoComponent } from './components/video/video.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +46,9 @@ import {MatButtonModule} from "@angular/material/button";
     CourseViewComponent,
     CourseEditComponent,
     LanguagesComponent,
-    AddSectionComponent
+    AddSectionComponent,
+    CourseEditDataComponent,
+    VideoComponent
   ],
   imports: [
     BrowserModule,
@@ -54,7 +62,11 @@ import {MatButtonModule} from "@angular/material/button";
     MatFormFieldModule,
     MatDialogModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    VgCoreModule,
+    VgControlsModule,
+    VgOverlayPlayModule,
+    VgBufferingModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [],
