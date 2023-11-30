@@ -6,11 +6,19 @@ import Editor from 'ckeditor5-custom-build';
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {DataService} from "../../../data.service";
 import {NgxSpinnerService} from "ngx-spinner";
+import {MatDialog} from '@angular/material/dialog';
+import {AddSectionComponent} from "./add-section/add-section.component";
+
+
+export interface DialogData {
+  sectionName: string;
+  name: string;
+}
 
 @Component({
   selector: 'app-course-edit',
   templateUrl: './course-edit.component.html',
-  styleUrls: ['./course-edit.component.css']
+  styleUrls: ['./course-edit.component.css'],
 })
 export class CourseEditComponent implements OnInit {
   Editor = Editor;
@@ -36,7 +44,8 @@ export class CourseEditComponent implements OnInit {
               private titleService: Title,
               private axiosService: AxiosService,
               private data: DataService,
-              private spinner: NgxSpinnerService) {
+              private spinner: NgxSpinnerService,
+              public dialog: MatDialog) {
 
   }
 
@@ -101,7 +110,18 @@ export class CourseEditComponent implements OnInit {
   }
 
   addSection() {
-    this.sections.push({name: "", description: "", videos: []});
+    //TODO https://v6.material.angular.io/components/dialog/overview Connect this and get section name from modal window
+    const dialogRef = this.dialog.open(AddSectionComponent, {
+      width: '300px',
+      data: {name: "Add section name"}
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      console.log('The dialog was closed ' + result);
+      if (result !== undefined && result !== "" && result.replace(/\s/g, '') !== "") {
+        this.sections.push({name: result, videos: []});
+      }
+    });
   }
 
   changeIsEdit(isEdit: boolean) {
@@ -119,9 +139,14 @@ export class CourseEditComponent implements OnInit {
   }
 
   addVideoToSection(name: string) {
+    //TODO https://v6.material.angular.io/components/dialog/overview Connect this and get video name from modal window
     this.sections.forEach((section: any) => {
-      if (section.name === name) {
-        section.videos.push({name: "", urlToVideo: ""});
+      // add video to section by name of section (section.name) but if section name is "Add section name" then print error
+      if (section.name === name && section.name !== "Add section name ") {
+        section.videos.push({name: "Add video name", url: ""});
+      } else {
+        // open modal window with error
+        alert("Please change section name before add video");
       }
     });
   }

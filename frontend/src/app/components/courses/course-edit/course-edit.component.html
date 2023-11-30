@@ -77,33 +77,33 @@
     <!--course Sections-->
     <section class="mt-3">
       <div class="row sectionsEdit mx-0 d-flex align-items-center justify-content-center">
-        <div class="col-11">
-          <h4>Edit sections</h4>
+        <div class="col-10 col-md-11">
+          <label class="sectionsEditText">Edit sections</label>
         </div>
-        <div class="col-1 ">
-          <h4>
-            <fa-icon [icon]="faPlus" (click)="addSection()" class="addSection"></fa-icon>
-          </h4>
+        <div class="col-2 col-md-1">
+          <label class="sectionsEditText">
+            <fa-icon [icon]="faPlus" (click)="addSection()" class="add"></fa-icon>
+          </label>
         </div>
       </div>
 
-      <div class="row mx-0 mt-2">
-        <div *ngFor="let section of sections" style="background-color: #a9d29d">
+      <div class="row mx-0">
+        <div *ngFor="let section of sections" class="section mt-2">
 
           <div class="row">
             <div class="col-11">
-              <h5>{{section.name}},  {{section.description}}</h5>
+              <h5>{{section.name}}</h5>
             </div>
             <div class="col-1">
               <h5>
-                <fa-icon [icon]="faPlus" (click)="addVideoToSection(section.name)"></fa-icon>
+                <fa-icon [icon]="faPlus" (click)="addVideoToSection(section.name)" class="add"></fa-icon>
               </h5>
             </div>
           </div>
 
           <div *ngFor="let video of section.videos">
-            <div class="row mx-0 mt-1">
-              {{video.name}}, {{video.urlToVideo}}
+            <div class="row mx-0 mt-1 videoEditText">
+              {{video.name}}
             </div>
           </div>
         </div>

@@ -20,6 +20,11 @@ import {CourseEditComponent} from './components/courses/course-edit/course-edit.
 import {LanguagesComponent} from './components/languages/languages.component';
 import {NgxSpinnerModule} from "ngx-spinner";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import {AddSectionComponent} from './components/courses/course-edit/add-section/add-section.component';
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {MatDialogModule} from "@angular/material/dialog";
+import {MatInputModule} from "@angular/material/input";
+import {MatButtonModule} from "@angular/material/button";
 
 @NgModule({
   declarations: [
@@ -34,7 +39,8 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
     CreateCourseComponent,
     CourseViewComponent,
     CourseEditComponent,
-    LanguagesComponent
+    LanguagesComponent,
+    AddSectionComponent
   ],
   imports: [
     BrowserModule,
@@ -44,7 +50,11 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
     FormsModule,
     FontAwesomeModule,
     BrowserAnimationsModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
+    MatFormFieldModule,
+    MatDialogModule,
+    MatInputModule,
+    MatButtonModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [],

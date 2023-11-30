@@ -1,9 +1,24 @@
-.addSection {
+.add {
   cursor: pointer;
 }
 
 .sectionsEdit {
   background-color: #f5f5f5;
-  border-radius: 2px;
+  border-radius: 5px;
   border: 1px solid #e7e7e7;
+  height: 3rem;
+}
+
+.sectionsEditText {
+  font-size: 1.8rem;
+}
+
+.videoEditText {
+  font-size: 1.1rem;
+}
+
+.section {
+  background-color: #a9d29d;
+  border-radius: 5px;
+  border: 1px solid #9bd38c;
 }
