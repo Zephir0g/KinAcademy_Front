@@ -8,7 +8,6 @@
     </div>
   </div>
 
-
   <form (ngSubmit)="onCreate()" #createForm="ngForm">
     <div class="mb-3">
       <label for="courseName" class="form-label">Course Name
@@ -30,9 +29,7 @@
           <span class="required-asterisk">*</span></label>
         <select class="form-select col-9" id="courseLanguage" name="courseLanguage" [(ngModel)]="courseLanguage">
           <option *ngFor="let language of languages">{{ language.label }}</option>
-
         </select>
-
       </div>
       <div class="col-6">
         <label class="input-group-text col-3" for="courseCategory">Category

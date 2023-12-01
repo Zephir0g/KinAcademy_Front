@@ -22,10 +22,6 @@ public class SectionsDto {
     @NotBlank
     String name;
 
-    @Schema(description = "Section description", example = "Section 1 description")
-    @NotBlank
-    String description;
-
     @Schema(description = "Section videos", example = "See VideoDto")
     List<Video> videos;
 

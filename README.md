@@ -11,7 +11,7 @@ npm install --save @ckeditor/ckeditor5-core @ckeditor/ckeditor5-engine @ckeditor
 
 ```
 
-After go to ckeditor5 and run
+After go to [ckeditor5](frontend/ckeditor5) and run
 ```
 npm install 
 
@@ -20,6 +20,8 @@ npm run build
 
 To run frontend
 ```
+npm install
+
 ng serve
 ```
 

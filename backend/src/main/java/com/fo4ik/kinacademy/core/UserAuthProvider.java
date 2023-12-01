@@ -5,6 +5,7 @@ import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fo4ik.kinacademy.dto.user.UserDto;
+import com.fo4ik.kinacademy.exceptions.AppException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -57,7 +58,6 @@ public class UserAuthProvider {
 
             return new UsernamePasswordAuthenticationToken(userDto, null, Collections.emptyList());
         } catch (Exception e) {
-            System.out.println("validateToken: " + e.getMessage());
             return null;
         }
     }

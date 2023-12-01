@@ -63,6 +63,7 @@ export class LoginComponent implements OnInit {
     ).catch((error) => {
       // this.errorMessages.push(error.response.data.message)
       console.log(error.response)
+        //TODO fix if error show error message not load data
     })
       .then((response) => {
         if (response) {
