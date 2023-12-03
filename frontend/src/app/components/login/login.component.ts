@@ -63,22 +63,16 @@ export class LoginComponent implements OnInit {
     ).catch((error) => {
       // this.errorMessages.push(error.response.data.message)
       console.log(error.response)
-        //TODO fix if error show error message not load data
+      //TODO fix if error show error message not load data
     })
       .then((response) => {
         if (response) {
           localStorage.setItem('user', JSON.stringify(response.data));
 
-          this.data.getInternalizationFromServerWithLanguage(response.data.language).then((response) => {
-            console.log(response.data)
-            this.data.getLanguagesFromServer().then((response) => {
-              this.spinner.hide();
-              window.location.href = "/";
-            })
-          })
+          this.data.getInternalizationFromServerWithLanguage(response.data.language);
+          this.data.getLanguagesFromServer();
 
-
-          // window.location.href = "/";
+          window.location.href = "/";
         }
       })
   }

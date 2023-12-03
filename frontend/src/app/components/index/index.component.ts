@@ -19,7 +19,7 @@ export class IndexComponent implements OnInit {
   constructor(private axiosService: AxiosService, private data: DataService, private spinner: NgxSpinnerService) {
   }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.spinner.show();
     this.isLoading = true;
 
@@ -27,6 +27,18 @@ export class IndexComponent implements OnInit {
       this.spinner.hide();
       this.isLoading = false;
     });
+
+    try{
+      await this.getData();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      // Check if all data is available before hiding the spinner and updating isLoading
+      if (this.user && this.internalization && this.languages) {
+        this.spinner.hide();
+        this.isLoading = false;
+      }
+    }
   }
 
   async getData() {
