@@ -91,28 +91,31 @@
       <div class="modal fade" id="addVideoModal" tabindex="-1" aria-labelledby="addVideoModal" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
           <div class="modal-content">
-            <div class="modal-body">
-              <div class="row align-items-center justify-content-center">
-                <div class="col-12 col-md-6 col-xl-4">
-                  <label class="form-label" for="videoInputName">Video name: </label>
-                  <input class="form-control" [(ngModel)]="videoInputName" name="videoInputName" id="videoInputName">
+            <form #videoForm="ngForm" (ngSubmit)="onSubmitVideo(section.name)">
+              <div class="modal-body">
+                <div class="row align-items-center justify-content-center">
+                  <div class="col-12 col-md-6 col-xl-4">
+                    <label class="form-label" for="videoInputName">Video name: </label>
+                    <input class="form-control" [(ngModel)]="videoInputName" name="videoInputName" id="videoInputName">
 
-                  <label class="form-label" for="videoInputFile">Video file: </label>
-                  <input class="form-control" type="file" (change)="onVideoUploaded($event)"
-                         accept="video/mp4, video/avi, video/webm"
-                         name="videoInputFile" id="videoInputFile">
-                </div>
-                <div class="col-12 col-md-6 col-xl-8">
-                  <app-video *ngIf="selectedFile" [selectedFile]="selectedFile"></app-video>
+                    <label class="form-label" for="videoInputFile">Video file: </label>
+                    <input class="form-control" type="file" (change)="onVideoUploaded($event)"
+                           accept="video/mp4, video/avi, video/webm"
+                           name="videoInputFile" id="videoInputFile">
+                  </div>
+                  <div class="col-12 col-md-6 col-xl-8" *ngIf="selectedFile">
+                    <app-video [selectedFile]="selectedFile"></app-video>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
-                      (click)="addVideoToSection(section.name)">Save changes
-              </button>
-            </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal"
+                        [disabled]="!(videoInputName && selectedFile)">
+                  Save changes
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -137,7 +140,8 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary" (click)="addSection()" data-bs-dismiss="modal">Save changes
+        <button type="button" class="btn btn-primary" (click)="addSection()" data-bs-dismiss="modal"
+                [disabled]="!sectionInputName">Save changes
         </button>
       </div>
     </div>

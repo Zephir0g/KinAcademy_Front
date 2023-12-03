@@ -105,6 +105,4 @@ export class DataService {
       console.log(error.response.data);
     })
   }
-
-
 }

@@ -1,4 +1,4 @@
-import {Component, HostListener, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import Editor from "ckeditor5-custom-build";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {ActivatedRoute} from "@angular/router";
@@ -7,7 +7,6 @@ import {AxiosService} from "../../../../axios.service";
 import {DataService} from "../../../../data.service";
 import {NgxSpinnerService} from "ngx-spinner";
 import {MatDialog} from "@angular/material/dialog";
-import {VgApiService} from "@videogular/ngx-videogular/core";
 
 
 export interface DialogData {
@@ -29,6 +28,7 @@ export class CourseEditDataComponent implements OnInit {
   isLoading: boolean = true;
   @Input() isEdit!: boolean;
   @Input() courseUrl !: string;
+  sectionAlreadyExists: boolean = false;
 
   imageNotFound: string = "https://www.salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled-1150x647.png";
 
@@ -40,10 +40,7 @@ export class CourseEditDataComponent implements OnInit {
   sections: any;
   sectionInputName: string = '';
   videoInputName: string = '';
-  selectedFile!: string;
-
-  preload: string = "auto";
-
+  selectedFile: string = '';
 
 
   constructor(private route: ActivatedRoute,
@@ -111,9 +108,17 @@ export class CourseEditDataComponent implements OnInit {
 
   addSection() {
     if (this.sectionInputName !== undefined && this.sectionInputName !== "" && this.sectionInputName.replace(/\s/g, '') !== "") {
-      this.sections.push({name: this.sectionInputName, videos: []});
-    } else {
-      alert("Please enter section name");
+      this.sections.forEach((section: any) => {
+        if (section.name === this.sectionInputName) {
+          alert("Section with this name already exists.");
+          this.sectionAlreadyExists = true;
+          return;
+        }
+      });
+      if (!this.sectionAlreadyExists) {
+        this.sections.push({name: this.sectionInputName, videos: []});
+        this.sectionAlreadyExists = false;
+      }
     }
   }
 
@@ -125,18 +130,6 @@ export class CourseEditDataComponent implements OnInit {
   hideSpinner() {
     this.spinner.hide();
     this.isLoading = false;
-  }
-
-  addVideoToSection(name: string) {
-    this.sections.forEach((section: any) => {
-      /*// add video to section by name of section (section.name) but if section name is "Add section name" then print error
-      if (section.name === name && section.name !== "" && section.name.replace(/\s/g, '') !== "") {
-        section.videos.push({name: "Add video name", url: ""});
-      } else {
-        // open modal window with error
-        alert("Please change section name before add video");
-      }*/
-    });
   }
 
   changeCourseLanguage(language: string) {
@@ -159,4 +152,17 @@ export class CourseEditDataComponent implements OnInit {
 
 
   }
+
+  onSubmitVideo(sectionName: string) {
+    //TODO send video to server to compress and get url
+    this.sections.forEach((section: any) => {
+      if (section.name === sectionName) {
+        section.videos.push({name: this.videoInputName, url: this.selectedFile});
+      }
+    });
+
+    this.videoInputName = '';
+    this.selectedFile = '';
+  }
+
 }
