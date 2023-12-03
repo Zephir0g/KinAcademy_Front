@@ -37,6 +37,9 @@ dependencies {
     //JSON
     implementation 'com.google.code.gson:gson:2.10.1'
 
+    //FFMPEG
+    implementation 'net.bramp.ffmpeg:ffmpeg:0.8.0'
+
     //Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'
