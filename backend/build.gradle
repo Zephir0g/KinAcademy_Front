@@ -40,6 +40,8 @@ dependencies {
     //FFMPEG
     implementation 'net.bramp.ffmpeg:ffmpeg:0.8.0'
 
+    implementation 'commons-io:commons-io:2.15.1'
+
     //Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.security:spring-security-test'

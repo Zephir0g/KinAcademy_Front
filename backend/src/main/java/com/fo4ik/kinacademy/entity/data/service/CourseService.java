@@ -64,4 +64,12 @@ public class CourseService {
         }
         return courseMapper.courseToCourseDto(oCourse.get());
     }
+
+    public boolean isUserIsAuthor(Long userId, String courseUrl) {
+        Optional<Course> oCourse = courseRepository.findByUrl(courseUrl);
+        if (oCourse.isEmpty()) {
+            throw new AppException("Course not found", HttpStatus.NOT_FOUND);
+        }
+        return oCourse.get().getAuthorId().equals(userId);
+    }
 }
