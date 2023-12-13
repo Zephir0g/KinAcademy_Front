@@ -69,15 +69,18 @@ export class LoginComponent implements OnInit {
         if (response) {
           localStorage.setItem('user', JSON.stringify(response.data));
 
-          this.data.getInternalizationFromServerWithLanguage(response.data.language);
-          this.data.getLanguagesFromServer();
-
-          window.location.href = "/";
+          this.data.getInternalizationFromServerWithLanguage(response.data.language).then((internalization) => {
+            this.data.getLanguagesFromServer().then((languages) => {
+              this.spinner.hide();
+              window.location.href = "/";
+            });
+          });
         }
       })
   }
 
   onSubmitRegister() {
+    this.spinner.show();
     this.errorMessages = [];
     this.axiosService.request(
       "POST",
@@ -96,7 +99,12 @@ export class LoginComponent implements OnInit {
       if (response) {
         localStorage.setItem("user", JSON.stringify(response.data));
         // redirect to home page if login is successful
-        window.location.href = "/";
+        this.data.getInternalizationFromServerWithLanguage(response.data.language).then((internalization) => {
+          this.data.getLanguagesFromServer().then((languages) => {
+            this.spinner.hide();
+            window.location.href = "/";
+          });
+        });
       }
     })
   }

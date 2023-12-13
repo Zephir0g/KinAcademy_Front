@@ -102,6 +102,9 @@
                     <input class="form-control" type="file" (change)="onVideoUploaded($event)"
                            accept="video/mp4, video/avi, video/webm"
                            name="videoInputFile" id="videoInputFile">
+                    <label class="form-label" for="videoInputFile">
+                      Max file size: 5GB
+                    </label>
                   </div>
                   <div class="col-12 col-md-6 col-xl-8" *ngIf="selectedFile">
                     <app-video [selectedFile]="selectedFile"></app-video>

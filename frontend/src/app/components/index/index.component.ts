@@ -28,7 +28,7 @@ export class IndexComponent implements OnInit {
       this.isLoading = false;
     });
 
-    try{
+    try {
       await this.getData();
     } catch (error) {
       console.log(error);
@@ -46,7 +46,7 @@ export class IndexComponent implements OnInit {
       await Promise.all([
         this.getUser(),
         this.getInternalization(),
-        this.checkIsTokenValid(),
+        this.data.checkIsTokenValid(),
         this.getLanguage()
       ]);
     } catch (error) {
@@ -70,27 +70,7 @@ export class IndexComponent implements OnInit {
   }
 
   // Check if the user is logged in and if the token is valid
-  async checkIsTokenValid() {
-    if (this.user == null) {
-      return this.axiosService.requestWithHeaderAuth(
-        "GET",
-        "/is-secure-token-valid?userId=" + this.user.id,
-        null,
-        "Bearer " + this.user.secure_TOKEN
-      ).then((response) => {
-        if (response) {
-          console.log("Token is valid");
-        }
-      })
-        .catch((error) => {
-          console.log(error.response.data.message);
-          // this.updateUser();
-          this.data.updateUser();
-        })
-    } else {
-      return false;
-    }
-  }
+
 
 
 }

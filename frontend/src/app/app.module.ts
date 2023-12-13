@@ -6,7 +6,6 @@ import {AppComponent} from './app.component';
 import {FormsModule} from "@angular/forms";
 import {HttpClientModule} from "@angular/common/http";
 import {MenuComponent} from './components/menu/menu.component';
-import {AuthenticationComponent} from './components/authentication/authentication.component';
 import {LoginComponent} from './components/login/login.component';
 import {IndexComponent} from './components/index/index.component';
 import {IndexContentComponent} from './components/index/index-content/index-content.component';
@@ -36,7 +35,6 @@ import { VideoComponent } from './components/video/video.component';
   declarations: [
     AppComponent,
     MenuComponent,
-    AuthenticationComponent,
     LoginComponent,
     IndexComponent,
     IndexContentComponent,

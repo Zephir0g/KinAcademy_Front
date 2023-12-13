@@ -105,4 +105,32 @@ export class DataService {
       console.log(error.response.data);
     })
   }
+
+  async checkIsTokenValid() {
+    if (!this.user.isEmpty) {
+      return this.axiosService.requestWithHeaderAuth(
+        "GET",
+        "/is-secure-token-valid?userId=" + this.user.id,
+        null,
+        "Bearer " + this.user.secure_TOKEN
+      ).then((response) => {
+
+      }).catch((error) => {
+        this.toLoginPage();
+      })
+    } else {
+      console.log("User is not logged in");
+      return false;
+    }
+  }
+
+  async toLoginPage(){
+    localStorage.clear();
+    // send to login page if user is not logged in
+    window.location.href = "/login";
+  }
+
+  async uploadVideo(file:any){
+
+  }
 }

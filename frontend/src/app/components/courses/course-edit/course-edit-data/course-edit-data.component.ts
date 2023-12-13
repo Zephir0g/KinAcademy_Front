@@ -155,6 +155,7 @@ export class CourseEditDataComponent implements OnInit {
 
   onSubmitVideo(sectionName: string) {
     //TODO send video to server to compress and get url
+
     this.sections.forEach((section: any) => {
       if (section.name === sectionName) {
         section.videos.push({name: this.videoInputName, url: this.selectedFile});
