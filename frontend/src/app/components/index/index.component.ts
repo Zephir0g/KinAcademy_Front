@@ -72,5 +72,4 @@ export class IndexComponent implements OnInit {
   // Check if the user is logged in and if the token is valid
 
 
-
 }

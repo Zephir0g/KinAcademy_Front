@@ -82,13 +82,13 @@
         <div class="col-1">
           <h5>
             <fa-icon [icon]="faPlus" class="add" data-bs-toggle="modal"
-                     data-bs-target="#addVideoModal"></fa-icon>
+                     data-bs-target="#addVideoModal" [attr.data-bs-target]="'#addVideoModal-' + section.name"></fa-icon>
           </h5>
         </div>
       </div>
 
       <!--Add video modal window-->
-      <div class="modal fade" id="addVideoModal" tabindex="-1" aria-labelledby="addVideoModal" aria-hidden="true">
+      <div class="modal fade" [id]="'addVideoModal-' + section.name" tabindex="-1" aria-labelledby="'addVideoModal-' + section.name" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
           <div class="modal-content">
             <form #videoForm="ngForm" (ngSubmit)="onSubmitVideo(section.name)">

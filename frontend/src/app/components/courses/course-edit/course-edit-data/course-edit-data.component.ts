@@ -28,7 +28,6 @@ export class CourseEditDataComponent implements OnInit {
   isLoading: boolean = true;
   @Input() isEdit!: boolean;
   @Input() courseUrl !: string;
-  sectionAlreadyExists: boolean = false;
 
   imageNotFound: string = "https://www.salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled-1150x647.png";
 
@@ -107,19 +106,16 @@ export class CourseEditDataComponent implements OnInit {
   }
 
   addSection() {
+    this.sectionInputName = this.sectionInputName.trim();
     if (this.sectionInputName !== undefined && this.sectionInputName !== "" && this.sectionInputName.replace(/\s/g, '') !== "") {
-      this.sections.forEach((section: any) => {
-        if (section.name === this.sectionInputName) {
-          alert("Section with this name already exists.");
-          this.sectionAlreadyExists = true;
-          return;
-        }
-      });
-      if (!this.sectionAlreadyExists) {
+      //check if section with this name already exists
+      if (this.sections.some((section: any) => section.name === this.sectionInputName)) {
+        alert("Section with this name already exists.");
+      } else {
         this.sections.push({name: this.sectionInputName, videos: []});
-        this.sectionAlreadyExists = false;
       }
     }
+    this.sectionInputName = '';
   }
 
   showSpinner() {
@@ -139,6 +135,7 @@ export class CourseEditDataComponent implements OnInit {
 
   onVideoUploaded(event: any) {
     const selectedFile = event.target.files[0];
+    this.selectedFile = '';
     //if selected file is not video mp4,avi,webm then print error
     if (selectedFile) {
       const allowedTypes = ['video/mp4', 'video/webm', 'video/avi'];
@@ -149,21 +146,24 @@ export class CourseEditDataComponent implements OnInit {
         this.selectedFile = URL.createObjectURL(selectedFile);
       }
     }
-
-
   }
 
   onSubmitVideo(sectionName: string) {
     //TODO send video to server to compress and get url
+    //TODO Fix save video to section
 
-    this.sections.forEach((section: any) => {
-      if (section.name === sectionName) {
-        section.videos.push({name: this.videoInputName, url: this.selectedFile});
-      }
-    });
+    this.addVideoToSection(sectionName);
 
     this.videoInputName = '';
     this.selectedFile = '';
+  }
+
+  addVideoToSection(sectionName: string) {
+    const section = this.sections.find((section: any) => section.name === sectionName);
+
+    if (section) {
+      section.videos.push({name: this.videoInputName, url: this.selectedFile});
+    }
   }
 
 }
