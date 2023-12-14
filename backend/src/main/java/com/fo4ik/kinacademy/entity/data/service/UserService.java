@@ -14,6 +14,7 @@ import com.fo4ik.kinacademy.entity.user.User;
 import com.fo4ik.kinacademy.exceptions.AppException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 

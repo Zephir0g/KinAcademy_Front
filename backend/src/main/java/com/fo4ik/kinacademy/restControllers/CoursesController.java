@@ -101,15 +101,14 @@ public class CoursesController {
             throw new AppException("You are not author of this course", HttpStatus.UNAUTHORIZED);
         }
 
-        response = videoCompressor.getVideoExtension(video, Path.of("backend/src/main/resources/static/videos/" + courseUrl + "/"));
 
-        if (!response.isSuccess()) {
-            throw new AppException(response.getMessage(), response.getHttpStatus());
-        }
-        if (response.getMessage() == null) {
+        Path videoPath = VideoCompressor.builder().build().getVideoExtension(video, Path.of("data/" + courseUrl));
+
+
+        if(videoPath == null) {
             throw new AppException("Video extension is not supported", HttpStatus.BAD_REQUEST);
         }
 
-        return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
+        return ResponseEntity.ok(videoPath.toString());
     }
 }

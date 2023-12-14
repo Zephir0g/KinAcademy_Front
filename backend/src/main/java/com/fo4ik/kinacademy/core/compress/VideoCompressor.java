@@ -2,8 +2,9 @@ package com.fo4ik.kinacademy.core.compress;
 
 import com.fo4ik.kinacademy.core.Response;
 import com.fo4ik.kinacademy.exceptions.AppException;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import net.bramp.ffmpeg.FFmpeg;
 import net.bramp.ffmpeg.FFmpegExecutor;
@@ -13,14 +14,12 @@ import net.bramp.ffmpeg.job.FFmpegJob;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import net.bramp.ffmpeg.progress.Progress;
 import net.bramp.ffmpeg.progress.ProgressListener;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -28,24 +27,29 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 
-@Service
-@RequiredArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
+@Builder
+@Service
+@NoArgsConstructor
+@AllArgsConstructor
 public class VideoCompressor {
 
+    @Builder.Default
     private final Path FFMPEG_PATH = Path.of("backend/ffmpeg/bin/ffmpeg.exe");
+    @Builder.Default
     private final Path FFPROBE_PATH = Path.of("backend/ffmpeg/bin/ffprobe.exe");
-
+    @Builder.Default
     private final String currentDirectory = System.getProperty("user.dir");
 
+
     @Async("AsyncTaskExecutor")
-    public Response getVideoExtension(MultipartFile video, Path folder) {
-        String extension = FilenameUtils.getExtension(video.getName());
+    public Path getVideoExtension(MultipartFile video, Path folder) {
+        String extension = FilenameUtils.getExtension(video.getOriginalFilename());
         switch (extension) {
             case "mp4":
                 return compressMp4(video, folder);
             case "avi":
-                return compressAVI(video, folder);
+                //return compressAVI(video, folder);
              /* case "webm":
                 return Path.of("webm");*/
             default:
@@ -54,7 +58,7 @@ public class VideoCompressor {
     }
 
     @Async("AsyncTaskExecutor")
-    Response compressMp4(MultipartFile video, Path folder) {
+    Path compressMp4(MultipartFile video, Path folder) {
         FFmpegJob job = null;
         try {
             //set ffmpeg and ffprobe path
@@ -63,13 +67,24 @@ public class VideoCompressor {
 
 
             FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
-            String inputVideoPath = UUID.randomUUID() + "-" + video.getOriginalFilename();
-            Path path = Path.of(folder + "/" + UUID.fromString(FilenameUtils.removeExtension(inputVideoPath)) + "-" + UUID.randomUUID() + ".mp4");
+            String inputVideo = UUID.randomUUID() + "-" + video.getOriginalFilename();
+            Path path = Path.of(folder + "/" + UUID.randomUUID() + ".mp4");
             String outputVideoPath = String.valueOf(path);
 
-            Files.write(Path.of(inputVideoPath), video.getBytes());
+            Path folderDirectory = Path.of(currentDirectory + "/" + folder);
+            if (!Files.exists(folderDirectory)) {
+                try {
+                    System.out.println("Creating directory: " + folderDirectory);
+                    Files.createDirectory(folderDirectory);
+                } catch (Exception e) {
+                    System.out.println("Error: " + e.getMessage());
+                }
+            }
 
-            FFmpegProbeResult in = ffprobe.probe(inputVideoPath);
+            Path videoInputPath = Path.of(inputVideo);
+            Files.write(videoInputPath, video.getBytes());
+
+            FFmpegProbeResult in = ffprobe.probe(inputVideo);
 
             FFmpegBuilder builder = new FFmpegBuilder()
                     .setInput(in)
@@ -99,12 +114,13 @@ public class VideoCompressor {
 
             job.run();
             if (job.getState() == FFmpegJob.State.FAILED) {
-                return Response.builder().isSuccess(false).message("Error while compressing video").httpStatus(HttpStatus.INTERNAL_SERVER_ERROR).build();
+                throw new AppException("Error while compressing video", HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-            Files.delete(Path.of(inputVideoPath));
+            Files.delete(videoInputPath);
 
-            return Response.builder().isSuccess(true).message(outputVideoPath).httpStatus(HttpStatus.OK).build();
+            System.out.println("Video path: " + path);
+            return Path.of(outputVideoPath);
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error: " + e.getMessage());
@@ -142,8 +158,8 @@ public class VideoCompressor {
             Files.delete(Path.of(inputVideoPath));
             return Response.builder().isSuccess(true).message(outputVideoPath).httpStatus(HttpStatus.OK).build();
         } catch (Exception e) {
-            e.printStackTrace();
             System.out.println("Error: " + e.getMessage());
+            System.out.println("Error: " + e.getStackTrace());
             return null;
         }
     }

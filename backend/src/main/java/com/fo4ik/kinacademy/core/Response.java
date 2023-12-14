@@ -3,6 +3,7 @@ package com.fo4ik.kinacademy.core;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
+import org.springframework.scheduling.annotation.Async;
 
 @Data
 @AllArgsConstructor
