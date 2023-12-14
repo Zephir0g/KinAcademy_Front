@@ -17,12 +17,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -37,6 +35,7 @@ public class CoursesController {
 
     private final UserService userService;
     private final CourseService courseService;
+    private final VideoCompressor videoCompressor;
 
     @Operation(summary = "Search courses", tags = {"Courses"})
     @GetMapping("/search")
@@ -84,7 +83,7 @@ public class CoursesController {
 
     @RequestMapping(value = "/{url}/compress", method = RequestMethod.POST)
     @Operation(summary = "Get course video url", description = "Compress course video by url and need SECURE_TOKEN", tags = {"Courses"})
-    public ResponseEntity<String> compressVideo (
+    public ResponseEntity<String> compressVideo(
             @Parameter(description = "Course url", required = true)
             @PathVariable("url") String courseUrl,
             @Parameter(description = "Course video", required = true)
@@ -102,18 +101,15 @@ public class CoursesController {
             throw new AppException("You are not author of this course", HttpStatus.UNAUTHORIZED);
         }
 
-        Path videoPath = VideoCompressor.builder().build().getVideoExtension(video, Path.of("data/" + courseUrl + "//"));
-        System.out.println("Video path: " + videoPath);
-        /*System.out.println("Video path: " + video.getOriginalFilename());
-        System.out.println("User id: " + userId);
-        System.out.println("SECURE_TOKEN: " + SECURE_TOKEN);
-        String videoPath = "Data;";*/
+        response = videoCompressor.getVideoExtension(video, Path.of("backend/src/main/resources/static/videos/" + courseUrl + "/"));
 
-        //TODO compress video and return url
-        if(videoPath == null) {
+        if (!response.isSuccess()) {
+            throw new AppException(response.getMessage(), response.getHttpStatus());
+        }
+        if (response.getMessage() == null) {
             throw new AppException("Video extension is not supported", HttpStatus.BAD_REQUEST);
         }
 
-        return ResponseEntity.ok(videoPath.toString());
+        return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
     }
 }

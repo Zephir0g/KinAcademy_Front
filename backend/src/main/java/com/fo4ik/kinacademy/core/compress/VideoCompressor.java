@@ -1,7 +1,7 @@
 package com.fo4ik.kinacademy.core.compress;
 
+import com.fo4ik.kinacademy.core.Response;
 import com.fo4ik.kinacademy.exceptions.AppException;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -13,12 +13,14 @@ import net.bramp.ffmpeg.job.FFmpegJob;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
 import net.bramp.ffmpeg.progress.Progress;
 import net.bramp.ffmpeg.progress.ProgressListener;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
@@ -28,23 +30,17 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
-@Builder
-@NoArgsConstructor
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class VideoCompressor {
 
-    @Builder.Default
     private final Path FFMPEG_PATH = Path.of("backend/ffmpeg/bin/ffmpeg.exe");
-    @Builder.Default
     private final Path FFPROBE_PATH = Path.of("backend/ffmpeg/bin/ffprobe.exe");
 
-    //Get curren directory
-    @Builder.Default
     private final String currentDirectory = System.getProperty("user.dir");
 
     @Async("AsyncTaskExecutor")
-    public Path getVideoExtension(MultipartFile video, Path folder) {
-        String extension = FilenameUtils.getExtension(video.getOriginalFilename());
+    public Response getVideoExtension(MultipartFile video, Path folder) {
+        String extension = FilenameUtils.getExtension(video.getName());
         switch (extension) {
             case "mp4":
                 return compressMp4(video, folder);
@@ -58,7 +54,7 @@ public class VideoCompressor {
     }
 
     @Async("AsyncTaskExecutor")
-    Path compressMp4(MultipartFile video, Path folder) {
+    Response compressMp4(MultipartFile video, Path folder) {
         FFmpegJob job = null;
         try {
             //set ffmpeg and ffprobe path
@@ -103,13 +99,12 @@ public class VideoCompressor {
 
             job.run();
             if (job.getState() == FFmpegJob.State.FAILED) {
-                throw new AppException("Error while compressing video", HttpStatus.INTERNAL_SERVER_ERROR);
+                return Response.builder().isSuccess(false).message("Error while compressing video").httpStatus(HttpStatus.INTERNAL_SERVER_ERROR).build();
             }
 
             Files.delete(Path.of(inputVideoPath));
 
-            System.out.println("Video path: " + path);
-            return Path.of(outputVideoPath);
+            return Response.builder().isSuccess(true).message(outputVideoPath).httpStatus(HttpStatus.OK).build();
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error: " + e.getMessage());
@@ -118,15 +113,17 @@ public class VideoCompressor {
     }
 
     @Async("AsyncTaskExecutor")
-    Path compressAVI(MultipartFile video, Path folder) {
+    Response compressAVI(MultipartFile video, Path folder) {
         try {
             FFmpeg ffmpeg = new FFmpeg(Objects.requireNonNull(getClass().getResource("/ffmpeg/bin/ffmpeg.exe")).getPath());
             FFprobe ffprobe = new FFprobe(Objects.requireNonNull(getClass().getResource("/ffmpeg/bin/ffprobe.exe")).getPath());
 
             FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
-            String inputVideoPath = video.getOriginalFilename();
-            String outputVideoPath = folder + video.getOriginalFilename() + UUID.randomUUID();
+            String inputVideoPath = UUID.randomUUID() + "-" + video.getOriginalFilename();
+            Path path = Path.of(folder + "/" + UUID.fromString(FilenameUtils.removeExtension(inputVideoPath)) + "-" + UUID.randomUUID() + ".avi");
+            String outputVideoPath = String.valueOf(path);
 
+            //save video to file by path
             Files.write(Path.of(inputVideoPath), video.getBytes());
 
             FFmpegProbeResult in = ffprobe.probe(inputVideoPath);
@@ -143,7 +140,7 @@ public class VideoCompressor {
                     .done();
 
             Files.delete(Path.of(inputVideoPath));
-            return Path.of(outputVideoPath);
+            return Response.builder().isSuccess(true).message(outputVideoPath).httpStatus(HttpStatus.OK).build();
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error: " + e.getMessage());
