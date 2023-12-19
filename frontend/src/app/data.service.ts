@@ -86,6 +86,24 @@ export class DataService {
     }
   }
 
+  public async getVideoUrlFromServer(url: string, file: any) {
+    //TODO Fix this send in body or in param file
+    const formData = new FormData();
+    formData.append('video', file);
+    formData.append('userId', this.user.id);
+
+    return this.axiosService.requestWithHeaderAuthAndContentType(
+      "POST",
+      "/course/" + url + "/compress",
+      {
+        "video": file,
+        "userId": this.user.id
+      },
+      this.user.secure_TOKEN,
+      "multipart/form-data"
+    )
+  }
+
   async updateUser() {
     this.axiosService.request(
       "POST",
@@ -124,13 +142,23 @@ export class DataService {
     }
   }
 
-  async toLoginPage(){
+  async toLoginPage() {
     localStorage.clear();
     // send to login page if user is not logged in
+    //TODO add redirect to login page with ?currentUrl= to redirect after login
     window.location.href = "/login";
   }
 
-  async uploadVideo(file:any){
-
+  async errorHandler(error: any) {
+    switch (error.response.status) {
+      case 401:
+        if (error.response.data.message === "Invalid SECURE_TOKEN") {
+          this.toLoginPage();
+        }
+        break;
+      case 403:
+        console.log("Forbidden");
+        break;
+    }
   }
 }

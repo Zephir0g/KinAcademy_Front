@@ -20,17 +20,31 @@ export class AxiosService {
     });
   }
 
-  requestWithHeaderAuth(method: string, url: string, data: any, header: string): Promise<any> {
+  requestWithHeaderAuth(method: string, url: string, data: any, TOKEN: string): Promise<any> {
 
     return axios({
       method: method,
       url: url,
       data: data,
       headers: {
-        'Authorization': 'Bearer ' + header
+        'Authorization': 'Bearer ' + TOKEN
       }
     })
   }
+  requestWithHeaderAuthAndContentType(method: string, url: string, data: any, TOKEN: string, contentType: string): Promise<any> {
+
+    return axios({
+      method: method,
+      url: url,
+      data: data,
+      headers: {
+        'Authorization': 'Bearer ' + TOKEN,
+        'Content-Type': contentType
+      }
+    })
+
+  }
+
 
   requestWithHeaderLang(method: string, url: string, data: any, header: string): Promise<any> {
     return axios({

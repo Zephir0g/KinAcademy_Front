@@ -39,7 +39,8 @@ export class CourseEditDataComponent implements OnInit {
   sections: any;
   sectionInputName: string = '';
   videoInputName: string = '';
-  selectedFile: string = '';
+  selectedFileUrl: string = '';
+  selectedFile: any;
 
 
   constructor(private route: ActivatedRoute,
@@ -119,7 +120,7 @@ export class CourseEditDataComponent implements OnInit {
   }
 
   showSpinner() {
-    this.spinner.show().then(r => console.log("Loading..."));
+    this.spinner.show();
     this.isLoading = true;
   }
 
@@ -134,36 +135,56 @@ export class CourseEditDataComponent implements OnInit {
   }
 
   onVideoUploaded(event: any) {
-    const selectedFile = event.target.files[0];
-    this.selectedFile = '';
+    this.selectedFile = event.target.files[0];
+    this.selectedFileUrl = '';
     //if selected file is not video mp4,avi,webm then print error
-    if (selectedFile) {
+    if (this.selectedFile) {
       const allowedTypes = ['video/mp4', 'video/webm', 'video/avi'];
-      if (!allowedTypes.includes(selectedFile.type)) {
+      if (!allowedTypes.includes(this.selectedFile.type)) {
         alert('Please, choose file .avi, .mp4 or .webm.');
         return;
       } else {
-        this.selectedFile = URL.createObjectURL(selectedFile);
+        this.selectedFileUrl = URL.createObjectURL(this.selectedFile);
       }
     }
   }
 
-  onSubmitVideo(sectionName: string) {
-    //TODO send video to server to compress and get url
-    //TODO Fix save video to section
-
-    this.addVideoToSection(sectionName);
+  async onSubmitVideo(sectionName: string) {
+    //TODO create loading spinner for video upload
+    const videoName = this.videoInputName;
+    this.addVideoToSection(sectionName, videoName);
+    this.data.getVideoUrlFromServer(this.courseUrl, this.selectedFile)
+      .then((response) => {
+        if (response) {
+          //TODO Fix this
+          this.updateVideoUrl(sectionName, videoName, response.data.url);
+        }
+      }).catch((error) => {
+      console.log(error.response.data.message);
+      console.log(error.response.status);
+      this.data.errorHandler(error);
+    });
 
     this.videoInputName = '';
-    this.selectedFile = '';
+    this.selectedFileUrl = '';
+    this.selectedFile = null;
   }
 
-  addVideoToSection(sectionName: string) {
+  async addVideoToSection(sectionName: string, videoName: string) {
     const section = this.sections.find((section: any) => section.name === sectionName);
 
     if (section) {
-      section.videos.push({name: this.videoInputName, url: this.selectedFile});
+      section.videos.push({name: videoName, url: ''});
+      // this.sections = [...this.sections];
     }
   }
 
+  async updateVideoUrl(sectionName: string, videoName: string, url: string) {
+    const section = this.sections.find((section: any) => section.name === sectionName);
+
+    const videoIndex = section.videos.findIndex((video: any) => video.name === videoName);
+    if (videoIndex !== -1) {
+      section.videos[videoIndex].url = url;
+    }
+  }
 }

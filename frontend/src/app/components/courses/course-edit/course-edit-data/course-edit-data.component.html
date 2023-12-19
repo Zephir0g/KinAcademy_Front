@@ -88,7 +88,8 @@
       </div>
 
       <!--Add video modal window-->
-      <div class="modal fade" [id]="'addVideoModal-' + section.name" tabindex="-1" aria-labelledby="'addVideoModal-' + section.name" aria-hidden="true">
+      <div class="modal fade" [id]="'addVideoModal-' + section.name" tabindex="-1"
+           aria-labelledby="'addVideoModal-' + section.name" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
           <div class="modal-content">
             <form #videoForm="ngForm" (ngSubmit)="onSubmitVideo(section.name)">
@@ -106,15 +107,15 @@
                       Max file size: 5GB
                     </label>
                   </div>
-                  <div class="col-12 col-md-6 col-xl-8" *ngIf="selectedFile">
-                    <app-video [selectedFile]="selectedFile"></app-video>
+                  <div class="col-12 col-md-6 col-xl-8" *ngIf="selectedFileUrl">
+                    <app-video [selectedFile]="selectedFileUrl"></app-video>
                   </div>
                 </div>
               </div>
               <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                 <button type="submit" class="btn btn-primary" data-bs-dismiss="modal"
-                        [disabled]="!(videoInputName && selectedFile)">
+                        [disabled]="!(videoInputName && selectedFileUrl)">
                   Save changes
                 </button>
               </div>
@@ -125,7 +126,12 @@
 
       <div *ngFor="let video of section.videos">
         <div class="row mx-0 mt-1 videoEditText">
-          {{video.name}}
+          <div class="col">
+            {{video.name}}
+          </div>
+          <div class="col" *ngIf="video.url === ''">
+            Loading...
+          </div>
         </div>
       </div>
     </div>
