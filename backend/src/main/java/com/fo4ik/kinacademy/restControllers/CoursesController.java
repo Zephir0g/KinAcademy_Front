@@ -15,16 +15,23 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @RequestMapping("/api/course")
@@ -69,11 +76,11 @@ public class CoursesController {
         return ResponseEntity.ok(course.getUrl());
     }
 
-    @RequestMapping(value = "/{url}", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/{course-url}", method = RequestMethod.GET, produces = "application/json")
     @Operation(summary = "Get course by url", description = "Get course by url and need SECURE_TOKEN", tags = {"Courses"})
     public ResponseEntity<CourseDto> getCourse(
             @Parameter(description = "Course url")
-            @PathVariable String url) {
+            @PathVariable("course-url") String url) {
 
 
         CourseDto course = courseService.getCourseByUrl(url);
@@ -81,11 +88,11 @@ public class CoursesController {
     }
 
 
-    @RequestMapping(value = "/{url}/compress", method = RequestMethod.POST)
+    @RequestMapping(value = "/{course-url}/compress", method = RequestMethod.POST)
     @Operation(summary = "Get course video url", description = "Compress course video by url and need SECURE_TOKEN", tags = {"Courses"})
-    public ResponseEntity<String> compressVideo(
+    public ResponseEntity<Map<String, String>> compressVideo(
             @Parameter(description = "Course url", required = true)
-            @PathVariable("url") String courseUrl,
+            @PathVariable("course-url") String courseUrl,
             @Parameter(description = "Course video", required = true)
             @RequestParam(value = "video", required = true) MultipartFile video,
             @Parameter(description = "User id", required = true)
@@ -103,12 +110,52 @@ public class CoursesController {
 
 
         Path videoPath = VideoCompressor.builder().build().getVideoExtension(video, Path.of("data/" + courseUrl));
+        //Replace data/ from path
+        //String videoPath = "data/" + courseUrl + "/video.webm";
 
 
-        if(videoPath == null) {
+        if (videoPath == null) {
             throw new AppException("Video extension is not supported", HttpStatus.BAD_REQUEST);
         }
 
-        return ResponseEntity.ok(videoPath.toString());
+        return ResponseEntity.ok(new HashMap<>(Map.of("url", videoPath.toString())));
+    }
+
+    @RequestMapping(value = "/{video-url}", method = RequestMethod.GET)
+    public ResponseEntity<Resource> getVideoByUrl(@PathVariable("video-url") Path videoUrl) {
+        try {
+
+            //TODO check is user have access to this video
+
+            if (videoUrl == null) {
+                throw new AppException("Video url is null", HttpStatus.BAD_REQUEST);
+            }
+
+            videoUrl = Path.of(videoUrl.toString().replace("=", "/"));
+            Path videoPath = Path.of("data/" + videoUrl);
+
+            File file = new File(videoPath.toString());
+            if (!file.exists()) {
+                throw new AppException("Video not found", HttpStatus.NOT_FOUND);
+            }
+
+            Resource videoResource = new UrlResource(videoPath.toUri());
+
+            if (videoResource.exists() && videoResource.isReadable()) {
+                HttpHeaders headers = new HttpHeaders();
+                headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+                headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline");
+
+                return ResponseEntity.ok()
+                        .headers(headers)
+                        .body(videoResource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (MalformedURLException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IOException e) {
+            return ResponseEntity.status(500).build();
+        }
     }
 }

@@ -1,7 +1,6 @@
 package com.fo4ik.kinacademy.core.compress;
 
 import com.fo4ik.kinacademy.core.Response;
-import com.fo4ik.kinacademy.exceptions.AppException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -12,8 +11,6 @@ import net.bramp.ffmpeg.FFprobe;
 import net.bramp.ffmpeg.builder.FFmpegBuilder;
 import net.bramp.ffmpeg.job.FFmpegJob;
 import net.bramp.ffmpeg.probe.FFmpegProbeResult;
-import net.bramp.ffmpeg.progress.Progress;
-import net.bramp.ffmpeg.progress.ProgressListener;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
@@ -24,7 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
@@ -33,6 +29,7 @@ import java.util.concurrent.TimeUnit;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VideoCompressor {
+    //TODO Optimize this class
 
     @Builder.Default
     private final Path FFMPEG_PATH = Path.of("backend/ffmpeg/bin/ffmpeg.exe");
@@ -50,8 +47,8 @@ public class VideoCompressor {
                 return compressMp4(video, folder);
             case "avi":
                 //return compressAVI(video, folder);
-             /* case "webm":
-                return Path.of("webm");*/
+            case "webm":
+                return compressWebm(video, folder);
             default:
                 return null;
         }
@@ -98,7 +95,11 @@ public class VideoCompressor {
                     .addExtraArgs("-tile-columns", "6")
                     .done();
 
-            job = executor.createJob(builder, new ProgressListener() {
+
+            job = executor.createJob(builder);
+            job.run();
+
+            /*job = executor.createJob(builder, new ProgressListener() {
                 final double duration_ns = in.getFormat().duration * TimeUnit.SECONDS.toNanos(1);
 
                 @Override
@@ -115,11 +116,14 @@ public class VideoCompressor {
             job.run();
             if (job.getState() == FFmpegJob.State.FAILED) {
                 throw new AppException("Error while compressing video", HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+            }*/
 
             Files.delete(videoInputPath);
+            //check if file deleted
+            if (Files.exists(videoInputPath)) {
+                Files.delete(videoInputPath);
+            }
 
-            System.out.println("Video path: " + path);
             return Path.of(outputVideoPath);
         } catch (Exception e) {
             e.printStackTrace();
@@ -164,4 +168,59 @@ public class VideoCompressor {
         }
     }
 
+
+    @Async("AsyncTaskExecutor")
+    Path compressWebm(MultipartFile video, Path folder) {
+        FFmpegJob job = null;
+        try {
+            FFmpeg ffmpeg = new FFmpeg(String.valueOf(FFMPEG_PATH));
+            FFprobe ffprobe = new FFprobe(String.valueOf(FFPROBE_PATH));
+
+            FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
+            String inputVideo = UUID.randomUUID() + "-" + video.getOriginalFilename();
+            Path path = Path.of(folder + "/" + UUID.randomUUID() + ".webm");
+            String outputVideoPath = String.valueOf(path);
+
+            Path folderDirectory = Path.of(currentDirectory + "/" + folder);
+            if (!Files.exists(folderDirectory)) {
+                try {
+                    Files.createDirectory(folderDirectory);
+                } catch (Exception e) {
+                    System.out.println("Error: " + e.getMessage());
+                }
+            }
+
+            Path videoInputPath = Path.of(inputVideo);
+            Files.write(videoInputPath, video.getBytes());
+
+            FFmpegProbeResult in = ffprobe.probe(inputVideo);
+
+            FFmpegBuilder builder = new FFmpegBuilder()
+                    .setInput(in)
+                    .addOutput(outputVideoPath)
+                    .setAudioCodec("libopus")
+                    .setVideoCodec("libvpx-vp9")
+                    .setFormat("webm")
+                    .setVideoFrameRate(FFmpeg.FPS_30)
+                    .setAudioChannels(FFmpeg.AUDIO_STEREO)
+                    .setStrict(FFmpegBuilder.Strict.EXPERIMENTAL)
+                    .addExtraArgs("-tile-columns", "6")
+                    .done();
+
+            job = executor.createJob(builder);
+            job.run();
+
+            Files.delete(videoInputPath);
+            //check if file deleted
+            if (Files.exists(videoInputPath)) {
+                Files.delete(videoInputPath);
+            }
+
+            return Path.of(outputVideoPath);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
