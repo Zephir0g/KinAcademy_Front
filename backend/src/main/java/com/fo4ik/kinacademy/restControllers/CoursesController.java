@@ -74,12 +74,33 @@ public class CoursesController {
     @RequestMapping(value = "/{course-url}", method = RequestMethod.GET, produces = "application/json")
     @Operation(summary = "Get course by url", description = "Get course by url and need SECURE_TOKEN", tags = {"Courses"})
     public ResponseEntity<CourseDto> getCourse(
-            @Parameter(description = "Course url")
+            @Parameter(description = "Course url", required = true)
             @PathVariable("course-url") String url) {
 
 
         CourseDto course = courseService.getCourseByUrl(url);
         return ResponseEntity.ok(course);
+    }
+
+    @RequestMapping(value = "/{course-url}/update", method = RequestMethod.POST)
+    public ResponseEntity<?> updateCourse(
+            @Parameter(description = "Course url", required = true)
+            @PathVariable("course-url") String courseUrl,
+            @Parameter(description = "Course data", required = true)
+            @RequestBody CourseDto courseDto,
+            @Parameter(description = "User username", required = true)
+            @RequestParam("username") String username) {
+
+        if (!courseService.isUserIsAuthor(username, courseUrl)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not author of this course");
+        }
+
+        Response response = courseService.updateCourse(courseUrl, courseDto);
+
+        if (!response.isSuccess()) {
+            throw new AppException(response.getMessage(), response.getHttpStatus());
+        }
+        return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
     }
 
 
@@ -95,10 +116,6 @@ public class CoursesController {
             /*@Parameter(hidden = true)
             @RequestHeader(value = HttpHeaders.AUTHORIZATION) String SECURE_TOKEN*/) throws IOException {
 
-        Response response = userService.isUserActive(username);
-        if (!response.isSuccess()) {
-            throw new AppException(response.getMessage(), response.getHttpStatus());
-        }
         if (!courseService.isUserIsAuthor(username, courseUrl)) {
             throw new AppException("You are not author of this course", HttpStatus.UNAUTHORIZED);
         }

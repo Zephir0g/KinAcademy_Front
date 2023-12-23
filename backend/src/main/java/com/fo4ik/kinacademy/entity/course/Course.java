@@ -54,15 +54,23 @@ public class Course {
         this.sections.add(section);
     }
 
-    @Operation(summary = "Create Url", description = "Create Url for course automatically")
-    public void setUrl() {
-        this.url = createUrl();
+    @Override
+    public String toString() {
+        return "Course{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", category='" + category + '\'' +
+                ", description='" + description + '\'' +
+                ", language='" + language + '\'' +
+                ", authorUsername='" + authorUsername + '\'' +
+                ", url='" + url + '\'' +
+                ", imageUrl='" + imageUrl + '\'' +
+                ", status=" + status +
+                ", isPublic=" + isPublic +
+                ", studentsCount=" + studentsCount +
+                ", lastUpdateDate=" + lastUpdateDate +
+                ", rating=" + rating +
+                ", sections=" + sections +
+                '}';
     }
-
-    String createUrl() {
-        //TODO create url from name and id or something else
-        return this.name;
-    }
-
-
 }

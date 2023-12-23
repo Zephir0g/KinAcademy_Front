@@ -100,22 +100,14 @@ public class UserService {
     public Response isUserActive(String username) {
         Optional<User> user = userRepository.findByUsername(username);
 
-
-        if (user == null) {
+        if (user.isEmpty()) {
             return new Response().builder()
                     .isSuccess(false)
-                    .message("User not found 1")
+                    .message("User not found")
                     .httpStatus(HttpStatus.NOT_FOUND)
                     .build();
         }
 
-        /*if (!isUserSecureTokenValid(SECURE_TOKEN, id)) {
-            return new Response().builder()
-                    .isSuccess(false)
-                    .message("Invalid SECURE_TOKEN")
-                    .httpStatus(HttpStatus.UNAUTHORIZED)
-                    .build();
-        }*/
         if (!user.get().getStatus().equals(Status.ACTIVE)) {
             return new Response().builder()
                     .isSuccess(false)

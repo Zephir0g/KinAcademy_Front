@@ -68,4 +68,6 @@ public class CourseDto {
     @Schema(description = "Course sections", example = "See SectionDto")
     List<Section> sections;
 
+
+
 }

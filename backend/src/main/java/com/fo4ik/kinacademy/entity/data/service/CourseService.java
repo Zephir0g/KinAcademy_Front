@@ -1,5 +1,6 @@
 package com.fo4ik.kinacademy.entity.data.service;
 
+import com.fo4ik.kinacademy.core.Response;
 import com.fo4ik.kinacademy.dto.course.CourseDto;
 import com.fo4ik.kinacademy.dto.course.SingUpCourseDto;
 import com.fo4ik.kinacademy.entity.course.Course;
@@ -72,5 +73,30 @@ public class CourseService {
             throw new AppException("Course not found", HttpStatus.NOT_FOUND);
         }
         return oCourse.get().getAuthorUsername().equals(username);
+    }
+
+    public Response updateCourse(String courseUrl, CourseDto courseDto) {
+        Optional<Course> oCourse = courseRepository.findByUrl(courseUrl);
+        if (oCourse.isEmpty()) {
+            return new Response().builder()
+                    .isSuccess(false)
+                    .message("Course not found")
+                    .httpStatus(HttpStatus.NOT_FOUND)
+                    .build();
+        }
+
+        Course course = oCourse.get();
+        course.setDescription(courseDto.getDescription());
+        course.setCategory(courseDto.getCategory());
+        course.setLanguage(courseDto.getLanguage());
+        course.setImageUrl(courseDto.getImageUrl());
+        course.setLastUpdateDate(new Date());
+        course.setSections(courseDto.getSections());
+        courseRepository.save(course);
+        return new Response().builder()
+                .isSuccess(true)
+                .message("Course updated")
+                .httpStatus(HttpStatus.OK)
+                .build();
     }
 }
