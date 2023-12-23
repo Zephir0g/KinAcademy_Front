@@ -1,7 +1,7 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import Editor from "ckeditor5-custom-build";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
-import {ActivatedRoute, Router} from "@angular/router";
+import {Router} from "@angular/router";
 import {Title} from "@angular/platform-browser";
 import {AxiosService} from "../../../../axios.service";
 import {DataService} from "../../../../data.service";
@@ -19,14 +19,14 @@ export interface DialogData {
   templateUrl: './course-edit-data.component.html',
   styleUrls: ['./course-edit-data.component.css']
 })
-export class CourseEditDataComponent implements OnInit {
+export class CourseEditDataComponent implements OnInit, OnChanges {
   Editor = Editor;
   faPlus = faPlus;
   user = JSON.parse(localStorage.getItem('user') || '{}');
   course: any = {};
   languages: any;
   isLoading: boolean = true;
-  @Input() isEdit!: boolean;
+  @Input() isEdit: boolean | undefined;
   @Input() courseUrl !: string;
 
   imageNotFound: string = "https://www.salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled-1150x647.png";
@@ -37,6 +37,8 @@ export class CourseEditDataComponent implements OnInit {
   courseLanguage: String = '';
   courseCategory: String = '';
   sections: any;
+
+
   sectionInputName: string = '';
   videoInputName: string = '';
   selectedFileUrl: string = '';
@@ -55,6 +57,19 @@ export class CourseEditDataComponent implements OnInit {
   ngOnInit(): void {
     this.showSpinner();
     this.loadCourseData();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['isEdit']) {
+      const currentValue = changes['isEdit'].currentValue;
+      const previousValue = changes['isEdit'].previousValue;
+
+      if (previousValue === true && currentValue === false) {
+        //TODO Save course data and send to server
+        console.log("Save course data and send to server");
+        this.saveCourse();
+      }
+    }
   }
 
   loadCourseData() {
@@ -134,11 +149,6 @@ export class CourseEditDataComponent implements OnInit {
     this.isLoading = false;
   }
 
-  changeCourseLanguage(language: string) {
-    console.log("change lang: " + language);
-    this.courseLanguage = language;
-  }
-
   onVideoUploaded(event: any) {
     this.selectedFile = event.target.files[0];
     this.selectedFileUrl = '';
@@ -180,7 +190,6 @@ export class CourseEditDataComponent implements OnInit {
 
     if (section) {
       section.videos.push({name: videoName, url: ''});
-      // this.sections = [...this.sections];
     }
   }
 
@@ -191,5 +200,15 @@ export class CourseEditDataComponent implements OnInit {
     if (videoIndex !== -1) {
       section.videos[videoIndex].url = url;
     }
+  }
+
+  saveCourse() {
+    this.course.category = this.courseCategory;
+    this.course.language = this.courseLanguage;
+    //if this.courseImage equal to imageNotFound then set empty string
+    this.course.imageUrl = this.courseImage === this.imageNotFound ? '' : this.courseImage;
+    this.course.description = this.courseDescription;
+    this.course.sections = this.sections;
+    this.data.updateCourse(this.course);
   }
 }

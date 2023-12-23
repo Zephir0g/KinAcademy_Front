@@ -93,7 +93,7 @@ export class DataService {
 
     return this.axiosService.requestWithHeaderAuthAndContentType(
       "POST",
-      "/course/" + url + "/compress",
+      "/course/" + url + "/compress?username=" + this.user.username,
       {
         "video": file,
         "userId": this.user.id
@@ -159,5 +159,22 @@ export class DataService {
         console.log("Forbidden");
         break;
     }
+  }
+
+
+  updateCourse(course: any) {
+    this.axiosService.requestWithHeaderAuth(
+      "POST",
+      "/course/" + course.url + "/update?username=" + this.user.username,
+      course,
+      this.user.secure_TOKEN
+    ).then((response) => {
+      if (response) {
+        localStorage.removeItem("course-" + response.data.url);
+        localStorage.setItem("course-" + response.data.url, JSON.stringify(response.data));
+      }
+    }).catch((error) => {
+      console.log(error.response.data.message);
+    })
   }
 }
