@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -34,6 +35,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        if (request.getServletPath().contains("/api/v1/components")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         final String authHeader = request.getHeader("Authorization"); // Get the "Authorization" header
         final String bearer = "Bearer ";
         final String jwt;
@@ -41,8 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         // Check if the "Authorization" header is missing or doesn't start with the token prefix.
         if (authHeader == null || !authHeader.startsWith(bearer)) {
-            // If not, continue processing the request without authentication.
-            filterChain.doFilter(request, response);
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized");
             return;
         }
 
@@ -70,7 +74,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
                 // Set the authentication token in the security context.
                 SecurityContextHolder.getContext().setAuthentication(authToken);
+            } else {
+                // If the token is not valid, clear the security context.
+                SecurityContextHolder.clearContext();
+                response.sendError(401, "Token is not valid");
+                return;
             }
+        } else {
+            // If the username is null or the token is invalid, clear the security context.
+            SecurityContextHolder.clearContext();
+            response.sendError(401, "Token is not valid");
+            return;
         }
 
         // Continue processing the request.
