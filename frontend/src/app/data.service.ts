@@ -30,7 +30,7 @@ export class DataService {
     return this.languages;
   }
 
-  public getInternalizationFromServer() {
+  /*public getInternalizationFromServer() {
     this.user = JSON.parse(localStorage.getItem('user') || '{}');
     this.axiosService.requestWithHeaderLang(
       "GET",
@@ -46,14 +46,13 @@ export class DataService {
     }).catch((error) => {
       console.log(error.response.data.message);
     })
-  }
+  }*/
 
   public async getInternalizationFromServerWithLanguage(lang: any) {
-    return this.axiosService.requestWithHeaderLang(
+    return this.axiosService.request(
       "GET",
-      "/components/internationalization",
-      {},
-      lang || "English"
+      "/components/internationalization?language=" + lang || "English",
+      {}
     ).then((response) => {
       if (response) {
         localStorage.removeItem('internalization');

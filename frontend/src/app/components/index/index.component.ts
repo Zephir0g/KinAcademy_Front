@@ -14,31 +14,19 @@ export class IndexComponent implements OnInit {
   languages: any;
   internalization: any;
 
-  isLoading: boolean = false;
+  isPageLoading: boolean = false;
 
-  constructor(private axiosService: AxiosService, private data: DataService, private spinner: NgxSpinnerService) {
+  constructor(private data: DataService, private spinner: NgxSpinnerService) {
   }
 
   async ngOnInit() {
-    this.spinner.show();
-    this.isLoading = true;
-
-    this.getData().then(() => {
-      this.spinner.hide();
-      this.isLoading = false;
-    });
-
-    try {
-      await this.getData();
-    } catch (error) {
-      console.log(error);
-    } finally {
-      // Check if all data is available before hiding the spinner and updating isLoading
-      if (this.user && this.internalization && this.languages) {
+    this.isPageLoading = true;
+    this.spinner.show().then(r => {
+      this.getData().then(() => {
         this.spinner.hide();
-        this.isLoading = false;
-      }
-    }
+        this.isPageLoading = false;
+      });
+    });
   }
 
   async getData() {
@@ -46,7 +34,7 @@ export class IndexComponent implements OnInit {
       await Promise.all([
         this.getUser(),
         this.getInternalization(),
-        this.data.checkIsTokenValid(),
+        //this.data.checkIsTokenValid(),
         this.getLanguage()
       ]);
     } catch (error) {

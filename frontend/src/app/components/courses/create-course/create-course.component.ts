@@ -3,6 +3,8 @@ import Editor from 'ckeditor5-custom-build';
 import {AxiosService} from "../../../axios.service";
 import {DataService} from "../../../data.service";
 import {Title} from "@angular/platform-browser";
+import {NgxSpinnerService} from "ngx-spinner";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-create-course',
@@ -10,6 +12,7 @@ import {Title} from "@angular/platform-browser";
   styleUrls: ['./create-course.component.css']
 })
 export class CreateCourseComponent implements OnInit {
+  isPageLoading = false;
   Editor = Editor;
   user: any;
   languages: any;
@@ -23,20 +26,31 @@ export class CreateCourseComponent implements OnInit {
   error: String = '';
 
 
-  constructor(private axiosService: AxiosService, private data: DataService, private titleService: Title) {
+  constructor(private axiosService: AxiosService,
+              private data: DataService,
+              private titleService: Title,
+              private spinner: NgxSpinnerService,
+              private router: Router) {
     this.titleService.setTitle("Create course");
   }
 
   ngOnInit(): void {
-    this.user = this.data.getUser();
-    this.languages = this.data.getLanguages();
-    if (this.user.id == null) {
-      window.location.href = "/login";
-    }
-    if (!this.user.roles.includes("TEACHER")) {
-      window.location.href = "/";
-    }
-    /*console.log(this.languages)*/
+    this.isPageLoading = true;
+    this.spinner.show().then(r => {
+      this.user = this.data.getUser();
+      this.languages = this.data.getLanguages();
+      if (this.user.role !== "TEACHER") {
+        this.router.navigate(['/']);
+      }
+      if (this.user.username == null) {
+        this.router.navigate(['/login']);
+      }
+
+    }).then(r => {
+        this.spinner.hide();
+        this.isPageLoading = false;
+      }
+    );
   }
 
   onCreate() {
@@ -47,7 +61,7 @@ export class CreateCourseComponent implements OnInit {
     } else {
       this.axiosService.requestWithHeaderAuth(
         "POST",
-        "/course/create?userId=" + this.user.id,
+        "/course/create?username=" + this.user.username,
         {
           "name": this.courseName,
           "description": this.courseDescription,
@@ -56,7 +70,7 @@ export class CreateCourseComponent implements OnInit {
           "isPublic": this.coursePolicy,
           "url": this.courseUrl
         },
-        "Bearer " + this.user.secure_TOKEN
+        this.user.secure_TOKEN
       ).catch((error) => {
         if (error.response.data.message == "Invalid SECURE_TOKEN" && !this.isUpdate) {
           this.data.updateUser().then(() => {

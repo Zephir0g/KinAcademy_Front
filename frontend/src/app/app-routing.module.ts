@@ -9,7 +9,7 @@ import {CourseEditComponent} from "./components/courses/course-edit/course-edit.
 const routes: Routes = [
   {path: '', component: IndexComponent},
   {path: 'login', component: LoginComponent},
-  {path: 'createCourse', component: CreateCourseComponent},
+  {path: 'course-create', component: CreateCourseComponent},
   {path: 'course/:name', component: CourseViewComponent},
   {path: 'course/:name/edit', component: CourseEditComponent}
 ];

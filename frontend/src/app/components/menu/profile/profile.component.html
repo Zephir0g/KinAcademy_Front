@@ -18,8 +18,8 @@
 </li>
 <li class="align-items-start underline">
   <a href="#" class="dropdown-item">{{internalization['myCourses']}}</a>
-  <a href="/createCourse" class="dropdown-item"
-     *ngIf="user.roles.includes('TEACHER')">{{internalization['createCourse']}}</a>
+  <a href="/course-create" class="dropdown-item"
+     *ngIf="user.role == 'TEACHER'">{{internalization['createCourse']}}</a>
 </li>
 <li class="align-items-start underline">
   <a href="#" class="dropdown-item" data-bs-toggle="modal"

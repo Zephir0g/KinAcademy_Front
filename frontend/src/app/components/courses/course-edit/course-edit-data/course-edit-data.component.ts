@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import Editor from "ckeditor5-custom-build";
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 import {Title} from "@angular/platform-browser";
 import {AxiosService} from "../../../../axios.service";
 import {DataService} from "../../../../data.service";
@@ -43,7 +43,7 @@ export class CourseEditDataComponent implements OnInit {
   selectedFile: any;
 
 
-  constructor(private route: ActivatedRoute,
+  constructor(private router: Router,
               private titleService: Title,
               private axiosService: AxiosService,
               private data: DataService,
@@ -86,7 +86,7 @@ export class CourseEditDataComponent implements OnInit {
 
   loadCourseDetails() {
     if (!this.userIsAuthor()) {
-      window.location.href = '/course/' + this.courseUrl;
+      this.router.navigate(['/course/' + this.courseUrl]);
     }
     this.hideSpinner();
     this.languages = this.data.getLanguages();
@@ -99,11 +99,16 @@ export class CourseEditDataComponent implements OnInit {
   }
 
   userIsAuthor(): boolean {
-    return this.user.id === this.course.authorId;
+    return this.user.username === this.course.authorUsername;
   }
 
   getCourseData(url: string): Promise<any> {
-    return this.axiosService.request("GET", "/course/" + url, null);
+    return this.axiosService.requestWithHeaderAuth(
+      "GET",
+      "/course/" + url + "?username=" + this.user.username,
+      null,
+      this.user.secure_TOKEN
+    );
   }
 
   addSection() {

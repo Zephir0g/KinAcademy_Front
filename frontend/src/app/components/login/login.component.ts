@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
   }
 
   active: string = "login";
-  login: string = "";
+  username: string = "";
   password: string = "";
   email: string = "";
   firstName: String = "";
@@ -49,30 +49,30 @@ export class LoginComponent implements OnInit {
   onSubmitLogin(): void {
     this.spinner.show();
     this.errorMessages = [];
-    if (this.login == "" || this.password == "") {
+    if (this.username == "" || this.password == "") {
       this.errorMessages.push("Please fill required fields")
+      this.spinner.hide();
       return;
     }
     this.axiosService.request(
       "POST",
-      "/login",
+      "/auth/login",
       {
-        "login": this.login,
+        "username": this.username,
         "password": this.password
       },
     ).catch((error) => {
-      // this.errorMessages.push(error.response.data.message)
-      console.log(error.response)
-      //TODO fix if error show error message not load data
+      this.spinner.hide();
+      this.errorMessages.push(error.response.data.message)
     })
       .then((response) => {
         if (response) {
           localStorage.setItem('user', JSON.stringify(response.data));
 
+
           this.data.getInternalizationFromServerWithLanguage(response.data.language).then((internalization) => {
             this.data.getLanguagesFromServer().then((languages) => {
-              this.spinner.hide();
-              window.location.href = "/";
+              this.router.navigate(['/']);
             });
           });
         }
@@ -84,27 +84,21 @@ export class LoginComponent implements OnInit {
     this.errorMessages = [];
     this.axiosService.request(
       "POST",
-      "/register",
+      "/auth/register",
       {
         "firstName": this.firstName,
         "surname": this.surname,
-        "login": this.login,
+        "username": this.username,
         "email": this.email,
         "password": this.password,
         "language": this.userLanguage || "English"
       },
     ).catch((error) => {
-      this.errorMessages.push(error.response.data.message)
+
+      this.spinner.hide().then(r => this.errorMessages.push(error.response.data.message));
     }).then((response) => {
       if (response) {
-        localStorage.setItem("user", JSON.stringify(response.data));
-        // redirect to home page if login is successful
-        this.data.getInternalizationFromServerWithLanguage(response.data.language).then((internalization) => {
-          this.data.getLanguagesFromServer().then((languages) => {
-            this.spinner.hide();
-            window.location.href = "/";
-          });
-        });
+        this.spinner.hide().then(r => this.active = "login");
       }
     })
   }
