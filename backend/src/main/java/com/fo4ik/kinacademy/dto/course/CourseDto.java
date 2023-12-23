@@ -30,10 +30,9 @@ public class CourseDto {
     @Schema(description = "Course description", example = "Java course")
     String description;
 
-    @Schema(description = "Course author", example = "1")
-    @Max(1)
+    @Schema(description = "Course author username", example = "John")
     @NotBlank
-    Long authorId;
+    String authorUsername;
 
     @Schema(description = "Course category", example = "Java")
     @NotBlank

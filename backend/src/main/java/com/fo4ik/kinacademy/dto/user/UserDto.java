@@ -19,30 +19,20 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Schema(description = "Data for user entity")
 public class UserDto {
-    @Schema(description = "User id", example = "1")
-    @Min(1)
-    @NotBlank
-    Long id;
-
     @Schema(description = "User name", example = "John")
     String firstName;
 
     @Schema(description = "User surname", example = "Doe")
     String surname;
 
-    @Schema(description = "User login", example = "john123")
+    @Schema(description = "User username (login)", example = "john123")
     @NotBlank
-    String login;
+    String username;
 
     @Schema(description = "User email", example = "john.example@gmail.com")
     @UniqueElements
     @Size(min = 5, max = 50)
     String email;
-
-    @Schema(description = "User password", example = "john123")
-    @UniqueElements
-    @NotBlank
-    String password;
 
     @Schema(description = "User language", example = "English")
     @NotBlank
@@ -53,8 +43,8 @@ public class UserDto {
     @NotBlank
     String SECURE_TOKEN;
 
-    @Schema(description = "User roles", example = "[\"USER\"]")
-    List<Role> roles;
+    @Schema(description = "User role", example = "STUDENT")
+    Role role;
 
     @Schema(description = "User status", example = "ACTIVE")
     Status status;

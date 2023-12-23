@@ -11,12 +11,12 @@ public record SingUpUserDto(
         @Schema(description = "User surname", example = "Doe")
         @NotBlank
         String surname,
-        @Schema(description = "User login", example = "john123")
+        @Schema(description = "User username (login)", example = "john123")
         @NotBlank
-        String login,
+        String username,
         @Schema(description = "User password", example = "john123")
         @NotBlank
-        char[] password,
+        String password,
 
         @Schema(description = "User language", example = "English")
         String language,

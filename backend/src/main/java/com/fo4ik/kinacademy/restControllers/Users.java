@@ -10,12 +10,11 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 @Tag(name = "Users", description = "Methods for getting users")
 @SecurityRequirement(name = "Bearer token")
@@ -31,11 +30,14 @@ public class Users {
             @Parameter(hidden = true)
             @RequestHeader(value = HttpHeaders.AUTHORIZATION) String SECURE_TOKEN
     ) {
-        Response response = userService.isUserValid(SECURE_TOKEN, id);
+
+        /*Response response = userService.isUserActive(SECURE_TOKEN, id);
         if (!response.isSuccess()) {
             throw new AppException(response.getMessage(), response.getHttpStatus());
-        }
-        return ResponseEntity.ok(userService.getUserById(id));
+        }*/
+//        return ResponseEntity.ok(userService.getUserById(id));
+        //TODO return do it
+        return null;
     }
 
     @Operation(summary = "Update User", description = "Update User data use UserDto, need SECURE_TOKEN", tags = {"Users"})
@@ -47,11 +49,12 @@ public class Users {
                     "firstName: John", required = true)
             @RequestBody UserDto userDto
     ) {
-        if (!userService.isUserSecureTokenValid(SECURE_TOKEN, userDto.getId())) {
+       /* if (!userService.isUserSecureTokenValid(SECURE_TOKEN, userDto.getId())) {
             throw new AppException("Token is invalid", HttpStatus.UNAUTHORIZED);
-        }
+        }*/
 
-        return ResponseEntity.ok(userService.updateUser(userDto));
+//        return ResponseEntity.ok(userService.updateUser(userDto));
+        return null;
     }
 
 }

@@ -22,19 +22,26 @@ public class WebConfig {
     @Value("${client.url}")
     private String clientUrl;
 
+    //Cors filter for all requests
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
     public FilterRegistrationBean corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
+
+        //Add allowed origins for request
         config.setAllowCredentials(false);
-        config.addAllowedOrigin("*"); // allow all origins
+        config.addAllowedOrigin("*");
+
+        //Add allowed headers for request
         config.setAllowedHeaders(Arrays.asList(
                 HttpHeaders.AUTHORIZATION,
                 HttpHeaders.ACCEPT_LANGUAGE,
                 HttpHeaders.CONTENT_TYPE,
                 HttpHeaders.ACCEPT
         ));
+
+        //Add allowed methods for request
         config.setAllowedMethods(Arrays.asList(
                 HttpMethod.GET.name(),
                 HttpMethod.POST.name(),
@@ -44,6 +51,7 @@ public class WebConfig {
         //Cors accept only 30 min
         config.setMaxAge(3600L);
 
+        //Allow all request for /api/** path for all users
         source.registerCorsConfiguration("/**", config);
         FilterRegistrationBean bean = new FilterRegistrationBean(new CorsFilter(source));
         bean.setOrder(-102);

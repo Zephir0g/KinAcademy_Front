@@ -5,10 +5,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 
 public record CredentialDto(
-        @Schema(description = "User login", example = "john123", name = "login")
+        @Schema(description = "User username (login)", example = "john123", name = "username")
                 @NotBlank
-        String login,
+        String username,
         @Schema(description = "User password", example = "john123", name = "password")
         @NotBlank
-        char[] password) {
+        String password) {
 }

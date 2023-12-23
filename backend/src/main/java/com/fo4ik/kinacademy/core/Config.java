@@ -1,4 +1,4 @@
-package com.fo4ik.kinacademy.configuration;
+package com.fo4ik.kinacademy.core;
 
 
 import java.util.Map;

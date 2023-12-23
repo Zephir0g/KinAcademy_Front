@@ -1,11 +1,6 @@
 package com.fo4ik.kinacademy.core;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fo4ik.kinacademy.dto.user.UserDto;
-import com.fo4ik.kinacademy.exceptions.AppException;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,40 +13,44 @@ import java.util.Collections;
 import java.util.Date;
 
 
+//JWT token config
 @RequiredArgsConstructor
 @Component
 public class UserAuthProvider {
 
-    @Value("${security.jwt.token.secret-key:secret-key}")
+    /*@Value("${security.jwt.token.secret-key:secret-key}")
     private String secretKey;
 
+    //Encode secret key
     @PostConstruct
     public void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
+    //Create token for user by User first name, surname and login
     public String createToken(UserDto userDto) {
         Date now = new Date();
-        Date validity = new Date(now.getTime() + 3_600_000); // 1 hour 3_600_000
+        Date validity = new Date(now.getTime() + 3_600_000); // 1 hour
         return JWT.create()
-                .withIssuer(userDto.getLogin())
+                .withIssuer(userDto.getUsername())
                 .withIssuedAt(now)
                 .withExpiresAt(validity)
                 .withClaim("firstName", userDto.getFirstName())
                 .withClaim("surname", userDto.getSurname())
-                .sign(Algorithm.HMAC256(secretKey));
+                .sign(Algorithm.HMAC256(secretKey)); //Encode token by special algorithm
     }
 
+    //Check token for valid and return Authentication
     public Authentication validateToken(String token) {
         try {
-            Algorithm algorithm = Algorithm.HMAC256(secretKey);
+            Algorithm algorithm = Algorithm.HMAC256(secretKey); //Decode token by special algorithm
 
-            JWTVerifier verifier = JWT.require(algorithm).build();
+            JWTVerifier verifier = JWT.require(algorithm).build(); // Create verifier for token validation
 
             DecodedJWT jwt = verifier.verify(token);
 
             UserDto userDto = UserDto.builder()
-                    .login(jwt.getIssuer())
+                    .username(jwt.getIssuer())
                     .firstName(jwt.getClaim("firstName").asString())
                     .surname(jwt.getClaim("surname").asString())
                     .build();
@@ -60,5 +59,5 @@ public class UserAuthProvider {
         } catch (Exception e) {
             return null;
         }
-    }
+    }*/
 }

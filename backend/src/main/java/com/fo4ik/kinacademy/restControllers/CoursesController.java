@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
-@RequestMapping("/api/course")
+@RequestMapping("api/v1/course")
 @RestController
 @SecurityRequirement(name = "Bearer token")
 @Tag(name = "Courses", description = "Methods for working with courses")
@@ -61,18 +61,13 @@ public class CoursesController {
     public ResponseEntity<String> createCourse(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(description = "Data for course, see SignUpCourseDto", required = true)
             @RequestBody SingUpCourseDto signUpCourseDto,
-            @Parameter(description = "User id", required = true)
-            @RequestParam Long userId,
-            @Parameter(hidden = true)
-            @RequestHeader(value = HttpHeaders.AUTHORIZATION) String SECURE_TOKEN
+            @Parameter(description = "Username", required = true)
+            @RequestParam("username") String username
+            /*@Parameter(hidden = true)
+            @RequestHeader(value = HttpHeaders.AUTHORIZATION) String SECURE_TOKEN*/
     ) {
 
-        Response response = userService.isUserValid(SECURE_TOKEN, userId);
-        if (!response.isSuccess()) {
-            throw new AppException(response.getMessage(), response.getHttpStatus());
-        }
-
-        CourseDto course = courseService.createCourse(signUpCourseDto, userId);
+        CourseDto course = courseService.createCourse(signUpCourseDto, username);
         return ResponseEntity.ok(course.getUrl());
     }
 
@@ -96,22 +91,20 @@ public class CoursesController {
             @Parameter(description = "Course video", required = true)
             @RequestParam(value = "video", required = true) MultipartFile video,
             @Parameter(description = "User id", required = true)
-            @RequestParam(value = "userId", required = true) Long userId,
-            @Parameter(hidden = true)
-            @RequestHeader(value = HttpHeaders.AUTHORIZATION) String SECURE_TOKEN) throws IOException {
+            @RequestParam(value = "username", required = true) String username
+            /*@Parameter(hidden = true)
+            @RequestHeader(value = HttpHeaders.AUTHORIZATION) String SECURE_TOKEN*/) throws IOException {
 
-        Response response = userService.isUserValid(SECURE_TOKEN, userId);
+        Response response = userService.isUserActive(username);
         if (!response.isSuccess()) {
             throw new AppException(response.getMessage(), response.getHttpStatus());
         }
-        if (!courseService.isUserIsAuthor(userId, courseUrl)) {
+        if (!courseService.isUserIsAuthor(username, courseUrl)) {
             throw new AppException("You are not author of this course", HttpStatus.UNAUTHORIZED);
         }
 
 
         Path videoPath = VideoCompressor.builder().build().getVideoExtension(video, Path.of("data/" + courseUrl));
-        //Replace data/ from path
-        //String videoPath = "data/" + courseUrl + "/video.webm";
 
 
         if (videoPath == null) {

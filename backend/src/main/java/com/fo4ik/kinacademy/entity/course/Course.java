@@ -31,7 +31,7 @@ public class Course {
     String name, category, description, language;
 
     @Column(nullable = false)
-    Long authorId;
+    String authorUsername;
 
     String url;
     String imageUrl;

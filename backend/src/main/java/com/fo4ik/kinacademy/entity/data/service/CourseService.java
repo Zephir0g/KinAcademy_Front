@@ -20,9 +20,10 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
     private final CourseMapper courseMapper;
+    private final UserService userService;
 
 
-    public CourseDto createCourse(SingUpCourseDto singUpCourseDto, Long userId) {
+    public CourseDto createCourse(SingUpCourseDto singUpCourseDto, String username) {
         Optional<Course> oCourse = courseRepository.findByName(singUpCourseDto.name());
 
         if (oCourse.isPresent()) {
@@ -30,7 +31,7 @@ public class CourseService {
         }
 
         Course course = courseMapper.singUpCourseDtoToCourse(singUpCourseDto);
-        course.setAuthorId(userId);
+        course.setAuthorUsername(username);
         course.setLastUpdateDate(new Date());
         course.setStatus(Status.INACTIVE);
 
@@ -65,11 +66,11 @@ public class CourseService {
         return courseMapper.courseToCourseDto(oCourse.get());
     }
 
-    public boolean isUserIsAuthor(Long userId, String courseUrl) {
+    public boolean isUserIsAuthor(String username, String courseUrl) {
         Optional<Course> oCourse = courseRepository.findByUrl(courseUrl);
         if (oCourse.isEmpty()) {
             throw new AppException("Course not found", HttpStatus.NOT_FOUND);
         }
-        return oCourse.get().getAuthorId().equals(userId);
+        return oCourse.get().getAuthorUsername().equals(username);
     }
 }

@@ -4,9 +4,14 @@ package com.fo4ik.kinacademy.entity.user;
 import com.fo4ik.kinacademy.entity.course.Course;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +22,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class User {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
@@ -34,18 +39,15 @@ public class User {
     String email;
 
     @Column(unique = true)
-    String login;
-
-    @Column(unique = true)
-    String USER_TOKEN;
+    @NotNull
+    String username;
 
     @Transient
     String SECURE_TOKEN;
 
-    @ElementCollection(targetClass = Role.class)
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false, unique = true)
-    List<Role> roles;
+    @Column(nullable = false)
+    Role role;
 
     @Column(nullable = false)
     Status status;
@@ -62,13 +64,57 @@ public class User {
         this.courses.add(course);
     }
 
-    String createUserToken() {
-        UUID uuid = UUID.nameUUIDFromBytes(login.getBytes());
-        return uuid.toString();
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority(role.name()));
     }
 
-    public void setUSER_TOKEN() {
-        this.USER_TOKEN = createUserToken();
+    @Override
+    public String getPassword() {
+        return password;
     }
 
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", surname='" + surname + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", username='" + username + '\'' +
+                ", SECURE_TOKEN='" + SECURE_TOKEN + '\'' +
+                ", roles=" + role +
+                ", status=" + status +
+                ", language='" + language + '\'' +
+                ", courses=" + courses +
+                '}';
+    }
 }

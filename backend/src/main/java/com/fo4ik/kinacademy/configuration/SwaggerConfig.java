@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.swing.plaf.basic.BasicToolBarUI;
 
-@Configuration
+//@Configuration
 public class SwaggerConfig {
 
     @Bean

@@ -14,12 +14,8 @@ import com.fo4ik.kinacademy.entity.user.User;
 import com.fo4ik.kinacademy.exceptions.AppException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -32,7 +28,7 @@ public class UserService {
     private final UserAuthProvider userAuthProvider;
 
     public UserDto login(CredentialDto credentialDTO) {
-        User user = userRepository.findByLogin(credentialDTO.login())
+        User user = userRepository.findByUsername(credentialDTO.username())
                 .orElseThrow(() -> new AppException("Incorrect Login or Password", HttpStatus.NOT_FOUND));
 
 
@@ -47,8 +43,8 @@ public class UserService {
         throw new AppException("Incorrect Login or Password", HttpStatus.BAD_REQUEST);
     }
 
-    public UserDto register(SingUpUserDto singUpDto) {
-        Optional<User> oUser = userRepository.findByLogin(singUpDto.login());
+    public User register(SingUpUserDto singUpDto) {
+        Optional<User> oUser = userRepository.findByUsername(singUpDto.username());
         Optional<User> oUserEmail = userRepository.findByEmail(singUpDto.email());
 
         if (oUser.isPresent()) {
@@ -60,70 +56,71 @@ public class UserService {
             throw new AppException("Email is invalid or already taken", HttpStatus.BAD_REQUEST);
         }
 
+        /*User user = User.builder()
+                .firstName(singUpDto.firstName())
+                .surname(singUpDto.surname())
+                .username(singUpDto.username())
+                .password(passwordConfig.passwordEncoder().encode(singUpDto.password()))
+                .language(singUpDto.language())
+                .email(singUpDto.email())
+                .roles(new ArrayList<>(List.of(Role.STUDENT)))
+                .status(Status.ACTIVE)
+                .build();*/
+
         User user = userMapper.singUpDtoToUser(singUpDto);
         user.setPassword(passwordConfig.encodeData(singUpDto.password()));
-        user.setUSER_TOKEN();
         user.setLanguage(singUpDto.language());
-        user.setStatus(Status.INACTIVE);
-        user.setRoles(new ArrayList<>(List.of(Role.STUDENT)));
+        user.setStatus(Status.ACTIVE);
+        user.setRole(Role.STUDENT);
 
-        User savedUser = userRepository.save(user);
-        return userMapper.userToUserDto(savedUser);
+        return save(user);
     }
 
-    public User saveUser(User user) {
+    public User save(User user) {
         return userRepository.save(user);
     }
 
-    public UserDto saveUser(UserDto userDto) {
+    public UserDto save(UserDto userDto) {
         User user = userMapper.userDtoToUser(userDto);
         return userMapper.userToUserDto(userRepository.save(user));
     }
 
-    public UserDto getUserById(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND));
-        return userMapper.userToUserDto(user);
-    }
 
-    public boolean isUserSecureTokenValid(String SECURE_TOKEN, Long userId) {
-        UserDto oUser = userMapper.userToUserDto(userRepository.findById(userId)
+    public UserDto getUserByUsernameDto(String username) {
+        return userMapper.userToUserDto(userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND)));
-
-
-        SECURE_TOKEN = SECURE_TOKEN.replace("Bearer ", "");
-        Authentication authentication = userAuthProvider.validateToken(SECURE_TOKEN);
-
-        if (authentication != null && authentication.getPrincipal() instanceof UserDto) {
-            UserDto userDto = (UserDto) authentication.getPrincipal();
-            return oUser.getLogin().equals(userDto.getLogin());
-        }
-
-        return false;
     }
 
-    public Response isUserValid(String SECURE_TOKEN, Long id) {
-        Optional<User> user = userRepository.findById(id);
-        if (user.isEmpty()) {
+
+    public User getUserByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND));
+    }
+
+    public Response isUserActive(String username) {
+        Optional<User> user = userRepository.findByUsername(username);
+
+
+        if (user == null) {
             return new Response().builder()
                     .isSuccess(false)
-                    .message("User not found")
+                    .message("User not found 1")
                     .httpStatus(HttpStatus.NOT_FOUND)
                     .build();
         }
 
-        if (!isUserSecureTokenValid(SECURE_TOKEN, id)) {
+        /*if (!isUserSecureTokenValid(SECURE_TOKEN, id)) {
             return new Response().builder()
                     .isSuccess(false)
                     .message("Invalid SECURE_TOKEN")
                     .httpStatus(HttpStatus.UNAUTHORIZED)
                     .build();
-        }
+        }*/
         if (!user.get().getStatus().equals(Status.ACTIVE)) {
             return new Response().builder()
                     .isSuccess(false)
                     .message("User is not active")
-                    .httpStatus(HttpStatus.BAD_REQUEST)
+                    .httpStatus(HttpStatus.FORBIDDEN)
                     .build();
         }
 
@@ -132,12 +129,18 @@ public class UserService {
                 .build();
     }
 
-    public UserDto updateUser(UserDto userDto) {
-        Optional<User> oUser = userRepository.findById(userDto.getId());
+    public User updateUser(User user) {
+        Optional<User> oUser = userRepository.findById(user.getId());
         if (oUser.isEmpty()) {
             throw new AppException("User not found", HttpStatus.NOT_FOUND);
         }
 
-        return saveUser(userDto);
+        return save(user);
+    }
+
+    public Long getUserIdByUsername(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND))
+                .getId();
     }
 }
