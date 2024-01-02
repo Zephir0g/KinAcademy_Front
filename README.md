@@ -6,7 +6,7 @@ npm install --save @ckeditor/ckeditor5-angular
 
 npm install --save @ckeditor/ckeditor5-build-classic
 
-npm install --save @ckeditor/ckeditor5-core @ckeditor/ckeditor5-engine @ckeditor/ckeditor5-utils @ckeditor/ckeditor5-watchdog
+npm install --save @ckeditor/ckeditor5-core @ckeditor/ckeditor5-engine @ckeditor/ckeditor5-utils @ckeditor/ckeditor5-watchdog @ckeditor/ckeditor5-alignment @ckeditor/ckeditor5-code-block @ckeditor/ckeditor5-font @ckeditor/ckeditor5-html-support @ckeditor/ckeditor5-style
 
 
 ```
