@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -55,16 +56,14 @@ public class User implements UserDetails {
     @Column(nullable = false)
     String language;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    /*@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    List<Course> courses;
+    List<Course> courses;*/
 
-    @Operation(summary = "Add Course", description = "Add Course to user", tags = {"User"})
-    public void addCourse(Course course) {
-        this.courses.add(course);
-    }
-
-
+    @ElementCollection
+    @CollectionTable(name = "user_courses", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "course_id")
+    List<Long> coursesId = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -114,7 +113,7 @@ public class User implements UserDetails {
                 ", roles=" + role +
                 ", status=" + status +
                 ", language='" + language + '\'' +
-                ", courses=" + courses +
+                ", courses=" + coursesId +
                 '}';
     }
 }

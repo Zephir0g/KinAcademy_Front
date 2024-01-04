@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import {Component, Input} from '@angular/core';
+import {DataService} from "../../../../data.service";
+import {NgxSpinnerService} from "ngx-spinner";
+import {AxiosService} from "../../../../axios.service";
 
 @Component({
   selector: 'app-course-view-outlook',
@@ -7,4 +10,11 @@ import { Component } from '@angular/core';
 })
 export class CourseViewOutlookComponent {
 
+  @Input() internalization: any
+  @Input() course: any
+
+  constructor(private data: DataService,
+              private spinner: NgxSpinnerService,
+              private axiosService: AxiosService) {
+  }
 }

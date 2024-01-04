@@ -2,6 +2,9 @@ package com.fo4ik.kinacademy.restControllers;
 
 import com.fo4ik.kinacademy.core.Config;
 import com.fo4ik.kinacademy.dto.LanguagesDto;
+import com.fo4ik.kinacademy.entity.data.service.UserService;
+import com.fo4ik.kinacademy.entity.user.User;
+import com.fo4ik.kinacademy.exceptions.AppException;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -21,7 +24,7 @@ import java.util.*;
 @OpenAPIDefinition(tags = {@Tag(name = "Components", description = "Methods for getting components")})
 public class Components {
 
-    private final MessageSource messageSource;
+    private final UserService userService;
 
 
     @RequestMapping(value = "/internationalization", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -65,5 +68,17 @@ public class Components {
 
         return ResponseEntity.ok("");
 
+    }
+
+    @RequestMapping(value = "/authorname", method = RequestMethod.GET)
+    public ResponseEntity<String> getUserByUsername(
+            @RequestParam("authorUsername") String authorUsername) throws AppException {
+
+        User user = userService.getUserByUsername(authorUsername);
+        if (user == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(user.getFirstName() + " " + user.getSurname());
     }
 }

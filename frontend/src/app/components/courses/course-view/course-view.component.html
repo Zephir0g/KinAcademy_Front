@@ -4,13 +4,17 @@
 <div *ngIf="!isLoading">
   <app-menu></app-menu>
 
-
   <app-course-view-preview
     [course]="course"
     [internalization]="internalization"
-    [lastUpdateDate]="lastUpdateDate"
     [authorUsername]="authorUsername"
-    *ngIf="!errorMessage"></app-course-view-preview>
+    *ngIf="!errorMessage && !isJoined"></app-course-view-preview>
+
+  <app-course-view-outlook
+    [course]="course"
+    [internalization]="internalization"
+    *ngIf="isJoined"></app-course-view-outlook>
+
 
   <div class="container row justify-content-center" style="color: red" *ngIf="errorMessage">
     {{errorMessage}}

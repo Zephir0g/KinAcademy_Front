@@ -7,6 +7,7 @@ import com.fo4ik.kinacademy.entity.course.Course;
 import com.fo4ik.kinacademy.entity.data.mappers.CourseMapper;
 import com.fo4ik.kinacademy.entity.data.repository.CourseRepository;
 import com.fo4ik.kinacademy.entity.user.Status;
+import com.fo4ik.kinacademy.entity.user.User;
 import com.fo4ik.kinacademy.exceptions.AppException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -96,6 +97,84 @@ public class CourseService {
         return new Response().builder()
                 .isSuccess(true)
                 .message("Course updated")
+                .httpStatus(HttpStatus.OK)
+                .build();
+    }
+
+    public Response isUserHaveAccessToCourse(String username, String url) {
+        Optional<Course> oCourse = courseRepository.findByUrl(url);
+        Optional<User> oUser = userService.findByUsername(username);
+        if (!oCourse.isPresent() || !oUser.isPresent()) {
+            return new Response().builder()
+                    .isSuccess(false)
+                    .message("Course or user not found")
+                    .httpStatus(HttpStatus.NOT_FOUND)
+                    .build();
+        }
+
+        if (oCourse.get().isPublic()) {
+            return new Response().builder()
+                    .isSuccess(true)
+                    .message("Course is public")
+                    .httpStatus(null)
+                    .build();
+        }
+
+        if (isUserIsAuthor(username, url)) {
+            return new Response().builder()
+                    .isSuccess(true)
+                    .message("")
+                    .httpStatus(null)
+                    .build();
+        } else if (oUser.get().getCoursesId().contains(oCourse.get().getId())) {
+            return new Response().builder()
+                    .isSuccess(true)
+                    .message("")
+                    .httpStatus(null)
+                    .build();
+        }
+
+        return new Response().builder()
+                .isSuccess(false)
+                .message("You have not access to this course")
+                .httpStatus(HttpStatus.FORBIDDEN)
+                .build();
+
+    }
+
+    public Response joinCourse(String username, String courseUrl) {
+        Optional<Course> oCourse = courseRepository.findByUrl(courseUrl);
+        Optional<User> oUser = userService.findByUsername(username);
+
+        if (oCourse.isEmpty()) {
+            return new Response().builder()
+                    .isSuccess(false)
+                    .message("Course not found")
+                    .httpStatus(HttpStatus.NOT_FOUND)
+                    .build();
+        }
+
+        if (oUser.isEmpty()) {
+            return new Response().builder()
+                    .isSuccess(false)
+                    .message("User not found")
+                    .httpStatus(HttpStatus.NOT_FOUND)
+                    .build();
+        }
+
+        if (oUser.get().getCoursesId().contains(oCourse.get().getId())) {
+            return new Response().builder()
+                    .isSuccess(false)
+                    .message("You already joined this course")
+                    .httpStatus(HttpStatus.CONFLICT)
+                    .build();
+        }
+
+        oUser.get().getCoursesId().add(oCourse.get().getId());
+        userService.save(oUser.get());
+        return new Response().builder()
+                .isSuccess(true)
+                .message("You joined this course")
                 .httpStatus(HttpStatus.OK)
                 .build();
     }

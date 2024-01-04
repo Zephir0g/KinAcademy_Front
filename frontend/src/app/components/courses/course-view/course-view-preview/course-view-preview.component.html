@@ -40,12 +40,20 @@
 
 
             <span class="row justify-content-center">
-                  <button type="button" class="btn btn-primary col">Join</button>
+                  <button type="button" class="btn btn-primary col" (click)="joinCourse()">Join</button>
                 </span>
           </div>
         </div>
       </section>
 
+    </div>
+
+    <div>
+      {{JSON.stringify(course)}}
+    </div>
+
+    <div class="mt-2">
+      {{JSON.stringify(user)}}
     </div>
   </div>
 </main>

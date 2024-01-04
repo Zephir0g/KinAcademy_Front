@@ -1,7 +1,10 @@
 package com.fo4ik.kinacademy.exceptions;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+
+import java.io.IOException;
 
 @Getter
 public class AppException extends RuntimeException {
@@ -10,5 +13,4 @@ public class AppException extends RuntimeException {
         super(message);
         this.httpStatus = httpStatus;
     }
-
 }

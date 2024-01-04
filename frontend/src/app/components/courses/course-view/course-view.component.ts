@@ -13,6 +13,7 @@ import {NgxSpinnerService} from "ngx-spinner";
 })
 export class CourseViewComponent implements OnInit {
   @Input() pageTitle!: string;
+
   courseUrl = '';
   course: any = {};
   authorUsername: string = '';
@@ -23,6 +24,7 @@ export class CourseViewComponent implements OnInit {
 
 
   isLoading: boolean = true;
+  isJoined: boolean = false;
 
   constructor(private route: ActivatedRoute,
               private titleService: Title,
@@ -32,7 +34,7 @@ export class CourseViewComponent implements OnInit {
 
   }
 
-
+//TODO check is user joined course
   async ngOnInit() {
     this.spinner.show().then(r => {
       this.getCourseUrl();
@@ -45,6 +47,7 @@ export class CourseViewComponent implements OnInit {
             this.errorMessage = error.response.data?.message || error.response.data;
           }
         });
+
     });
   }
 
@@ -70,6 +73,7 @@ export class CourseViewComponent implements OnInit {
         this.course = null;
         this.course = response.data;
         this.titleService.setTitle(response.data.name + " | Course");
+        this.checkIsUserJoinedCourse()
         this.getAuthorName().then((response) => {
           this.spinner.hide();
           this.isLoading = false;
@@ -84,14 +88,17 @@ export class CourseViewComponent implements OnInit {
       "/components/authorname?authorUsername=" + this.course.authorUsername,
       null
     ).then((response) => {
-      console.log(response.data);
       this.authorUsername = response.data;
     }).catch((error) => {
       console.log(error.response.data.message);
     });
   }
 
-
+  checkIsUserJoinedCourse() {
+    if (this.user.coursesId.includes(this.course.id)) {
+      this.isJoined = true;
+    }
+  }
 
   protected readonly JSON = JSON;
   protected readonly environment = environment;

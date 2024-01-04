@@ -104,13 +104,13 @@ export class DataService {
   }
 
   async updateUser() {
-    this.axiosService.request(
-      "POST",
-      "/login",
-      {
-        "login": this.user.login,
-        "password": this.user.password
-      },
+    //TODO Change this to update user use user/update with data {username, password, }
+
+    this.axiosService.requestWithHeaderAuth(
+      "GET",
+      "/user/update?username=" + this.user.username,
+      null,
+      this.user.secure_TOKEN
     ).then((response) => {
       if (response) {
         localStorage.removeItem("user");
@@ -119,7 +119,7 @@ export class DataService {
       }
     }).catch((error) => {
       console.log("Error while updating user")
-      console.log(error.response.data);
+      console.log(error.response.data || error.response.data.message);
     })
   }
 
@@ -175,5 +175,21 @@ export class DataService {
     }).catch((error) => {
       console.log(error.response.data.message);
     })
+  }
+
+  async joinCourse(courseUrl: any): Promise<any> {
+    return this.axiosService.requestWithHeaderAuth(
+      "POST",
+      "/course/" + courseUrl + "/join?username=" + this.user.username,
+      null,
+      this.user.secure_TOKEN
+    ).then((response) => {
+      if (response) {
+        return response;
+      }
+    }).catch((error) => {
+      return error.response;
+    })
+
   }
 }

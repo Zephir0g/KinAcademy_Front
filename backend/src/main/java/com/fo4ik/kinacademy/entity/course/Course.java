@@ -28,7 +28,10 @@ public class Course {
     Long id;
 
     @Column(nullable = false)
-    String name, category, description, language;
+    String name, category, language;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    String description;
 
     @Column(nullable = false)
     String authorUsername;

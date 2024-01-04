@@ -73,13 +73,43 @@ public class CoursesController {
 
     @RequestMapping(value = "/{course-url}", method = RequestMethod.GET, produces = "application/json")
     @Operation(summary = "Get course by url", description = "Get course by url and need SECURE_TOKEN", tags = {"Courses"})
-    public ResponseEntity<CourseDto> getCourse(
+    public ResponseEntity<?> getCourse(
             @Parameter(description = "Course url", required = true)
-            @PathVariable("course-url") String url) {
+            @PathVariable("course-url") String courseUrl,
+            @Parameter(description = "User username", required = true)
+            @RequestParam("username") String username) {
 
 
-        CourseDto course = courseService.getCourseByUrl(url);
+        Response response = courseService.isUserHaveAccessToCourse(username, courseUrl);
+        if (!response.isSuccess()) {
+            return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
+        }
+        CourseDto course = courseService.getCourseByUrl(courseUrl);
         return ResponseEntity.ok(course);
+    }
+
+    @RequestMapping(value = "/{course-url}/join", method = RequestMethod.POST)
+    public ResponseEntity<?> joinCourse(
+            @Parameter(description = "Course url", required = true)
+            @PathVariable("course-url") String courseUrl,
+            @Parameter(description = "User username", required = true)
+            @RequestParam("username") String username) {
+
+        Response isUserHaveAccessToCourse = courseService.isUserHaveAccessToCourse(username, courseUrl);
+
+        if (!isUserHaveAccessToCourse.isSuccess()) {
+//            return ResponseEntity.status(isUserHaveAccessToCourse.getHttpStatus()).body(isUserHaveAccessToCourse.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You have not access to this course");
+        }
+
+        Response joinCourse = courseService.joinCourse(username, courseUrl);
+
+        if (!joinCourse.isSuccess()) {
+            System.out.println("joinCourse = " + joinCourse.getMessage());
+            return ResponseEntity.status(joinCourse.getHttpStatus()).body(joinCourse.getMessage());
+        }
+
+        return ResponseEntity.ok(joinCourse.getMessage());
     }
 
     @RequestMapping(value = "/{course-url}/update", method = RequestMethod.POST)
@@ -98,7 +128,7 @@ public class CoursesController {
         Response response = courseService.updateCourse(courseUrl, courseDto);
 
         if (!response.isSuccess()) {
-            throw new AppException(response.getMessage(), response.getHttpStatus());
+            return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
         }
         return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
     }
@@ -113,8 +143,7 @@ public class CoursesController {
             @RequestParam(value = "video", required = true) MultipartFile video,
             @Parameter(description = "User id", required = true)
             @RequestParam(value = "username", required = true) String username
-            /*@Parameter(hidden = true)
-            @RequestHeader(value = HttpHeaders.AUTHORIZATION) String SECURE_TOKEN*/) throws IOException {
+    ) throws IOException, InterruptedException {
 
         if (!courseService.isUserIsAuthor(username, courseUrl)) {
             throw new AppException("You are not author of this course", HttpStatus.UNAUTHORIZED);
@@ -128,11 +157,15 @@ public class CoursesController {
             throw new AppException("Video extension is not supported", HttpStatus.BAD_REQUEST);
         }
 
-        return ResponseEntity.ok(new HashMap<>(Map.of("url", videoPath.toString())));
+        return ResponseEntity.ok(new HashMap<>(Map.of("urlToVideo", videoPath.toString())));
     }
 
-    @RequestMapping(value = "/{video-url}", method = RequestMethod.GET)
-    public ResponseEntity<Resource> getVideoByUrl(@PathVariable("video-url") Path videoUrl) {
+
+    @RequestMapping(value = "/{course-url}/{video-url}", method = RequestMethod.GET)
+    public ResponseEntity<Resource> getVideoByUrl(
+            @Parameter(description = "Course url", required = true)
+            @PathVariable("course-url") String courseUrl,
+            @PathVariable("video-url") Path videoUrl) {
         try {
 
             //TODO check is user have access to this video

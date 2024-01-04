@@ -56,16 +56,6 @@ public class UserService {
             throw new AppException("Email is invalid or already taken", HttpStatus.BAD_REQUEST);
         }
 
-        /*User user = User.builder()
-                .firstName(singUpDto.firstName())
-                .surname(singUpDto.surname())
-                .username(singUpDto.username())
-                .password(passwordConfig.passwordEncoder().encode(singUpDto.password()))
-                .language(singUpDto.language())
-                .email(singUpDto.email())
-                .roles(new ArrayList<>(List.of(Role.STUDENT)))
-                .status(Status.ACTIVE)
-                .build();*/
 
         User user = userMapper.singUpDtoToUser(singUpDto);
         user.setPassword(passwordConfig.encodeData(singUpDto.password()));
@@ -95,6 +85,21 @@ public class UserService {
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND));
+    }
+
+    public boolean isUserDataValid(String username, CredentialDto credentialDTO) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND));
+
+        if (user.getPassword().equals(String.valueOf(credentialDTO.password()))) {
+            return true;
+        }
+
+        if (passwordConfig.checkEncodedData(credentialDTO.password(), user.getPassword())) {
+            return true;
+        }
+
+        return false;
     }
 
     public Response isUserActive(String username) {
@@ -134,5 +139,14 @@ public class UserService {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new AppException("User not found", HttpStatus.NOT_FOUND))
                 .getId();
+    }
+
+    public Optional<User> findByUsername(String username) {
+        Optional<User> oUser = userRepository.findByUsername(username);
+        if (oUser.isEmpty()) {
+            throw new AppException("User not found", HttpStatus.NOT_FOUND);
+        }
+
+        return oUser;
     }
 }
