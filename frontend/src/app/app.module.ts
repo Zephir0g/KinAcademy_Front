@@ -30,6 +30,9 @@ import {VgControlsModule} from "@videogular/ngx-videogular/controls";
 import {VgOverlayPlayModule} from "@videogular/ngx-videogular/overlay-play";
 import {VgBufferingModule} from "@videogular/ngx-videogular/buffering";
 import { VideoComponent } from './components/video/video.component';
+import {NgxFileDropModule} from "ngx-file-drop";
+import { CourseViewPreviewComponent } from './components/courses/course-view/course-view-preview/course-view-preview.component';
+import { CourseViewOutlookComponent } from './components/courses/course-view/course-view-outlook/course-view-outlook.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +49,9 @@ import { VideoComponent } from './components/video/video.component';
     LanguagesComponent,
     AddSectionComponent,
     CourseEditDataComponent,
-    VideoComponent
+    VideoComponent,
+    CourseViewPreviewComponent,
+    CourseViewOutlookComponent
   ],
   imports: [
     BrowserModule,
@@ -64,7 +69,8 @@ import { VideoComponent } from './components/video/video.component';
     VgCoreModule,
     VgControlsModule,
     VgOverlayPlayModule,
-    VgBufferingModule
+    VgBufferingModule,
+    NgxFileDropModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [],

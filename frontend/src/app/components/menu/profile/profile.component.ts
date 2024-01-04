@@ -14,7 +14,7 @@ export class ProfileComponent implements OnInit {
   faGlobe = faGlobe
 
 
-  constructor(private data: DataService,private axiosService: AxiosService){
+  constructor(private data: DataService, private axiosService: AxiosService) {
   }
 
   ngOnInit(): void {
@@ -23,15 +23,8 @@ export class ProfileComponent implements OnInit {
   }
 
   onLogout() {
-    /*localStorage.removeItem('user');
-    localStorage.removeItem('internalization');*/
     localStorage.clear();
   }
-
-
-
-
-
 
 
 }

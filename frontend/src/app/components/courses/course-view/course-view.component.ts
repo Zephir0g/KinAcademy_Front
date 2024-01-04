@@ -2,6 +2,9 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ActivatedRoute} from "@angular/router";
 import {Title} from "@angular/platform-browser";
 import {AxiosService} from "../../../axios.service";
+import {DataService} from "../../../data.service";
+import {environment} from "../../../../../environments/environment";
+import {NgxSpinnerService} from "ngx-spinner";
 
 @Component({
   selector: 'app-course-view',
@@ -12,23 +15,37 @@ export class CourseViewComponent implements OnInit {
   @Input() pageTitle!: string;
   courseUrl = '';
   course: any = {};
+  authorUsername: string = '';
+  lastUpdateDate: string = '';
+  internalization: any;
   errorMessage: string = '';
+  user: any = JSON.parse(localStorage.getItem("user") || '{}');
+
+
+  isLoading: boolean = true;
 
   constructor(private route: ActivatedRoute,
               private titleService: Title,
+              private data: DataService,
+              private spinner: NgxSpinnerService,
               private axiosService: AxiosService) {
 
   }
 
-  ngOnInit(): void {
-    this.getCourseUrl();
 
-    if (localStorage.getItem("course-" + this.courseUrl) == null) {
-      //else get course from server
-      this.getCourseData(this.courseUrl);
-    } else {
-      this.course = JSON.parse(localStorage.getItem("course-" + this.courseUrl) || '{}');
-    }
+  async ngOnInit() {
+    this.spinner.show().then(r => {
+      this.getCourseUrl();
+      this.internalization = this.data.getInternalization();
+
+      this.getCourseData(this.courseUrl)
+        .catch((error) => {
+          if (error) {
+            this.spinner.hide();
+            this.errorMessage = error.response.data?.message || error.response.data;
+          }
+        });
+    });
   }
 
   getCourseUrl() {
@@ -37,20 +54,45 @@ export class CourseViewComponent implements OnInit {
     });
   }
 
-  getCourseData(url: string) {
+  async getCourseData(url: string) {
+
+    this.axiosService.requestWithHeaderAuth(
+      "GET",
+      "/course/" + url + "?username=" + this.user.username,
+      null,
+      this.user.secure_TOKEN
+    ).catch((error) => {
+      if (error) {
+        this.errorMessage = error.response.data?.message || error.response.data;
+      }
+    }).then((response) => {
+      if (response) {
+        this.course = null;
+        this.course = response.data;
+        this.titleService.setTitle(response.data.name + " | Course");
+        this.getAuthorName().then((response) => {
+          this.spinner.hide();
+          this.isLoading = false;
+        });
+      }
+    });
+  }
+
+  async getAuthorName() {
     this.axiosService.request(
       "GET",
-      "/course/" + url,
+      "/components/authorname?authorUsername=" + this.course.authorUsername,
       null
-    ).catch((error) => {
-      this.errorMessage = error.response.data.message;
-    })
-      .then((response) => {
-          if (response) {
-            localStorage.setItem("course-" + url, JSON.stringify(response.data));
-            this.titleService.setTitle(response.data.name + " | Course");
-          }
-        }
-      )
+    ).then((response) => {
+      console.log(response.data);
+      this.authorUsername = response.data;
+    }).catch((error) => {
+      console.log(error.response.data.message);
+    });
   }
+
+
+
+  protected readonly JSON = JSON;
+  protected readonly environment = environment;
 }

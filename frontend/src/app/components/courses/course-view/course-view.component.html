@@ -1,9 +1,19 @@
-<app-menu></app-menu>
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="square-jelly-box" [fullScreen]="true"><p
+  style="color: white"> Loading... </p></ngx-spinner>
 
-<div class="container" *ngIf="!errorMessage">
-  <h5>{{courseUrl}}</h5>
-</div>
+<div *ngIf="!isLoading">
+  <app-menu></app-menu>
 
-<div class="container row justify-content-center" style="color: red" *ngIf="errorMessage">
-  {{errorMessage}}
+
+  <app-course-view-preview
+    [course]="course"
+    [internalization]="internalization"
+    [lastUpdateDate]="lastUpdateDate"
+    [authorUsername]="authorUsername"
+    *ngIf="!errorMessage"></app-course-view-preview>
+
+  <div class="container row justify-content-center" style="color: red" *ngIf="errorMessage">
+    {{errorMessage}}
+  </div>
+
 </div>

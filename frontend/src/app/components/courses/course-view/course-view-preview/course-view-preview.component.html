@@ -1,0 +1,51 @@
+<main class="main-view mt-4">
+
+  <div class="container">
+    <div class="row">
+
+      <!--    Description -->
+      <section class="col-md-9 col-8">
+        <ckeditor [editor]="Editor" [(ngModel)]="course.description" [disabled]="true" class="mt-4"></ckeditor>
+      </section>
+
+      <!--    Details -->
+      <section class="col-md-3 col-4">
+        <div class="card" style="width: 18rem;">
+          <img *ngIf="course.imageUrl; else noImage" [src]="course.imageUrl" alt="Course Image">
+
+          <ng-template #noImage>
+            <img [src]="environment.imageNotFound" alt="Image Not Found">
+          </ng-template>
+          <div class="card-body">
+            <section class="container-fluid mb-2 ms-3">
+                <span label="course-name" class="row course-name">
+                  {{course.name}}
+                </span>
+
+              <span class="row" label="course-language">
+                  <span>
+                    <fa-icon [icon]="faGlobe"></fa-icon> : {{course.language}}
+                  </span>
+                </span>
+              <span class="row" label="course-category">
+                  {{internalization['category']}}: {{course.category}}
+                </span>
+              <span class="row" label="course-last-update-date">
+                  {{internalization['lastUpdateDate']}}: {{getLastUpdateDate()}}
+                </span>
+              <span class="row" label="course-author">
+                   {{internalization['author']}}: {{authorUsername}}
+                </span>
+            </section>
+
+
+            <span class="row justify-content-center">
+                  <button type="button" class="btn btn-primary col">Join</button>
+                </span>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</main>

@@ -23,10 +23,16 @@
   border: 1px solid #9bd38c;
 }
 
-
 .dialog-container {
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.customDragnDrop {
+  height: 100%;
+  padding-bottom: 0.5rem;
+  border: 2px dotted #0782d0;
+  border-radius: 30px;
 }

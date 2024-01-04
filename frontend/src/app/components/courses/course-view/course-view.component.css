@@ -1,0 +1,20 @@
+.main-view {
+}
+
+.details {
+
+}
+
+:host ::ng-deep .ck-rounded-corners {
+  border-radius: 15px !important;
+}
+
+:host ::ng-deep .ck-editor__top {
+  display: none;
+}
+
+.course-name {
+  font-size: 3rem;
+  font-weight: bold;
+  color: rgb(81, 83, 87)
+}

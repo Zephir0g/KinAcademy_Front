@@ -170,8 +170,7 @@ export class DataService {
       this.user.secure_TOKEN
     ).then((response) => {
       if (response) {
-        localStorage.removeItem("course-" + response.data.url);
-        localStorage.setItem("course-" + response.data.url, JSON.stringify(response.data));
+        console.log("Course updated");
       }
     }).catch((error) => {
       console.log(error.response.data.message);

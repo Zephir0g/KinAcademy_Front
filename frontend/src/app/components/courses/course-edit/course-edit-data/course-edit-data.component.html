@@ -47,8 +47,16 @@
   </div>
 
   <!--course image-->
-  <div class="col-12 col-md-5 col-xl-4">
-    <img src="{{courseImage}}" class="w-100 img-fluid rounded mt-2" alt="Course image">
+  <div class="col-12 col-md-5 col-xl-4" (dragover)="onDragOver($event)">
+    <img src="{{courseImage}}" class="w-100 img-fluid rounded mt-2" alt="Course image" *ngIf="!isImageDropped">
+    <ngx-file-drop class="w-100 h-100 img-fluid rounded mt-2"
+                   *ngIf="isImageDropped"
+                   dropZoneLabel="Drop image here"
+                   accept="image/*"
+                   dropZoneClassName="h-100 mt-2 rounded border border-primary"
+                   (onFileDrop)="onFileDropped($event)">
+
+    </ngx-file-drop>
   </div>
 </section>
 
@@ -88,8 +96,14 @@
         </div>
         <div class="col-1">
           <h5>
-            <fa-icon [icon]="faPlus" class="add" data-bs-toggle="modal"
-                     data-bs-target="#addVideoModal" [attr.data-bs-target]="'#addVideoModal-' + section.name"></fa-icon>
+            <button *ngIf="isEdit">
+              <fa-icon [icon]="faPlus" class="add" data-bs-toggle="modal"
+                       data-bs-target="#addVideoModal"
+                       [attr.data-bs-target]="'#addVideoModal-' + section.name"></fa-icon>
+            </button>
+            <button *ngIf="!isEdit" style="cursor: default;">
+              <fa-icon [icon]="faPlus" style="color: #515152"></fa-icon>
+            </button>
           </h5>
         </div>
       </div>
@@ -136,7 +150,7 @@
           <div class="col">
             {{video.name}}
           </div>
-          <div class="col" *ngIf="video.url === ''">
+          <div class="col" *ngIf="video.urlToVideo === ''">
             Loading...
           </div>
         </div>

@@ -1,5 +1,6 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import Editor from "ckeditor5-custom-build";
+// import Editor from "ckeditor5-custom-build";
+import Editor from 'ckeditor5-custom-build';
 import {faPlus} from "@fortawesome/free-solid-svg-icons";
 import {Router} from "@angular/router";
 import {Title} from "@angular/platform-browser";
@@ -7,6 +8,8 @@ import {AxiosService} from "../../../../axios.service";
 import {DataService} from "../../../../data.service";
 import {NgxSpinnerService} from "ngx-spinner";
 import {MatDialog} from "@angular/material/dialog";
+import {NgxFileDropEntry} from "ngx-file-drop";
+import {environment} from "../../../../../../environments/environment";
 
 
 export interface DialogData {
@@ -29,7 +32,8 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
   @Input() isEdit: boolean | undefined;
   @Input() courseUrl !: string;
 
-  imageNotFound: string = "https://www.salonlfc.com/wp-content/uploads/2018/01/image-not-found-scaled-1150x647.png";
+  imageNotFound: string = environment.imageNotFound;
+  isImageDropped = false;
 
   courseImage: string = '';
   courseDescription: String = '';
@@ -73,12 +77,7 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
   }
 
   loadCourseData() {
-    if (localStorage.getItem("course-" + this.courseUrl) === null) {
-      this.fetchCourseDataFromServer();
-    } else {
-      this.course = JSON.parse(localStorage.getItem("course-" + this.courseUrl) || '{}');
-      this.loadCourseDetails();
-    }
+    this.fetchCourseDataFromServer();
   }
 
   fetchCourseDataFromServer() {
@@ -87,7 +86,6 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
         if (response) {
           //TODO Fix title
           this.titleService.setTitle(response.data.name + " | Course");
-          localStorage.setItem("course-" + response.data.url, JSON.stringify(response.data));
           this.course = response.data;
           this.hideSpinner();
           this.loadCourseDetails();
@@ -172,7 +170,7 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
       .then((response) => {
         if (response) {
           //TODO Fix this
-          this.updateVideoUrl(sectionName, videoName, response.data.url);
+          this.updateVideoUrl(sectionName, videoName, response.data.urlToVideo);
         }
       }).catch((error) => {
       console.log(error.response.data.message);
@@ -189,7 +187,7 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
     const section = this.sections.find((section: any) => section.name === sectionName);
 
     if (section) {
-      section.videos.push({name: videoName, url: ''});
+      section.videos.push({name: videoName, urlToVideo: ''});
     }
   }
 
@@ -198,7 +196,7 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
 
     const videoIndex = section.videos.findIndex((video: any) => video.name === videoName);
     if (videoIndex !== -1) {
-      section.videos[videoIndex].url = url;
+      section.videos[videoIndex].urlToVideo = url;
     }
   }
 
@@ -211,4 +209,19 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
     this.course.sections = this.sections;
     this.data.updateCourse(this.course);
   }
+
+  onFileDropped(files: NgxFileDropEntry[]) {
+    console.log("File dropped");
+    //TODO Realize this
+    this.isImageDropped = false;
+
+  }
+
+  onDragOver(event: any) {
+    if (!this.isEdit) return;
+    event.preventDefault();
+    this.isImageDropped = event.dataTransfer && event.dataTransfer.types.includes('Files');
+    console.log("Drag over");
+  }
+
 }
