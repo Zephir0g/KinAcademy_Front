@@ -163,6 +163,7 @@ export class DataService {
 
 
   updateCourse(course: any) {
+    console.log(course);
     this.axiosService.requestWithHeaderAuth(
       "POST",
       "/course/" + course.url + "/update?username=" + this.user.username,

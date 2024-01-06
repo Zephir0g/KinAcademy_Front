@@ -37,6 +37,7 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
 
   courseImage: string = '';
   courseDescription: String = '';
+  courseShortDescription: String = '';
   courseName: String = '';
   courseLanguage: String = '';
   courseCategory: String = '';
@@ -105,6 +106,7 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
     this.languages = this.data.getLanguages();
     this.courseImage = this.course.imageUrl || this.imageNotFound;
     this.courseDescription = this.course.description;
+    this.courseShortDescription = this.course.shortDescription;
     this.courseName = this.course.name;
     this.courseLanguage = this.course.language;
     this.courseCategory = this.course.category;
@@ -206,6 +208,7 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
     //if this.courseImage equal to imageNotFound then set empty string
     this.course.imageUrl = this.courseImage === this.imageNotFound ? '' : this.courseImage;
     this.course.description = this.courseDescription;
+    this.course.shortDescription = this.courseShortDescription;
     this.course.sections = this.sections;
     this.data.updateCourse(this.course);
   }
@@ -224,4 +227,5 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
     console.log("Drag over");
   }
 
+  protected readonly JSON = JSON;
 }
