@@ -42,7 +42,9 @@
             <div class="col-md-6">
               <label for="courseLanguage" class="form-label">Language <span class="text-danger">*</span></label>
               <select class="form-select" id="courseLanguage" name="courseLanguage" [(ngModel)]="courseLanguage">
-                <option *ngFor="let language of languages">{{ language.label }}</option>
+                <option *ngFor="let language of languages" [value]="language.code">
+                  {{ language.label }}
+                </option>
               </select>
             </div>
             <div class="col-md-6">
