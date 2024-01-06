@@ -18,6 +18,7 @@ export class CreateCourseComponent implements OnInit {
   languages: any;
   isUpdate = false;
   courseDescription: String = '';
+  courseShortDescription: String = '';
   courseName: String = '';
   courseLanguage: String = '';
   courseCategory: String = '';
@@ -55,7 +56,7 @@ export class CreateCourseComponent implements OnInit {
 
   onCreate() {
     this.error = '';
-    if (this.courseName == '' || this.courseDescription == '' || this.courseLanguage == '' || this.courseCategory == '' || this.courseUrl == '') {
+    if (this.courseName == '' || this.courseShortDescription == '' || this.courseDescription == '' || this.courseLanguage == '' || this.courseCategory == '' || this.courseUrl == '') {
       this.error = "Please fill required fields";
       return;
     } else {
@@ -65,6 +66,7 @@ export class CreateCourseComponent implements OnInit {
         {
           "name": this.courseName,
           "description": this.courseDescription,
+          "shortDescription": this.courseShortDescription,
           "language": this.courseLanguage,
           "category": this.courseCategory,
           "isPublic": this.coursePolicy,
