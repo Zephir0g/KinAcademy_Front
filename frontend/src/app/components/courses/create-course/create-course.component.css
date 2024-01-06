@@ -1,4 +1,56 @@
-.required-asterisk {
-  color: red;
-  font-size: 20px;
+.justify-content-center {
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 2rem;
+}
+
+.mt-5, .mt-4, .col-md-8 {
+  margin-top: 3rem !important;
+}
+
+.form-label, .form-control, .form-select, .btn, .text-danger, .btn-success {
+  font-size: 1.2rem;
+}
+
+.text-danger {
+  color: #dc3545;
+}
+
+.btn {
+  font-size: 1.2rem;
+}
+
+.btn-success {
+  background-color: #198754;
+  border: none;
+  color: white;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
+}
+
+.btn-success:hover {
+  background-color: #146c43;
+}
+
+.form-check-input {
+  width: 1.5rem;
+  height: 1.5rem;
+  accent-color: #198754;
+}
+
+.form-check-input:checked {
+  background-color: #198754;
+}
+
+
+#courseName:focus, #courseDescription:focus, #coursePrice:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
