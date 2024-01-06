@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {faArrowRight, faXmark} from '@fortawesome/free-solid-svg-icons';
-import {NavigationExtras, Router} from "@angular/router";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-course-video-panel',
@@ -23,10 +23,8 @@ export class CourseVideoPanelComponent {
   }
 
   openVideo(url: string) {
-    const videoUrl = '/course/' + this.course.name + '/video/' + url;
-    // this.router.navigateByUrl(videoUrl);
+    const videoUrl = '/course/' + this.course.url + '/video/' + url;
     window.location.href = videoUrl;
-
   }
 
   protected readonly faArrowRight = faArrowRight;
