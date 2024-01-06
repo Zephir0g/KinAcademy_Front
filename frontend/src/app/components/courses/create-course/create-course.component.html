@@ -22,22 +22,29 @@
           </div>
 
 
-          <!-- New Text Area -->
+          <!-- Short Description -->
           <div class="mb-3">
-            <label for="courseName" class="form-label">Short Description <span class="text-danger">*</span></label>
-            <textarea type="text" class="form-control" name="TextArea" placeholder="Short Description" [(ngModel)]="courseShortDescription"></textarea>
+            <label for="courseShortDescription" class="form-label">Short Description <span class="text-danger">*</span></label>
+            <textarea type="text" class="form-control" name="courseShortDescription" placeholder="Short Description"
+                      [(ngModel)]="courseShortDescription"
+                      [maxlength]="200"></textarea>
           </div>
 
+          <!-- Description -->
           <div class="mb-3">
-            <label for="courseDescription" class="form-label">Course Description <span class="text-danger">*</span></label>
-            <ckeditor [editor]="Editor" id="courseDescription" name="courseDescription" [(ngModel)]="courseDescription"></ckeditor>
+            <label for="courseDescription" class="form-label">Course Description <span
+              class="text-danger">*</span></label>
+            <ckeditor [editor]="Editor" id="courseDescription" name="courseDescription"
+                      [(ngModel)]="courseDescription"></ckeditor>
           </div>
 
           <div class="row mb-3">
             <div class="col-md-6">
               <label for="courseLanguage" class="form-label">Language <span class="text-danger">*</span></label>
               <select class="form-select" id="courseLanguage" name="courseLanguage" [(ngModel)]="courseLanguage">
-                <option *ngFor="let language of languages">{{ language.label }}</option>
+                <option *ngFor="let language of languages" [value]="language.code">
+                  {{ language.label }}
+                </option>
               </select>
             </div>
             <div class="col-md-6">
@@ -55,11 +62,13 @@
               <label class="form-label d-block">
                 Is Course Public <span class="text-danger">*</span>
               </label>
-              <input class="form-check-input" type="checkbox" name="isPublic" [checked]="coursePolicy" [(ngModel)]="coursePolicy">
+              <input class="form-check-input" type="checkbox" name="isPublic" [checked]="coursePolicy"
+                     [(ngModel)]="coursePolicy">
             </div>
             <div class="col-md-6">
               <label for="courseUrl" class="form-label">Course Url <span class="text-danger">*</span></label>
-              <input type="text" class="form-control" id="courseUrl" name="courseUrl" placeholder="java-learning" [(ngModel)]="courseUrl">
+              <input type="text" class="form-control" id="courseUrl" name="courseUrl" placeholder="java-learning"
+                     [(ngModel)]="courseUrl">
             </div>
           </div>
 

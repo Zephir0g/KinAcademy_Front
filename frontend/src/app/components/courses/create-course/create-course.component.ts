@@ -61,13 +61,17 @@ export class CreateCourseComponent implements OnInit {
       return;
     } else {
       this.courseUrl = this.courseUrl.replace(/\s+/g, '-').toLowerCase();
+<<<<<<< HEAD
+=======
+
+>>>>>>> 54d9389fd83cc77d1d0b7318fadf6f750b066e2f
       this.axiosService.requestWithHeaderAuth(
         "POST",
         "/course/create?username=" + this.user.username,
         {
           "name": this.courseName,
-          "description": this.courseDescription,
           "shortDescription": this.courseShortDescription,
+          "description": this.courseDescription,
           "language": this.courseLanguage,
           "category": this.courseCategory,
           "isPublic": this.coursePolicy,

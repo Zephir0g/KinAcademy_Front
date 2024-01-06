@@ -32,14 +32,14 @@ export class CourseViewPreviewComponent {
 
   async joinCourse() {
 
-    const response = await this.data.joinCourse(this.course.name)
+    const response = await this.data.joinCourse(this.course.url)
     if (response.status === 200) {
       await this.data.updateUser()
-      this.router.navigate(['/course', this.course.name])
+      this.router.navigate(['/course', this.course.url])
     } else {
       //TODO show error message
       if (response.data === "User already joined course") {
-
+        window.location.reload();
       } else {
         console.log(response.data)
       }
