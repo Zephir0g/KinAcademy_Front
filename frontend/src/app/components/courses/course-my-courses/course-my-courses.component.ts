@@ -66,4 +66,8 @@ export class CourseMyCoursesComponent implements OnInit {
   }
 
   protected readonly JSON = JSON;
+
+  openCourse(url:string) {
+    window.location.href = "/course/" + url;
+  }
 }

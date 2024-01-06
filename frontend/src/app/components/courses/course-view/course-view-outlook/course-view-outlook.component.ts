@@ -18,6 +18,7 @@ export class CourseViewOutlookComponent {
   @Input() course: any
   @Input() authorUsername: any
   faArrowRight = faArrowRight;
+  user: any = JSON.parse(localStorage.getItem("user") || '{}');
 
 
   Editor = Editor;
@@ -34,7 +35,7 @@ export class CourseViewOutlookComponent {
   }
 
   openVideo(url: string) {
-    this.router.navigate(['/course/' + this.course.name + '/video/' + url]);
+    this.router.navigate(['/course/' + this.course.url + '/video/' + url]);
   }
 
   protected readonly faGlobe = faGlobe;
@@ -42,4 +43,7 @@ export class CourseViewOutlookComponent {
   protected readonly JSON = JSON;
 
 
+  openEditCourse() {
+    window.location.href = "/course/" + this.course.url + "/edit";
+  }
 }
