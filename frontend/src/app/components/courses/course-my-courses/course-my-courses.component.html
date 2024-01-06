@@ -1,0 +1,35 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="square-jelly-box" [fullScreen]="true"><p
+  style="color: white"> Loading... </p></ngx-spinner>
+
+<div *ngIf="!isLoading">
+  <app-menu></app-menu>
+
+  <div class="container-sm">
+    <div *ngFor="let course of userCourses; let i = index ">
+      <div class="card mt-3 course">
+        <div class="row g-0">
+          <div class="col-md-2">
+            <img [src]="course.imageUrl" class="img-fluid rounded-start" alt="...">
+          </div>
+          <div class="col-md-10">
+            <div class="card-body">
+              <h5 class="card-title">{{course.name}}</h5>
+              <p class="card-text">
+                {{course.authorName}}
+              </p>
+              <p class="card-text row"><small class="text-body-secondary">
+                <fa-icon [icon]="faGlobe"></fa-icon>
+                {{course.language}}
+                <span style="text-align: right;">
+                  {{internalization['lastUpdateDate']}}
+                  : {{course.lastUpdateDate | date: 'dd/MM/yyyy'}}
+                </span>
+              </small></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!--  {{JSON.stringify(userCourses)}}-->
+</div>
