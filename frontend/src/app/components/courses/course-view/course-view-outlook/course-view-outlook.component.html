@@ -34,7 +34,9 @@
 
 
             <span class="row justify-content-center">
-                  <button type="button" class="btn btn-warning col">Logout</button>
+                  <button type="button" class="btn btn-warning col">
+                    {{internalization['logoutFromCourse']}}
+                  </button>
                 </span>
           </div>
         </div>
@@ -44,7 +46,7 @@
       <section class="col-xl-8 col-lg-7 col-md-12 col-12 justify-content-center">
         <details>
           <summary class="summary">
-            Description
+            {{internalization['description']}}
             <fa-icon [icon]="faArrowRight" class="arrow"></fa-icon>
           </summary>
           <ckeditor [editor]="Editor" [(ngModel)]="course.description" [disabled]="true" class="mt-4"></ckeditor>

@@ -25,7 +25,8 @@ export class LanguagesComponent implements OnInit {
 
     this.data.getInternalizationFromServerWithLanguage(language).then(() => {
       this.updateUser(language).then(() => {
-        window.location.href = "/";
+        window.location.reload();
+
       })
     })
     this.updateUserOnServer(language);
