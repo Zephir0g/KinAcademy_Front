@@ -42,3 +42,6 @@ out/
 /frontend/ckeditor5/build/
 
 /backend/src/main/resources/application.properties
+
+/ckeditor5/build/
+/node_modules/
