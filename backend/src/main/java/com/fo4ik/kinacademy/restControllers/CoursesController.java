@@ -15,9 +15,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.http.HttpHeaders;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,8 +24,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -161,7 +159,7 @@ public class CoursesController {
     }
 
 
-    @RequestMapping(value = "/{course-url}/{video-url}", method = RequestMethod.GET)
+    /*@RequestMapping(value = "/{course-url}/video/{video-url}", method = RequestMethod.GET, produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     public ResponseEntity<Resource> getVideoByUrl(
             @Parameter(description = "Course url", required = true)
             @PathVariable("course-url") String courseUrl,
@@ -174,8 +172,51 @@ public class CoursesController {
                 throw new AppException("Video url is null", HttpStatus.BAD_REQUEST);
             }
 
-            videoUrl = Path.of(videoUrl.toString().replace("=", "/"));
-            Path videoPath = Path.of("data/" + videoUrl);
+            Path videoPath = Path.of("data/" + courseUrl + "/" + videoUrl);
+
+            File file = new File(videoPath.toString());
+            if (!file.exists()) {
+                throw new AppException("Video not found", HttpStatus.NOT_FOUND);
+            }
+
+            Resource videoResource = new UrlResource(videoPath.toUri());
+
+            if (videoResource.exists() && videoResource.isReadable()) {
+                HttpHeaders headers = new HttpHeaders();
+                headers.add(HttpHeaders.CONTENT_DISPOSITION, "inline");
+
+                String contentType = Files.probeContentType(videoPath);
+                if (contentType != null) {
+                    headers.add(HttpHeaders.CONTENT_TYPE, contentType);
+                } else {
+                    headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+                }
+
+                return ResponseEntity.ok()
+                        .headers(headers)
+                        .body(videoResource);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (MalformedURLException e) {
+            return ResponseEntity.notFound().build();
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }*/
+
+    /*@RequestMapping(value = "/{course-url}/video/{video-url}", method = RequestMethod.GET)
+    public ResponseEntity<Resource> getVideoByUrl(
+            @Parameter(description = "Course url", required = true)
+            @PathVariable("course-url") String courseUrl,
+            @PathVariable("video-url") Path videoUrl) {
+        try {
+
+
+
+
+
+            Path videoPath = Path.of("data/" + courseUrl + "/" + videoUrl);
 
             File file = new File(videoPath.toString());
             if (!file.exists()) {
@@ -200,5 +241,31 @@ public class CoursesController {
         } catch (IOException e) {
             return ResponseEntity.status(500).build();
         }
+    }*/
+
+    @RequestMapping(value = "/{course-url}/video/{video-url}", method = RequestMethod.GET)
+    public ResponseEntity<FileSystemResource> streamVideo(
+            @PathVariable("course-url") String courseUrl,
+            @PathVariable("video-url") String videoUrl) throws IOException {
+
+        //TODO check is user have access to this video
+
+        if (videoUrl == null) {
+            throw new AppException("Video url is null", HttpStatus.BAD_REQUEST);
+        }
+
+        String currentDirectory = System.getProperty("user.dir");
+
+        Path videoPath = Paths.get(currentDirectory + "/data/" + courseUrl + "/" + videoUrl);
+        File videoFile = new File(String.valueOf(videoPath));
+        if (videoFile.exists()) {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .header("Content-Disposition", "attachment; filename=\"" + videoFile.getName() + "\"")
+                    .body(new FileSystemResource(videoFile));
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+
     }
 }
