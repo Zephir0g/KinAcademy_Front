@@ -1,0 +1,29 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="square-jelly-box" [fullScreen]="true"><p
+  style="color: white"> Loading... </p></ngx-spinner>
+
+<div *ngIf="isLoading && isJoined">
+  <app-menu></app-menu>
+
+
+  <div class="container-fluid">
+    <div class="row">
+      <div
+        [ngClass]="{'col-md-10': isSidebarOpen, 'col-md-12': !isSidebarOpen}">
+        <div [ngClass]="{'video-panel': true, 'full-height': !isSidebarOpen}">
+          <app-video [selectedFile]="selectedFileUrl"></app-video>
+        </div>
+      </div>
+      <app-course-video-panel
+        [ngClass]="{'col-md-2': isSidebarOpen, 'col-md-12': !isSidebarOpen}"
+        (sidebarOpenChange)="handleSidebarChange($event)"
+        [course]="course"
+      ></app-course-video-panel>
+    </div>
+  </div>
+
+
+  <div class="container row justify-content-center" style="color: red" *ngIf="errorMessage">
+    {{errorMessage}}
+  </div>
+
+</div>

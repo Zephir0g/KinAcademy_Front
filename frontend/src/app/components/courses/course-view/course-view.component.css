@@ -1,12 +1,5 @@
-.main-view {
-}
-
-.details {
-
-}
-
 :host ::ng-deep .ck-rounded-corners {
-  border-radius: 15px !important;
+  border-radius: 0.375rem !important;
 }
 
 :host ::ng-deep .ck-editor__top {
@@ -18,3 +11,6 @@
   font-weight: bold;
   color: rgb(81, 83, 87)
 }
+
+
+

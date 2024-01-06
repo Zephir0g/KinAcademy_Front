@@ -31,6 +31,7 @@ export class AxiosService {
       }
     })
   }
+
   requestWithHeaderAuthAndContentType(method: string, url: string, data: any, TOKEN: string, contentType: string): Promise<any> {
 
     return axios({
@@ -43,5 +44,16 @@ export class AxiosService {
       }
     })
 
+  }
+
+  async getVideo(token: string, url: string): Promise<any> {
+    return axios.get(
+      url,
+      {
+        responseType: 'blob',
+        headers: {
+          'Authorization': 'Bearer ' + token
+        }
+      });
   }
 }

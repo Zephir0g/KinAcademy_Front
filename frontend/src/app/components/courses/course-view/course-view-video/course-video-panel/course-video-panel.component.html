@@ -1,0 +1,27 @@
+<div>
+  <div class="d-flex align-items-center justify-content-between">
+    <p class="mb-0">Lessons: </p>
+    <button class="btn" (click)="toggleSidebar()">
+      <fa-icon [icon]="faXmark" style="font-size: 1.5rem;"></fa-icon>
+    </button>
+  </div>
+  <div *ngFor="let section of course.sections; let i = index">
+    <details>
+      <summary class="summary">
+        {{section.name}}
+        <fa-icon [icon]="faArrowRight" class="arrow"></fa-icon>
+      </summary>
+      <div class="videos">
+        <ul *ngFor="let video of section.videos; let i = index">
+          <li>
+
+            <button class="btn video" (click)="openVideo(video.urlToVideo)">
+              {{video.name}}
+            </button>
+          </li>
+        </ul>
+      </div>
+    </details>
+  </div>
+
+</div>

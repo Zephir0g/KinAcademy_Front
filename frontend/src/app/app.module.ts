@@ -33,6 +33,8 @@ import { VideoComponent } from './components/video/video.component';
 import {NgxFileDropModule} from "ngx-file-drop";
 import { CourseViewPreviewComponent } from './components/courses/course-view/course-view-preview/course-view-preview.component';
 import { CourseViewOutlookComponent } from './components/courses/course-view/course-view-outlook/course-view-outlook.component';
+import { CourseViewVideoComponent } from './components/courses/course-view/course-view-video/course-view-video.component';
+import { CourseVideoPanelComponent } from './components/courses/course-view/course-view-video/course-video-panel/course-video-panel.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +53,9 @@ import { CourseViewOutlookComponent } from './components/courses/course-view/cou
     CourseEditDataComponent,
     VideoComponent,
     CourseViewPreviewComponent,
-    CourseViewOutlookComponent
+    CourseViewOutlookComponent,
+    CourseViewVideoComponent,
+    CourseVideoPanelComponent
   ],
   imports: [
     BrowserModule,

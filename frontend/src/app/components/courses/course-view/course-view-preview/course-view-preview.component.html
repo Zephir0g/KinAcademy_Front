@@ -3,13 +3,8 @@
   <div class="container">
     <div class="row">
 
-      <!--    Description -->
-      <section class="col-md-9 col-8">
-        <ckeditor [editor]="Editor" [(ngModel)]="course.description" [disabled]="true" class="mt-4"></ckeditor>
-      </section>
-
       <!--    Details -->
-      <section class="col-md-3 col-4">
+      <section class="col-xl-3 col-lg-5 col-md-12 col-12 mb-2 justify-content-center">
         <div class="card" style="width: 18rem;">
           <img *ngIf="course.imageUrl; else noImage" [src]="course.imageUrl" alt="Course Image">
 
@@ -46,14 +41,12 @@
         </div>
       </section>
 
-    </div>
+      <!--    Description -->
+      <section class="col-xl-8 col-lg-7 col-md-12 col-12 justify-content-center">
+        <ckeditor [editor]="Editor" [(ngModel)]="course.description" [disabled]="true" class="mt-4"></ckeditor>
+      </section>
 
-    <div>
-      {{JSON.stringify(course)}}
-    </div>
 
-    <div class="mt-2">
-      {{JSON.stringify(user)}}
     </div>
   </div>
 </main>
