@@ -8,6 +8,9 @@ public record SingUpCourseDto(
         @NotBlank
         String name,
 
+        @Schema(description = "Course short description", example = "Java course is the best course")
+        String shortDescription,
+
         @Schema(description = "Course description", example = "This is course about Java")
         String description,
 

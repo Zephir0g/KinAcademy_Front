@@ -33,6 +33,7 @@ public class CourseService {
             throw new AppException("Course already exists", HttpStatus.BAD_REQUEST);
         }
 
+
         Course course = courseMapper.singUpCourseDtoToCourse(singUpCourseDto);
         course.setAuthorUsername(username);
         course.setLastUpdateDate(new Date());
@@ -89,6 +90,7 @@ public class CourseService {
 
         Course course = oCourse.get();
         course.setDescription(courseDto.getDescription());
+        course.setShortDescription(courseDto.getShortDescription());
         course.setCategory(courseDto.getCategory());
         course.setLanguage(courseDto.getLanguage());
         course.setImageUrl(courseDto.getImageUrl());
