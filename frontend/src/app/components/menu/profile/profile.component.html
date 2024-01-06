@@ -4,8 +4,7 @@
       <!-- User Profile Section -->
       <div class="d-flex align-items-center mb-3">
         <div class="flex-shrink-0">
-          <img src="../../../../favicon.ico" alt="Profile Image" class="rounded-circle"
-               style="width: 50px; height: 50px;">
+          <p-avatar size="large" shape="circle" image="../../../../favicon.ico"></p-avatar>
         </div>
         <div class="flex-grow-1 ms-3">
           {{user.firstName}} {{user.lastName}}
@@ -17,14 +16,15 @@
   </div>
 </li>
 <li class="align-items-start underline">
-  <a href="#" class="dropdown-item">{{internalization['myCourses']}}</a>
+  <a href="/my-courses" class="dropdown-item">{{internalization['myCourses']}}</a>
   <a href="/course-create" class="dropdown-item"
      *ngIf="user.role == 'TEACHER'">{{internalization['createCourse']}}</a>
 </li>
 <li class="align-items-start underline">
   <a href="#" class="dropdown-item" data-bs-toggle="modal"
      data-bs-target="#exampleModal">{{internalization['languageDisplay']}}
-    <fa-icon [icon]="faGlobe"></fa-icon> :
+    <fa-icon [icon]="faGlobe"></fa-icon>
+    :
     <span>{{internalization['language']}}</span>
   </a>
 </li>

@@ -10,7 +10,7 @@
       <div
         [ngClass]="{'col-md-10': isSidebarOpen, 'col-md-12': !isSidebarOpen}">
         <div [ngClass]="{'video-panel': true, 'full-height': !isSidebarOpen}">
-          <app-video [selectedFile]="selectedFileUrl"></app-video>
+          <app-video [selectedFile]="selectedFileUrl" style="max-height: 95vh;"></app-video>
         </div>
       </div>
       <app-course-video-panel
