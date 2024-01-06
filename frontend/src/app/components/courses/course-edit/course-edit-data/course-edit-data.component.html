@@ -64,17 +64,19 @@
 <section class="row mt-2">
   <textarea class="form-control" name="courseShortDescription" id="courseShortDescription" [disabled]="!isEdit"
             [(ngModel)]="courseShortDescription"></textarea>
-</section>
-
-<!--course description-->
-<section class="row mt-2">
-  <ckeditor [editor]="Editor" id="courseDescription" name="courseDescription" [disabled]="!isEdit"
-            [(ngModel)]="courseDescription"></ckeditor>
+  <details>
+    <summary class="summary">
+      {{internalization['description']}}
+      <fa-icon [icon]="faArrowRight" class="arrow"></fa-icon>
+    </summary>
+    <ckeditor [editor]="Editor" id="courseDescription" name="courseDescription" [disabled]="!isEdit"
+              [(ngModel)]="courseDescription"></ckeditor>
+  </details>
 </section>
 
 <!--course Sections-->
 <section class="mt-3">
-  <div class="row sectionsEdit mx-0 align-items-center">
+  <div class="row sectionsEdit mx-0 align-items-center summary">
     <div class="col-10 col-md-11">
       <label class="sectionsEditText" [ngStyle]="{'color': isEdit ? 'black' : '#515152'}">Edit sections</label>
     </div>
@@ -183,6 +185,3 @@
     </div>
   </div>
 </div>
-
-
-

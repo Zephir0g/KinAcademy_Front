@@ -56,19 +56,18 @@ export class CreateCourseComponent implements OnInit {
 
   onCreate() {
     this.error = '';
-    if (this.courseName == '' || this.courseShortDescription == '' || this.courseDescription == '' || this.courseLanguage == '' || this.courseCategory == '' || this.courseUrl == '') {
+    if (this.courseName == '' ||  this.courseShortDescription == '' || this.courseDescription == '' ||this.courseLanguage == '' || this.courseCategory == '' || this.courseUrl == '') {
       this.error = "Please fill required fields";
       return;
     } else {
       this.courseUrl = this.courseUrl.replace(/\s+/g, '-').toLowerCase();
-
       this.axiosService.requestWithHeaderAuth(
         "POST",
         "/course/create?username=" + this.user.username,
         {
           "name": this.courseName,
-          "shortDescription": this.courseShortDescription,
           "description": this.courseDescription,
+          "shortDescription": this.courseShortDescription,
           "language": this.courseLanguage,
           "category": this.courseCategory,
           "isPublic": this.coursePolicy,

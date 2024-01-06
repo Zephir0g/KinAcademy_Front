@@ -1,7 +1,7 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 // import Editor from "ckeditor5-custom-build";
 import Editor from 'ckeditor5-custom-build';
-import {faPlus} from "@fortawesome/free-solid-svg-icons";
+import {faPlus, faArrowRight} from "@fortawesome/free-solid-svg-icons";
 import {Router} from "@angular/router";
 import {Title} from "@angular/platform-browser";
 import {AxiosService} from "../../../../axios.service";
@@ -10,6 +10,7 @@ import {NgxSpinnerService} from "ngx-spinner";
 import {MatDialog} from "@angular/material/dialog";
 import {NgxFileDropEntry} from "ngx-file-drop";
 import {environment} from "../../../../../../environments/environment";
+
 
 
 export interface DialogData {
@@ -26,6 +27,8 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
   Editor = Editor;
   faPlus = faPlus;
   user = JSON.parse(localStorage.getItem('user') || '{}');
+  internalization = JSON.parse(localStorage.getItem('internalization') || '{}');
+  faArrowRight = faArrowRight;
   course: any = {};
   languages: any;
   isLoading: boolean = true;
