@@ -1,67 +1,56 @@
-/* Основной фон страницы */
-body {
-  background-color: #f7f7f7; /* Светлый оттенок серого для мягкого фона */
-  color: #333; /* Нейтральный цвет текста для хорошего контраста */
-  font-family: 'Arial', sans-serif;
+.justify-content-center {
+  display: flex;
+  justify-content: center;
 }
 
-/* Стилизация контейнера */
 .container {
-  background-color: #fff; /* Чисто белый фон для контейнеров */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Деликатная тень для объема */
-  border-radius: 8px; /* Скругленные углы для современного вида */
-  padding: 2rem; /* Пространство вокруг содержимого */
-  margin-top: 2rem;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  padding: 2rem;
 }
 
-/* Заголовок на странице */
-h1 {
-  color: #5a5a5a; /* Темно-серый цвет для читабельности */
+.mt-5, .mt-4, .col-md-8 {
+  margin-top: 3rem !important;
 }
 
-/* Стилизация кнопки */
-.btn-primary {
-  background-color: #e8e8e8; /* Светло-серый фон для кнопок */
-  color: #333; /* Цвет текста для контраста */
-  border: none; /* Убрать стандартную границу */
-  padding: 10px 20px; /* Подушечки для комфорта */
-  border-radius: 4px; /* Скругление углов кнопки */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Тень для кнопки */
+.form-label, .form-control, .form-select, .btn, .text-danger, .btn-success {
+  font-size: 1.2rem;
 }
 
-.btn-primary:hover {
-  background-color: #dcdcdc; /* Чуть темнее при наведении */
+.text-danger {
+  color: #dc3545;
 }
 
-/* Стилизация полей ввода */
-.form-control {
-  background-color: #f7f7f7; /* Молочный фон для полей ввода */
-  border: 1px solid #dcdcdc; /* Граница чуть темнее фона */
-  color: #333; /* Цвет текста для контраста */
+.btn {
+  font-size: 1.2rem;
 }
 
-.form-control:focus {
-  border-color: #a0a0a0; /* Темно-серая граница при фокусе */
-  box-shadow: 0 0 0 3px rgba(160, 160, 160, 0.2); /* Светлая тень вокруг поля */
+.btn-success {
+  background-color: #198754;
+  border: none;
+  color: white;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s;
 }
 
-/* Стилизация чекбокса */
+.btn-success:hover {
+  background-color: #146c43;
+}
+
 .form-check-input {
-  accent-color: #333; /* Цвет галочки в чекбоксе */
+  width: 1.5rem;
+  height: 1.5rem;
+  accent-color: #198754;
 }
 
-/* Стилизация выпадающего списка */
-.form-select {
-  background-color: #f7f7f7; /* Молочный фон для селекторов */
-  border: 1px solid #dcdcdc; /* Граница чуть темнее фона */
+.form-check-input:checked {
+  background-color: #198754;
 }
 
-.form-select:focus {
-  border-color: #a0a0a0; /* Темно-серая граница при фокусе */
-  box-shadow: 0 0 0 3px rgba(160, 160, 160, 0.2); /* Светлая тень вокруг селектора */
-}
 
-/* Подсветка обязательных полей */
-.required-asterisk {
-  color: #e55; /* Цвет для обозначения обязательных полей */
+#courseName:focus, #courseDescription:focus, #coursePrice:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
