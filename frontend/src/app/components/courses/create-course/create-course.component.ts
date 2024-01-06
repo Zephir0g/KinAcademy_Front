@@ -60,13 +60,15 @@ export class CreateCourseComponent implements OnInit {
       this.error = "Please fill required fields";
       return;
     } else {
+      this.courseUrl = this.courseUrl.replace(/\s+/g, '-').toLowerCase();
+
       this.axiosService.requestWithHeaderAuth(
         "POST",
         "/course/create?username=" + this.user.username,
         {
           "name": this.courseName,
-          "description": this.courseDescription,
           "shortDescription": this.courseShortDescription,
+          "description": this.courseDescription,
           "language": this.courseLanguage,
           "category": this.courseCategory,
           "isPublic": this.coursePolicy,
