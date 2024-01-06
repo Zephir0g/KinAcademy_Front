@@ -2,7 +2,6 @@ package com.fo4ik.kinacademy.dto.course;
 
 import com.fo4ik.kinacademy.entity.course.Section;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -27,8 +26,12 @@ public class CourseDto {
     @NotBlank
     String name;
 
-    @Schema(description = "Course description", example = "Java course")
+    @Schema(description = "Course short description", example = "Java course is the best course")
+    String shortDescription;
+
+    @Schema(description = "Course description", example = "Java course description")
     String description;
+
 
     @Schema(description = "Course author username", example = "John")
     @NotBlank
@@ -67,7 +70,6 @@ public class CourseDto {
 
     @Schema(description = "Course sections", example = "See SectionDto")
     List<Section> sections;
-
 
 
 }

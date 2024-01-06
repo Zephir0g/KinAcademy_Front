@@ -31,7 +31,7 @@ public class Course {
     String name, category, language;
 
     @Column(nullable = false, columnDefinition = "TEXT")
-    String description;
+    String description, shortDescription;
 
     @Column(nullable = false)
     String authorUsername;

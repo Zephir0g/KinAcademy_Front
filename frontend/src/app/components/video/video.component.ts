@@ -10,6 +10,8 @@ export class VideoComponent {
   @Input() selectedFile!: string;
   api: VgApiService = new VgApiService()
   fullScreenApi: VgFullscreenApiService = new VgFullscreenApiService();
+  isMuted: boolean = false;
+  volume: number = 0;
 
 
   @HostListener('document:keydown', ['$event'])
@@ -34,6 +36,12 @@ export class VideoComponent {
         break;
       case 'KeyF':
         this.fullScreenApi.toggleFullscreen();
+        break;
+      case 'KeyM':
+        if(!this.isMuted) this.volume = this.api.volume;
+
+        this.isMuted = !this.isMuted;
+        this.api.volume = this.isMuted ? 0 : this.volume;
         break;
     }
   }

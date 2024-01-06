@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {faGlobe} from '@fortawesome/free-solid-svg-icons';
 import {AxiosService} from "../../../axios.service";
 import {DataService} from "../../../data.service";
+import { AvatarModule } from 'primeng/avatar';
+import { AvatarGroupModule } from 'primeng/avatargroup';
 
 @Component({
   selector: 'app-profile',

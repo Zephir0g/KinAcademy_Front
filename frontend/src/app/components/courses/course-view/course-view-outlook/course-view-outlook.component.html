@@ -33,6 +33,12 @@
             </section>
 
 
+            <span class="row justify-content-center mb-1" *ngIf="course.authorUsername === user.username">
+                  <button type="button" class="btn btn-primary col" (click)="openEditCourse()">
+                      {{internalization['editCourse']}}
+                  </button>
+                </span>
+
             <span class="row justify-content-center">
                   <button type="button" class="btn btn-warning col">
                     {{internalization['logoutFromCourse']}}
@@ -55,13 +61,13 @@
         <div>
 
           <h3 class="mt-4">Lessons</h3>
-          <div *ngFor="let section of course.sections; let i = index" >
-            <details >
+          <div *ngFor="let section of course.sections; let i = index">
+            <details>
               <summary class="summary">
                 {{section.name}}
                 <fa-icon [icon]="faArrowRight" class="arrow"></fa-icon>
               </summary>
-              <div  class="videos">
+              <div class="videos">
                 <ul *ngFor="let video of section.videos; let i = index">
                   <li>
 

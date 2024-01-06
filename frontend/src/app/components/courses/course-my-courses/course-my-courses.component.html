@@ -1,0 +1,85 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="square-jelly-box" [fullScreen]="true"><p
+  style="color: white"> Loading... </p></ngx-spinner>
+
+<div *ngIf="!isLoading">
+  <app-menu></app-menu>
+
+  <div>
+    <div class="container">
+      <p-tabView>
+        <p-tabPanel styleClass="tabview-custom">
+          <ng-template pTemplate="header">
+            <p-button label="My Courses" [text]="true" [plain]="true"></p-button>
+          </ng-template>
+          <div class="container-sm">
+            <div *ngFor="let course of userCourses">
+              <div class="card mt-3 course" (click)="openCourse(course.url)"
+                   *ngIf="course.authorUsername !== user.username">
+                <div class="row g-0 align-items-center justify-content-center">
+                  <div class="col-12 col-md-3 col-lg-2">
+                    <img [src]="course.imageUrl" class="img-fluid rounded w-100 h-100" alt="...">
+                  </div>
+                  <div class="col-12 col-md-9 col-lg-10">
+                    <div class="card-body">
+                      <h5 class="card-title">{{course.name}}</h5>
+                      <p class="card-text">
+                        {{course.authorName}}
+                      </p>
+                      <p class="card-text row">
+                        <small class="text-body-secondary">
+                          <fa-icon [icon]="faGlobe"></fa-icon>
+                          {{course.language}}
+                        </small>
+                        <span class="text-body-secondary">
+                            {{internalization['lastUpdateDate']}}:
+                          {{course.lastUpdateDate | date: 'dd/MM/yyyy'}}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-tabPanel>
+        <p-tabPanel styleClass="tabview-custom" *ngIf="user.role === 'TEACHER' ">
+          <ng-template pTemplate="header">
+            <p-button label="My Courses Created" [text]="true" [plain]="true"></p-button>
+          </ng-template>
+          <div class="container-sm">
+            <div *ngFor="let course of userCourses; let i = index ">
+              <div class="card mt-3 course" (click)="openCourse(course.url)"
+                   *ngIf="course.authorUsername === user.username">
+                <div class="row g-0">
+                  <div class="col-12 col-md-3 col-lg-2">
+                    <img [src]="course.imageUrl" class="img-fluid rounded w-100 h-100" alt="...">
+                  </div>
+                  <div class="col-12 col-md-9 col-lg-10">
+                    <div class="card-body">
+                      <h5 class="card-title">{{course.name}}</h5>
+                      <p class="card-text">
+                        {{course.authorName}}
+                      </p>
+                      <p class="card-text row">
+                        <small class="text-body-secondary">
+                          <fa-icon [icon]="faGlobe"></fa-icon>
+                          {{course.language}}
+                        </small>
+                        <span class="text-body-secondary">
+                            {{internalization['lastUpdateDate']}}:
+                          {{course.lastUpdateDate | date: 'dd/MM/yyyy'}}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
+  </div>
+
+  <!--  {{JSON.stringify(userCourses)}}-->
+</div>

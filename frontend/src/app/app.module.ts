@@ -35,6 +35,10 @@ import { CourseViewPreviewComponent } from './components/courses/course-view/cou
 import { CourseViewOutlookComponent } from './components/courses/course-view/course-view-outlook/course-view-outlook.component';
 import { CourseViewVideoComponent } from './components/courses/course-view/course-view-video/course-view-video.component';
 import { CourseVideoPanelComponent } from './components/courses/course-view/course-view-video/course-video-panel/course-video-panel.component';
+import { CourseMyCoursesComponent } from './components/courses/course-my-courses/course-my-courses.component';
+import {AvatarModule} from "primeng/avatar";
+import {TabViewModule} from "primeng/tabview";
+import {ButtonModule} from "primeng/button";
 
 @NgModule({
   declarations: [
@@ -55,7 +59,8 @@ import { CourseVideoPanelComponent } from './components/courses/course-view/cour
     CourseViewPreviewComponent,
     CourseViewOutlookComponent,
     CourseViewVideoComponent,
-    CourseVideoPanelComponent
+    CourseVideoPanelComponent,
+    CourseMyCoursesComponent
   ],
   imports: [
     BrowserModule,
@@ -74,7 +79,10 @@ import { CourseVideoPanelComponent } from './components/courses/course-view/cour
     VgControlsModule,
     VgOverlayPlayModule,
     VgBufferingModule,
-    NgxFileDropModule
+    NgxFileDropModule,
+    AvatarModule,
+    TabViewModule,
+    ButtonModule
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [],
