@@ -116,7 +116,6 @@ public class CourseService {
         }
 
         if (oCourse.get().isPublic()) {
-            System.out.println("Course is public");
             return new Response().builder()
                     .isSuccess(true)
                     .message("Course is public")
