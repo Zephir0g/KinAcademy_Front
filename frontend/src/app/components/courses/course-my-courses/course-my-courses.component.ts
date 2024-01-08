@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {NgxSpinnerService} from "ngx-spinner";
 import {AxiosService} from "../../../axios.service";
 import {faGlobe} from "@fortawesome/free-solid-svg-icons";
+import {DataService} from "../../../data.service";
 
 @Component({
   selector: 'app-course-my-courses',
@@ -15,10 +16,12 @@ export class CourseMyCoursesComponent implements OnInit {
   faGlobe = faGlobe
 
   userCourses: any = [];
+  languages = this.data.getLanguages();
 
   constructor(
     private spinner: NgxSpinnerService,
     private axiosService: AxiosService,
+    private data: DataService
   ) {
   }
 
@@ -65,9 +68,14 @@ export class CourseMyCoursesComponent implements OnInit {
     );
   }
 
+  getLanguageName(course: any): string {
+    const selectedLanguage = this.languages.find((language: { code: any; }) => language.code === course.language);
+    return selectedLanguage.label;
+  }
+
   protected readonly JSON = JSON;
 
-  openCourse(url:string) {
+  openCourse(url: string) {
     window.location.href = "/course/" + url;
   }
 }

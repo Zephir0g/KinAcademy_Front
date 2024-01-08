@@ -28,7 +28,7 @@
                       <p class="card-text row">
                         <small class="text-body-secondary">
                           <fa-icon [icon]="faGlobe"></fa-icon>
-                          {{course.language}}
+                          {{ getLanguageName(course) }}
                         </small>
                         <span class="text-body-secondary">
                             {{internalization['lastUpdateDate']}}:
@@ -63,7 +63,7 @@
                       <p class="card-text row">
                         <small class="text-body-secondary">
                           <fa-icon [icon]="faGlobe"></fa-icon>
-                          {{course.language}}
+                          {{ getLanguageName(course) }}
                         </small>
                         <span class="text-body-secondary">
                             {{internalization['lastUpdateDate']}}:

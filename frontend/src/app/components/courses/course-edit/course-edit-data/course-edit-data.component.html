@@ -62,8 +62,14 @@
 
 <!--course description-->
 <section class="row mt-2">
-  <textarea class="form-control" name="courseShortDescription" id="courseShortDescription" [disabled]="!isEdit"
-            [(ngModel)]="courseShortDescription"></textarea>
+  <details>
+    <summary class="summary">
+      {{internalization['shortDescription']}}
+      <fa-icon [icon]="faArrowRight" class="arrow"></fa-icon>
+    </summary>
+    <textarea class="form-control" name="courseShortDescription" id="courseShortDescription" [disabled]="!isEdit"
+              [(ngModel)]="courseShortDescription" [maxlength]="200"></textarea>
+  </details>
   <details>
     <summary class="summary">
       {{internalization['description']}}
@@ -75,7 +81,7 @@
 </section>
 
 <!--course Sections-->
-<section class="mt-3">
+<section class="mt-3 mx-2">
   <div class="row sectionsEdit mx-0 align-items-center summary">
     <div class="col-10 col-md-11">
       <label class="sectionsEditText" [ngStyle]="{'color': isEdit ? 'black' : '#515152'}">Edit sections</label>
