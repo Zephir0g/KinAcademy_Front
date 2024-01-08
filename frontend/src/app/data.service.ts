@@ -9,6 +9,7 @@ export class DataService {
   public user: any;
   public internalization: any;
   public languages: any;
+  public categories: any;
 
   constructor(private axiosService: AxiosService, private router: Router,) {
     /*this.getInternalizationFromServer();
@@ -29,24 +30,6 @@ export class DataService {
     this.languages = JSON.parse(localStorage.getItem('languages') || '{}');
     return this.languages;
   }
-
-  /*public getInternalizationFromServer() {
-    this.user = JSON.parse(localStorage.getItem('user') || '{}');
-    this.axiosService.requestWithHeaderLang(
-      "GET",
-      "/components/internationalization",
-      {},
-      this.user.language
-    ).then((response) => {
-      if (response) {
-        localStorage.removeItem('internalization');
-        localStorage.setItem("internalization", JSON.stringify(response.data));
-        this.internalization = JSON.parse(localStorage.getItem('internalization') || '{}');
-      }
-    }).catch((error) => {
-      console.log(error.response.data.message);
-    })
-  }*/
 
   public async getInternalizationFromServerWithLanguage(lang: any) {
     return this.axiosService.request(
@@ -163,7 +146,6 @@ export class DataService {
 
 
   updateCourse(course: any) {
-    console.log(course);
     this.axiosService.requestWithHeaderAuth(
       "POST",
       "/course/" + course.url + "/update?username=" + this.user.username,
@@ -192,5 +174,28 @@ export class DataService {
       return error.response;
     })
 
+  }
+
+ async getCategoriesFromServer(lang: any) {
+   return this.axiosService.request(
+     "GET",
+     "/components/categories?language=" + lang || "English",
+     {}
+   ).then((response) => {
+     if (response) {
+       localStorage.removeItem('categories');
+       localStorage.setItem("categories", JSON.stringify(response.data));
+       this.categories = JSON.parse(localStorage.getItem('categories') || '{}')
+       return this.categories;
+     }
+   }).catch((error) => {
+     console.log(error.response.data.message);
+     throw error;
+   })
+  }
+
+  getCategories(): Promise<any> {
+    this.categories = JSON.parse(localStorage.getItem('categories') || '{}');
+    return this.categories;
   }
 }

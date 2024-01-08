@@ -29,10 +29,17 @@
       </div>
       <div class="col-6">
         <label class="form-label" for="courseCategory">Category: </label>
-        <select class="form-control" name="courseCategory" id="courseCategory" [disabled]="!isEdit">
-          <option *ngIf="!isEdit">
-            {{courseCategory}}
-          </option>
+        <select class="form-control" name="courseCategory" id="courseCategory" [disabled]="!isEdit"
+                [(ngModel)]="courseCategory">
+          <ng-container *ngIf="!isEdit">
+            <option>{{ courseCategory }}</option>
+          </ng-container>
+          <ng-container *ngIf="isEdit">
+            <option value="">Select category</option>
+            <option *ngFor="let category of categories" [value]="category.name">
+              {{ category.name }}
+            </option>
+          </ng-container>
         </select>
       </div>
     </div>

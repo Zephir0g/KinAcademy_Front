@@ -16,6 +16,8 @@ export class MenuComponent implements OnInit {
   faXmark = faXmark
 
   user: any = {};
+  internalization: any = {};
+  categories: any = {};
   showFullscreenSearch: boolean = false;
 
   constructor(private axiosService: AxiosService, private data: DataService) {
@@ -29,5 +31,6 @@ export class MenuComponent implements OnInit {
 
   ngOnInit(): void {
     this.user = this.data.getUser();
+    this.categories = this.data.getCategories();
   }
 }
