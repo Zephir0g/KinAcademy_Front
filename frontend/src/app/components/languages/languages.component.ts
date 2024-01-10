@@ -22,6 +22,7 @@ export class LanguagesComponent implements OnInit {
 
   changeLanguage(language: string) {
 
+    this.data.getCategoriesFromServer(language);
 
     this.data.getInternalizationFromServerWithLanguage(language).then(() => {
       this.updateUser(language).then(() => {

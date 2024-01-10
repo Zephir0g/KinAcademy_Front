@@ -38,6 +38,8 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
   imageNotFound: string = environment.imageNotFound;
   isImageDropped = false;
 
+  categories: any = {};
+
   courseImage: string = '';
   courseDescription: String = '';
   courseShortDescription: String = '';
@@ -65,6 +67,7 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.showSpinner();
     this.loadCourseData();
+    this.categories = this.data.getCategories();
   }
 
   ngOnChanges(changes: SimpleChanges): void {

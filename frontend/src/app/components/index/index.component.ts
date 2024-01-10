@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {AxiosService} from "../../axios.service";
 import {DataService} from "../../data.service";
 import {NgxSpinnerService} from "ngx-spinner";
 
@@ -12,6 +11,7 @@ export class IndexComponent implements OnInit {
   title = 'frontend';
   user: any;
   languages: any;
+  categories: any;
   internalization: any;
 
   isPageLoading: boolean = false;
@@ -35,7 +35,8 @@ export class IndexComponent implements OnInit {
         this.getUser(),
         this.getInternalization(),
         //this.data.checkIsTokenValid(),
-        this.getLanguage()
+        this.getLanguage(),
+        this.getCategories()
       ]);
     } catch (error) {
       console.error("Error occurred:", error);
@@ -57,7 +58,14 @@ export class IndexComponent implements OnInit {
     return this.languages;
   }
 
+  async getCategories() {
+    this.categories = this.data.getCategoriesFromServer(this.user.language || "English");
+    return this.categories;
+  }
+
+
   // Check if the user is logged in and if the token is valid
 
 
+  protected readonly JSON = JSON;
 }
