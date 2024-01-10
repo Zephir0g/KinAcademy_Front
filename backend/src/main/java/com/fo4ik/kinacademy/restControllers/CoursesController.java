@@ -148,7 +148,7 @@ public class CoursesController {
         }
 
 
-        Path videoPath = VideoCompressor.builder().build().getVideoExtension(video, Path.of("data/" + courseUrl));
+        String videoPath = VideoCompressor.builder().build().getVideoExtension(video, Path.of("data/" + courseUrl));
 
 
         if (videoPath == null) {

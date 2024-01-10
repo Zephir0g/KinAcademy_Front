@@ -5,22 +5,96 @@
   <app-menu [pageTitle]="'KIN'"
             [logoSrc]="'./assets/images/logo.png'"></app-menu>
 
-  <!--  <h3>{{languages['welcome-message']}}</h3>-->
-  <!--  <h3>{{languages | json}}</h3>-->
-
-  <div class="container text-truncate mt-4">
-    <h5>{{internalization | json}}</h5>
+  <div *ngIf="user && Object.keys(user).length !== 0">
+    <div class="container">
+      <p-tabView>
+        <p-tabPanel styleClass="tabview-custom">
+          <ng-template pTemplate="header">
+            <p-button label="My Courses" [text]="true" [plain]="true"></p-button>
+          </ng-template>
+          <div class="container-sm">
+            <div *ngFor="let course of userCourses">
+              <div class="card mt-3 course" (click)="openCourse(course.url)"
+                   *ngIf="course.authorUsername !== user.username">
+                <div class="row g-0 align-items-center justify-content-center">
+                  <div class="col-12 col-md-3 col-lg-2">
+                    <img [src]="course.imageUrl" class="img-fluid rounded w-100 h-100" alt="...">
+                  </div>
+                  <div class="col-12 col-md-9 col-lg-10">
+                    <div class="card-body">
+                      <h5 class="card-title">{{course.name}}</h5>
+                      <p class="card-text">
+                        {{course.authorName}}
+                      </p>
+                      <p class="card-text">
+                        {{course.shortDescription}}
+                      </p>
+                      <p class="card-text row">
+                        <span class="text-body-secondary">
+                          <fa-icon [icon]="faGlobe"></fa-icon>
+                          {{ getLanguageName(course) }}
+                        </span>
+                        <span class="text-body-secondary">
+                          {{internalization['studentsCount']}}:
+                          {{ course.studentsCount}}
+                        </span>
+                        <span class="text-body-secondary">
+                            {{internalization['lastUpdateDate']}}:
+                          {{course.lastUpdateDate | date: 'dd/MM/yyyy'}}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-tabPanel>
+        <p-tabPanel styleClass="tabview-custom" *ngIf="user.role === 'TEACHER' ">
+          <ng-template pTemplate="header">
+            <p-button label="My Created Courses " [text]="true" [plain]="true"></p-button>
+          </ng-template>
+          <div class="container-sm">
+            <div *ngFor="let course of userCourses; let i = index ">
+              <div class="card mt-3 course" (click)="openCourse(course.url)"
+                   *ngIf="course.authorUsername === user.username">
+                <div class="row g-0">
+                  <div class="col-12 col-md-3 col-lg-2">
+                    <img [src]="course.imageUrl" class="img-fluid rounded w-100 h-100" alt="...">
+                  </div>
+                  <div class="col-12 col-md-9 col-lg-10">
+                    <div class="card-body">
+                      <h5 class="card-title">{{course.name}}</h5>
+                      <p class="card-text">
+                        {{course.authorName}}
+                      </p>
+                      <p class="card-text row">
+                        <span class="text-body-secondary">
+                          <fa-icon [icon]="faGlobe"></fa-icon>
+                          {{ getLanguageName(course) }}
+                        </span>
+                        <span class="text-body-secondary">
+                          {{internalization['studentsCount']}}:
+                          {{ course.studentsCount}}
+                        </span>
+                        <span class="text-body-secondary">
+                            {{internalization['lastUpdateDate']}}:
+                          {{course.lastUpdateDate | date: 'dd/MM/yyyy'}}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </p-tabPanel>
+      </p-tabView>
+    </div>
   </div>
 
-  <div class="container text-truncate mt-4">
-    <h5>{{user | json}}</h5>
-  </div>
+  <app-index-content *ngIf="!user || Object.keys(user).length === 0">
 
-  <div class="container text-truncate mt-4">
-    <h5>{{languages | json}}</h5>
-  </div>
-  <div class="container text-truncate mt-4">
-    <h5>{{JSON.stringify(categories)}}</h5>
-  </div>
+  </app-index-content>
 
 </div>

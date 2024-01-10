@@ -39,7 +39,7 @@ public class VideoCompressor {
 
 
     @Async("AsyncTaskExecutor")
-    public Path getVideoExtension(MultipartFile video, Path folder) throws IOException {
+    public String getVideoExtension(MultipartFile video, Path folder) throws IOException {
         String extension = FilenameUtils.getExtension(video.getOriginalFilename());
 
         FFmpeg ffmpeg = new FFmpeg(String.valueOf(FFMPEG_PATH));
@@ -67,7 +67,8 @@ public class VideoCompressor {
 
         switch (extension) {
             case "mp4":
-                path = Path.of(folder + "/" + UUID.randomUUID() + ".mp4");
+                String videoName = UUID.randomUUID() + ".mp4";
+                path = Path.of(folder + "/" + videoName);
                 outputVideoPath = String.valueOf(path);
                 Runnable parallelTask = () -> {
                 };
@@ -78,7 +79,7 @@ public class VideoCompressor {
                     }
                 });
                 thread.start();
-                return path;
+                return videoName;
             case "avi":
                 //return compressAVI(video, folder);
             case "webm":
@@ -89,7 +90,7 @@ public class VideoCompressor {
     }
 
     @Async("AsyncTaskExecutor")
-    Path compressMp4(MultipartFile video, Path folder) {
+    String compressMp4(MultipartFile video, Path folder) {
         try {
             //set ffmpeg and ffprobe path
             FFmpeg ffmpeg = new FFmpeg(String.valueOf(FFMPEG_PATH));
@@ -98,7 +99,8 @@ public class VideoCompressor {
 
             FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
             String inputVideo = UUID.randomUUID() + "-" + video.getOriginalFilename();
-            Path path = Path.of(folder + "/" + UUID.randomUUID() + ".mp4");
+            String videoName = UUID.randomUUID() + ".mp4";
+            Path path = Path.of(folder + "/" + videoName);
             String outputVideoPath = String.valueOf(path);
 
             Path folderDirectory = Path.of(currentDirectory + "/" + folder);
@@ -158,7 +160,7 @@ public class VideoCompressor {
                 Files.delete(videoInputPath);
             }
 
-            return Path.of(outputVideoPath);
+            return videoName;
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("Error: " + e.getMessage());

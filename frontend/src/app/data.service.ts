@@ -6,10 +6,11 @@ import {Router} from "@angular/router";
   providedIn: 'root'
 })
 export class DataService {
-  public user: any;
-  public internalization: any;
-  public languages: any;
-  public categories: any;
+  user: any;
+  internalization: any;
+  languages: any;
+  categories: any;
+  userCourses: any;
 
   constructor(private axiosService: AxiosService, private router: Router,) {
     /*this.getInternalizationFromServer();
@@ -197,5 +198,31 @@ export class DataService {
   getCategories(): Promise<any> {
     this.categories = JSON.parse(localStorage.getItem('categories') || '{}');
     return this.categories;
+  }
+
+  getListOfUserCoursesFromServer() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+   return  this.axiosService.requestWithHeaderAuth(
+      "GET",
+      "user/courses?username=" + user.username,
+      {},
+      user.secure_TOKEN
+    ).then((response: any) => {
+      if (response) {
+        localStorage.removeItem('userCourses');
+        localStorage.setItem("userCourses", JSON.stringify(response.data));
+        this.userCourses = JSON.parse(localStorage.getItem('userCourses') || '{}')
+        return this.userCourses;
+      }
+    }).catch((error) => {
+      if (error) {
+        console.log(error.response.data);
+      }
+    });
+  }
+
+  getListsOfUserCourses() {
+    this.userCourses = JSON.parse(localStorage.getItem('userCourses') || '{}');
+    return this.userCourses;
   }
 }

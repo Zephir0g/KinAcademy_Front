@@ -174,6 +174,10 @@ public class CourseService {
         }
 
         oUser.get().getCoursesId().add(oCourse.get().getId());
+        //Update course user count
+        oCourse.get().setStudentsCount(oCourse.get().getStudentsCount() + 1);
+
+        courseRepository.save(oCourse.get());
         userService.save(oUser.get());
         return new Response().builder()
                 .isSuccess(true)

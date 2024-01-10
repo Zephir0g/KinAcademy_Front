@@ -31,6 +31,9 @@
               <span class="row" label="course-author">
                    {{internalization['author']}}: {{authorUsername}}
                 </span>
+              <span class="row" label="course-students">
+                   {{internalization['studentsCount']}}: {{course.studentsCount}}
+                </span>
             </section>
             <span class="row justify-content-center">
                   <button type="button" class="btn btn-primary col" (click)="joinCourse()">

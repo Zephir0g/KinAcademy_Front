@@ -1,0 +1,7 @@
+.course {
+  cursor: pointer;
+}
+
+.course:hover {
+  scale: 1.01;
+}
