@@ -33,6 +33,8 @@ public class Users {
     ) {
         token = token.replace("Bearer ", "");
 
+        System.out.println("token: " + token);
+
         Response isUserActive = userService.isUserActive(username);
         if (!isUserActive.isSuccess()) {
             return ResponseEntity.status(isUserActive.getHttpStatus()).body(isUserActive);

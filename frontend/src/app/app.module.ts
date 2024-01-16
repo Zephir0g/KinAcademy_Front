@@ -8,7 +8,6 @@ import {HttpClientModule} from "@angular/common/http";
 import {MenuComponent} from './components/menu/menu.component';
 import {LoginComponent} from './components/login/login.component';
 import {IndexComponent} from './components/index/index.component';
-import {IndexContentComponent} from './components/index/index-content/index-content.component';
 import {UserAccountComponent} from './components/menu/user-account/user-account.component';
 import {FontAwesomeModule} from '@fortawesome/angular-fontawesome';
 import {ProfileComponent} from './components/menu/profile/profile.component';
@@ -38,6 +37,8 @@ import { CourseVideoPanelComponent } from './components/courses/course-view/cour
 import {AvatarModule} from "primeng/avatar";
 import {TabViewModule} from "primeng/tabview";
 import {ButtonModule} from "primeng/button";
+import { IndexUnauthorizedComponent } from './components/index/index-unauthorized/index-unauthorized.component';
+import { SearchComponent } from './components/search/search.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,6 @@ import {ButtonModule} from "primeng/button";
     MenuComponent,
     LoginComponent,
     IndexComponent,
-    IndexContentComponent,
     UserAccountComponent,
     ProfileComponent,
     CreateCourseComponent,
@@ -58,7 +58,9 @@ import {ButtonModule} from "primeng/button";
     CourseViewPreviewComponent,
     CourseViewOutlookComponent,
     CourseViewVideoComponent,
-    CourseVideoPanelComponent
+    CourseVideoPanelComponent,
+    IndexUnauthorizedComponent,
+    SearchComponent
   ],
   imports: [
     BrowserModule,

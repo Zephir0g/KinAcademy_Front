@@ -6,6 +6,7 @@ import {CreateCourseComponent} from "./components/courses/create-course/create-c
 import {CourseViewComponent} from "./components/courses/course-view/course-view.component";
 import {CourseEditComponent} from "./components/courses/course-edit/course-edit.component";
 import {CourseViewVideoComponent} from "./components/courses/course-view/course-view-video/course-view-video.component";
+import {SearchComponent} from "./components/search/search.component";
 
 const routes: Routes = [
   {path: '', component: IndexComponent},
@@ -13,6 +14,7 @@ const routes: Routes = [
   {path: 'course-create', component: CreateCourseComponent},
   {path: 'course/:name', component: CourseViewComponent},
   {path: 'course/:name/video/:url', component: CourseViewVideoComponent},
+  {path: 'search', component: SearchComponent},
   {path: 'course/:name/edit', component: CourseEditComponent}
 ];
 

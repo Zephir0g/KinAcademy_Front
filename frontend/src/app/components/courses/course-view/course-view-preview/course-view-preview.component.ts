@@ -32,20 +32,14 @@ export class CourseViewPreviewComponent {
 
   async joinCourse() {
 
-    const response = await this.data.joinCourse(this.course.url)
-    if (response.status === 200) {
-      await this.data.updateUser()
-      this.data.updateUser().then(() => {
-        window.location.reload();
-      });
-    } else {
-      //TODO show error message
-      if (response.data === "User already joined course") {
-        window.location.reload();
-      } else {
-        console.log(response.data)
-      }
-    }
+    this.data.joinCourse(this.course.url).then((response: any) => {
+      this.user.coursesId.push(this.course.id);
+      localStorage.setItem("user", JSON.stringify(this.user));
+      window.location.reload();
+    }).catch((error: any) => {
+      console.log(error.response);
+    })
+
   }
 
 

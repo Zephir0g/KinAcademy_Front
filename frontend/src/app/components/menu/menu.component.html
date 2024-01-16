@@ -25,19 +25,19 @@
                 Categories
               </a>
               <ul class="dropdown-menu dropdown-menu-light dropdown-first">
-
-
-                <li *ngFor="let category of categories" class="dropdown-item">
-                  {{category.name}}
+                <li *ngFor="let category of categories" (click)="addCategoryToSearch(category.name)"
+                    class="dropdown-item">
+                  <span>{{category.name}}</span>
                 </li>
 
               </ul>
             </li>
             <li class="d-md-block d-none search-input">
-              <form class="d-flex" role="search">
+              <div class="d-flex" role="search">
                 <input class="form-control me-2" type="search" placeholder="Search"
+                       [(ngModel)]="searchText" (keydown.enter)="addNameToSearch()"
                        aria-label="Search" id="search-input">
-              </form>
+              </div>
             </li>
             <li *ngIf="(user | json) == '{}'" class="nav-item">
               <a class="nav-link active" aria-current="page" routerLink="/login" routerLinkActive="active">Login</a>
@@ -54,19 +54,21 @@
   </nav>
   <div class="fullscreen-search" id="fullscreenSearch" *ngIf="showFullscreenSearch">
     <div class="fullscreen-search-content">
-      <form class="d-flex" style="height: 60px" role="search">
+      <div class="d-flex" style="height: 60px" role="search">
         <button class="btn mt-2 btn-link" disabled>
           <fa-icon [icon]="faMagnifyingGlass"></fa-icon>
         </button>
         <input class="form-control mt-1" type="search" placeholder="Search" aria-label="Search"
+               [(ngModel)]="searchText" (keydown.enter)="addNameToSearch()"
                id="search-input-full">
         <button class="btn mt-2 me-2 color-search" id="closeSearch"
                 (click)="toggleFullscreenSearch(false)">
           <fa-icon [icon]="faXmark"></fa-icon>
         </button>
-      </form>
+      </div>
     </div>
   </div>
 
   <app-languages></app-languages>
 </header>
+

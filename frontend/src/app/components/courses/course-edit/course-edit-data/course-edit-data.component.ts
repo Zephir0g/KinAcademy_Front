@@ -1,7 +1,7 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 // import Editor from "ckeditor5-custom-build";
 import Editor from 'ckeditor5-custom-build';
-import {faPlus, faArrowRight} from "@fortawesome/free-solid-svg-icons";
+import {faArrowRight, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {Router} from "@angular/router";
 import {Title} from "@angular/platform-browser";
 import {AxiosService} from "../../../../axios.service";
@@ -10,7 +10,6 @@ import {NgxSpinnerService} from "ngx-spinner";
 import {MatDialog} from "@angular/material/dialog";
 import {NgxFileDropEntry} from "ngx-file-drop";
 import {environment} from "../../../../../../environments/environment";
-
 
 
 export interface DialogData {
@@ -29,16 +28,16 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
   user = JSON.parse(localStorage.getItem('user') || '{}');
   internalization = JSON.parse(localStorage.getItem('internalization') || '{}');
   faArrowRight = faArrowRight;
-  course: any = {};
   languages: any;
-  isLoading: boolean = true;
   @Input() isEdit: boolean | undefined;
   @Input() courseUrl !: string;
+  @Input() course : any = {};
+  @Input() categories: any = {};
 
   imageNotFound: string = environment.imageNotFound;
   isImageDropped = false;
 
-  categories: any = {};
+
 
   courseImage: string = '';
   courseDescription: String = '';
@@ -47,27 +46,21 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
   courseLanguage: String = '';
   courseCategory: String = '';
   sections: any;
-
-
   sectionInputName: string = '';
   videoInputName: string = '';
   selectedFileUrl: string = '';
   selectedFile: any;
 
 
-  constructor(private router: Router,
-              private titleService: Title,
-              private axiosService: AxiosService,
-              private data: DataService,
+  constructor(private data: DataService,
               private spinner: NgxSpinnerService,
               public dialog: MatDialog) {
 
   }
 
   ngOnInit(): void {
-    this.showSpinner();
-    this.loadCourseData();
-    this.categories = this.data.getCategories();
+    this.loadCourseDetails();
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -83,32 +76,7 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
     }
   }
 
-  loadCourseData() {
-    this.fetchCourseDataFromServer();
-  }
-
-  fetchCourseDataFromServer() {
-    this.getCourseData(this.courseUrl)
-      .then((response) => {
-        if (response) {
-          //TODO Fix title
-          this.titleService.setTitle(response.data.name + " | Course");
-          this.course = response.data;
-          this.hideSpinner();
-          this.loadCourseDetails();
-        }
-      })
-      .catch((error) => {
-        console.log(error.response.data.message);
-        this.hideSpinner();
-      });
-  }
-
   loadCourseDetails() {
-    if (!this.userIsAuthor()) {
-      this.router.navigate(['/course/' + this.courseUrl]);
-    }
-    this.hideSpinner();
     this.languages = this.data.getLanguages();
     this.courseImage = this.course.imageUrl || this.imageNotFound;
     this.courseDescription = this.course.description;
@@ -121,15 +89,6 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
 
   userIsAuthor(): boolean {
     return this.user.username === this.course.authorUsername;
-  }
-
-  getCourseData(url: string): Promise<any> {
-    return this.axiosService.requestWithHeaderAuth(
-      "GET",
-      "/course/" + url + "?username=" + this.user.username,
-      null,
-      this.user.secure_TOKEN
-    );
   }
 
   addSection() {
@@ -145,14 +104,8 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
     this.sectionInputName = '';
   }
 
-  showSpinner() {
-    this.spinner.show();
-    this.isLoading = true;
-  }
-
   hideSpinner() {
     this.spinner.hide();
-    this.isLoading = false;
   }
 
   onVideoUploaded(event: any) {

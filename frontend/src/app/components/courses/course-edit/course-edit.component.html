@@ -1,4 +1,9 @@
-<div>
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="square-jelly-box" [fullScreen]="true"><p
+  style="color: white"> Loading... </p></ngx-spinner>
+
+
+
+<div *ngIf="!isLoading">
 
   <app-menu>
   </app-menu>
@@ -14,7 +19,9 @@
       </button>
     </div>
 
-    <app-course-edit-data [isEdit]="isEdit" [courseUrl]="courseUrl">
+
+
+    <app-course-edit-data [isEdit]="isEdit" [courseUrl]="courseUrl" [course]="course" [categories]="categories">
     </app-course-edit-data>
   </div>
 </div>

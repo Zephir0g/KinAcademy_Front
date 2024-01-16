@@ -186,7 +186,67 @@ public class CourseService {
                 .build();
     }
 
+    public Response logoutCourse(String username, String courseUrl) {
+        Optional<Course> oCourse = courseRepository.findByUrl(courseUrl);
+        Optional<User> oUser = userService.findByUsername(username);
+
+        if (oCourse.isEmpty()) {
+            return new Response().builder()
+                    .isSuccess(false)
+                    .message("Course not found")
+                    .httpStatus(HttpStatus.NOT_FOUND)
+                    .build();
+        }
+
+        if (oUser.isEmpty()) {
+            return new Response().builder()
+                    .isSuccess(false)
+                    .message("User not found")
+                    .httpStatus(HttpStatus.NOT_FOUND)
+                    .build();
+        }
+
+        if (!oUser.get().getCoursesId().contains(oCourse.get().getId())) {
+            return new Response().builder()
+                    .isSuccess(false)
+                    .message("You not joined this course")
+                    .httpStatus(HttpStatus.CONFLICT)
+                    .build();
+        }
+
+        oUser.get().getCoursesId().remove(oCourse.get().getId());
+        //Update course user count
+        oCourse.get().setStudentsCount(oCourse.get().getStudentsCount() - 1);
+
+        courseRepository.save(oCourse.get());
+        userService.save(oUser.get());
+        return new Response().builder()
+                .isSuccess(true)
+                .message("You logout from this course")
+                .httpStatus(HttpStatus.OK)
+                .build();
+    }
+
     public List<Course> getUserCourses(User user) {
         return courseRepository.findAllById(user.getCoursesId());
+    }
+
+    public List<CourseDto> searchCourses(String name, String category) {
+
+        if (name != null && category == null) {
+            return courseMapper.coursesToCoursesDto(courseRepository.findAllByNameContainingAndIsPublic(name, true));
+        }
+
+        if (name == null && category != null) {
+            return courseMapper.coursesToCoursesDto(courseRepository.findAllByCategoryContainingAndIsPublic(category, true));
+        }
+
+        if (name != null && category != null) {
+            return courseMapper.coursesToCoursesDto(courseRepository.findAllByNameContainingAndCategoryContainingAndIsPublic(name, category, true));
+        }
+
+
+//        return courseMapper.coursesToCoursesDto(courseRepository.findAllByIsPublic(true));
+        return null;
     }
 }

@@ -1,6 +1,5 @@
 package com.fo4ik.kinacademy.configuration;
 
-import com.fo4ik.kinacademy.configuration.filter.UserActivityFilter;
 import com.fo4ik.kinacademy.configuration.jwt.JwtAuthFilter;
 import com.fo4ik.kinacademy.entity.data.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -37,25 +36,23 @@ public class WebSecurityConfig {
 
     // Authentication provider for handling authentication logic
     private final AuthenticationProvider authenticationProvider;
-    private final UserActivityFilter userActivityFilter;
 
     // Configures security filters for HTTP requests
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 // Disables CSRF protection
+                .addFilterBefore(jwtAuthfilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests((requests) -> {
+                /*.authorizeHttpRequests((requests) -> {
                     // Configures authorization rules for specific URLs
                     requests.requestMatchers(WHITE_LIST_URL).permitAll()
                             // Requires authentication for any other request
                             .anyRequest().authenticated();
-                })
+                });*/
                 .sessionManagement(customizer -> customizer
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider) // Sets the authentication provider
-                .addFilterBefore(jwtAuthfilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(userActivityFilter, UsernamePasswordAuthenticationFilter.class);
+                .authenticationProvider(authenticationProvider); // Sets the authentication provider;
         return http.build(); // Builds and returns the configured security filter chain
     }
 }

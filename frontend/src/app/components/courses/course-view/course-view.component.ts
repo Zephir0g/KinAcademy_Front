@@ -59,15 +59,25 @@ export class CourseViewComponent implements OnInit {
 
   async getCourseData(url: string) {
 
+    if (this.user === '{}') {
+      this.data.toLoginPage();
+    }
+
     this.axiosService.requestWithHeaderAuth(
       "GET",
       "/course/" + url + "?username=" + this.user.username,
       null,
       this.user.secure_TOKEN
     ).catch((error) => {
+
+      if (error.response.status === 403 || error.response.status === 401) {
+        this.data.toLoginPage();
+      }
+
       if (error) {
         this.errorMessage = error.response.data?.message || error.response.data;
       }
+
     }).then((response) => {
       if (response) {
         this.course = null;

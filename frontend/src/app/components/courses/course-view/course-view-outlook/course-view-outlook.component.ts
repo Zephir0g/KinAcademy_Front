@@ -46,4 +46,15 @@ export class CourseViewOutlookComponent {
   openEditCourse() {
     window.location.href = "/course/" + this.course.url + "/edit";
   }
+
+  async logoutCourse() {
+    this.data.logoutCourse(this.course.url).then((response: any) => {
+      this.user.coursesId.splice(this.user.coursesId.indexOf(this.course.id), 1);
+      localStorage.setItem("user", JSON.stringify(this.user));
+      window.location.reload();
+    }).catch((error: any) => {
+      console.log(error.response);
+    })
+
+  }
 }

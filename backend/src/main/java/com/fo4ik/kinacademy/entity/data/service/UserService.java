@@ -24,7 +24,6 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordConfig passwordConfig;
     private final UserMapper userMapper;
-    private final UserAuthProvider userAuthProvider;
 
     public UserDto login(CredentialDto credentialDTO) {
         User user = userRepository.findByUsername(credentialDTO.username())

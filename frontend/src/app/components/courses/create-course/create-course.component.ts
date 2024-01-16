@@ -16,7 +16,6 @@ export class CreateCourseComponent implements OnInit {
   Editor = Editor;
   user: any;
   languages: any;
-  isUpdate = false;
   courseDescription: String = '';
   courseShortDescription: String = '';
   courseName: String = '';
@@ -56,7 +55,7 @@ export class CreateCourseComponent implements OnInit {
 
   onCreate() {
     this.error = '';
-    if (this.courseName == '' ||  this.courseShortDescription == '' || this.courseDescription == '' ||this.courseLanguage == '' || this.courseCategory == '' || this.courseUrl == '') {
+    if (this.courseName == '' || this.courseShortDescription == '' || this.courseDescription == '' || this.courseLanguage == '' || this.courseCategory == '' || this.courseUrl == '') {
       this.error = "Please fill required fields";
       return;
     } else {
@@ -75,14 +74,7 @@ export class CreateCourseComponent implements OnInit {
         },
         this.user.secure_TOKEN
       ).catch((error) => {
-        if (error.response.data.message == "Invalid SECURE_TOKEN" && !this.isUpdate) {
-          this.data.updateUser().then(() => {
-            this.onCreate();
-            this.isUpdate = true;
-          })
-        } else {
-          this.error = error.response.data.message;
-        }
+        this.error = error.response.data.message;
       })
         .then((response) => {
             if (response) {
