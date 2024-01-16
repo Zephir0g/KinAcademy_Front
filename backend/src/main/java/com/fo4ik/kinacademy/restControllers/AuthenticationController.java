@@ -39,7 +39,8 @@ public class AuthenticationController {
 
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    @Operation(summary = "Authenticate", description = "Authenticate, needed username (login) and password", tags = {"Authentication"})
+    @Operation(summary = "Authenticate", description = "Authenticate, needed username (login) and password",
+            tags = {"Authentication"})
     public ResponseEntity<UserDto> authenticate(
             @Parameter(description = "User login and password by format JSON", required = true)
             @RequestBody CredentialDto credentialDTO) {

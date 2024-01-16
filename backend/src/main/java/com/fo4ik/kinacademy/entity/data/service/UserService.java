@@ -2,7 +2,6 @@ package com.fo4ik.kinacademy.entity.data.service;
 
 import com.fo4ik.kinacademy.core.PasswordConfig;
 import com.fo4ik.kinacademy.core.Response;
-import com.fo4ik.kinacademy.core.UserAuthProvider;
 import com.fo4ik.kinacademy.dto.user.CredentialDto;
 import com.fo4ik.kinacademy.dto.user.SingUpUserDto;
 import com.fo4ik.kinacademy.dto.user.UserDto;
