@@ -21,6 +21,6 @@ public class VideoDto {
     @Schema(description = "Video url", example = "https://example.com/video.mp4")
     String urlToVideo;
 
-    @Schema(description = "Video users id witch watched this video", example = "[1, 2, 3]")
-    String usersIdWitchWatchedThisVideo;
+    @Schema(description = "Video is watched by this user", example = "false")
+    Boolean isWatched;
 }

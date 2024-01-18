@@ -47,4 +47,8 @@ button {
   box-shadow: 5px 5px 0 #b3b3b3;
 }
 
+li {
+  list-style-type: none;
+  display: flex;
+}
 

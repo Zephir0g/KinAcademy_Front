@@ -57,23 +57,36 @@ public class CoursesController {
         return ResponseEntity.ok(course.getUrl());
     }
 
+    /**
+     * Get courseDto by course url
+     * @param courseUrl
+     * @param username
+     * @return CourseDto or error message
+     */
+
     @RequestMapping(value = "/{course-url}", method = RequestMethod.GET, produces = "application/json")
-    @Operation(summary = "Get course by url", description = "Get course by url and need SECURE_TOKEN", tags = {"Courses"})
+    @Operation(summary = "Get course by url", description = "Get course by url and need SECURE_TOKEN",
+            tags = {"Courses"})
     public ResponseEntity<?> getCourse(
             @Parameter(description = "Course url", required = true)
             @PathVariable("course-url") String courseUrl,
             @Parameter(description = "User username", required = true)
             @RequestParam("username") String username) {
 
+        // Check if the 'username' parameter is null and return a BAD_REQUEST response if it is.
         if (username == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is null");
         }
 
+        // Calls a service method to check if the user has access to the requested course.
         Response response = courseService.isUserHaveAccessToCourse(username, courseUrl);
         if (!response.isSuccess()) {
+            // If the user don`t have access, return 'response' object data.
             return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
         }
-        CourseDto course = courseService.getCourseByUrl(courseUrl);
+        // If the user has access, retrieve the course data using the 'courseUrl'.
+        CourseDto course = courseService.getCourseByUrl(courseUrl, username);
+        // Return an OK response with the course data as the body.
         return ResponseEntity.ok(course);
     }
 
@@ -205,5 +218,24 @@ public class CoursesController {
 
         //List<Course> courses = courseService.searchCourses(name, category);'
         return ResponseEntity.ok(courseService.searchCourses(name, category));
+    }
+
+    @RequestMapping(value = "/change-status-watched-video", method = RequestMethod.POST)
+    public ResponseEntity<?> changeStatusWatchedVideo(
+            @RequestParam("username") String username,
+            @RequestParam("courseUrl") String courseUrl,
+            @RequestParam("videoUrl") String videoUrl
+    ) {
+        Response isUserHaveAccessToCourse = courseService.changeStatusWatchedVideo(username, courseUrl, videoUrl);
+        if (!isUserHaveAccessToCourse.isSuccess()) {
+            return ResponseEntity.status(isUserHaveAccessToCourse.getHttpStatus()).body(isUserHaveAccessToCourse.getMessage());
+        }
+
+        Response isStatusChanged = courseService.changeStatusWatchedVideo(username, courseUrl, videoUrl);
+        if (!isStatusChanged.isSuccess()) {
+            return ResponseEntity.status(isStatusChanged.getHttpStatus()).body(isStatusChanged.getMessage());
+        }
+
+        return ResponseEntity.ok(isStatusChanged.getMessage());
     }
 }

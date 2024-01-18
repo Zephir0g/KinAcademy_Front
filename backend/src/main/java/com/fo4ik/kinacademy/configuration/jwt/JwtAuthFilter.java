@@ -36,7 +36,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        if (request.getServletPath().contains("/api/v1/components")) {
+        if (request.getServletPath().contains("/api/v1/components/")) {
             filterChain.doFilter(request, response);
             return;
         }

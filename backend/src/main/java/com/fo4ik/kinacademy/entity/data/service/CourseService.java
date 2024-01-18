@@ -2,9 +2,15 @@ package com.fo4ik.kinacademy.entity.data.service;
 
 import com.fo4ik.kinacademy.core.Response;
 import com.fo4ik.kinacademy.dto.course.CourseDto;
+import com.fo4ik.kinacademy.dto.course.SectionsDto;
 import com.fo4ik.kinacademy.dto.course.SingUpCourseDto;
+import com.fo4ik.kinacademy.dto.course.VideoDto;
 import com.fo4ik.kinacademy.entity.course.Course;
+import com.fo4ik.kinacademy.entity.course.Section;
+import com.fo4ik.kinacademy.entity.course.Video;
 import com.fo4ik.kinacademy.entity.data.mappers.CourseMapper;
+import com.fo4ik.kinacademy.entity.data.mappers.SectionMapper;
+import com.fo4ik.kinacademy.entity.data.mappers.VideoMapper;
 import com.fo4ik.kinacademy.entity.data.repository.CourseRepository;
 import com.fo4ik.kinacademy.entity.user.Status;
 import com.fo4ik.kinacademy.entity.user.User;
@@ -23,6 +29,8 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
     private final CourseMapper courseMapper;
+    private final SectionMapper sectionMapper;
+    private final VideoMapper videoMapper;
     private final UserService userService;
 
 
@@ -67,7 +75,37 @@ public class CourseService {
         if (oCourse.isEmpty()) {
             throw new AppException("Course not found", HttpStatus.NOT_FOUND);
         }
+
+
         return courseMapper.courseToCourseDto(oCourse.get());
+    }
+
+    public CourseDto getCourseByUrl(String url, String username) {
+        Optional<Course> oCourse = courseRepository.findByUrl(url);
+        if (oCourse.isEmpty()) {
+            throw new AppException("Course not found", HttpStatus.NOT_FOUND);
+        }
+
+        Course course = oCourse.get();
+        CourseDto courseDto = courseMapper.courseToCourseDto(oCourse.get());
+        Optional<User> oUser = userService.findByUsername(username);
+
+        /// Get the list of watched videos for the user
+        List<Video> watchedVideos = courseRepository.findVideosWatchedByUser(username);
+
+        // Iterate through course sections and videos in courseDto and mark them as watched if they exist in watchedVideos
+        for (SectionsDto section : courseDto.getSections()) {
+            for (VideoDto videoDto : section.getVideos()) {
+                videoDto.setIsWatched(isVideoWatched(watchedVideos, videoDto.getId()));
+            }
+        }
+
+//        return courseMapper.courseToCourseDto(oCourse.get());
+        return courseDto;
+    }
+
+    private boolean isVideoWatched(List<Video> watchedVideos, Long videoId) {
+        return watchedVideos.stream().anyMatch(video -> video.getId().equals(videoId));
     }
 
     public boolean isUserIsAuthor(String username, String courseUrl) {
@@ -95,7 +133,7 @@ public class CourseService {
         course.setLanguage(courseDto.getLanguage());
         course.setImageUrl(courseDto.getImageUrl());
         course.setLastUpdateDate(new Date());
-        course.setSections(courseDto.getSections());
+        course.setSections(sectionMapper.sectionsDtoToSections(courseDto.getSections()));
         courseRepository.save(course);
         return new Response().builder()
                 .isSuccess(true)
@@ -248,5 +286,67 @@ public class CourseService {
 
 //        return courseMapper.coursesToCoursesDto(courseRepository.findAllByIsPublic(true));
         return null;
+    }
+
+    public Response changeStatusWatchedVideo(String username, String courseUrl, String videoUrl) {
+
+        Response response = isUserHaveAccessToCourse(username, courseUrl);
+        if (!response.isSuccess()) {
+            return response;
+        }
+
+        Optional<Course> oCourse = courseRepository.findByUrl(courseUrl);
+        if (oCourse.isEmpty()) {
+            return new Response().builder()
+                    .isSuccess(false)
+                    .message("Course not found")
+                    .httpStatus(HttpStatus.NOT_FOUND)
+                    .build();
+        }
+
+        Optional<User> oUser = userService.findByUsername(username);
+        if (oUser.isEmpty()) {
+            return new Response().builder()
+                    .isSuccess(false)
+                    .message("User not found")
+                    .httpStatus(HttpStatus.NOT_FOUND)
+                    .build();
+        }
+
+        if (!oUser.get().getCoursesId().contains(oCourse.get().getId())) {
+            return new Response().builder()
+                    .isSuccess(false)
+                    .message("You not joined this course")
+                    .httpStatus(HttpStatus.CONFLICT)
+                    .build();
+        }
+
+        Video video = oCourse.get().getSections().stream()
+                .flatMap(section -> section.getVideos().stream())
+                .filter(video1 -> video1.getUrlToVideo().equals(videoUrl))
+                .findFirst()
+                .orElseThrow(() -> null);
+
+        if (video == null) {
+            return new Response().builder()
+                    .isSuccess(false)
+                    .message("Video not found")
+                    .httpStatus(HttpStatus.NOT_FOUND)
+                    .build();
+        }
+
+        if (video.getUsersWhoWatched().contains(oUser.get())) {
+            video.getUsersWhoWatched().remove(oUser.get());
+        } else {
+            video.getUsersWhoWatched().add(oUser.get());
+        }
+
+
+        courseRepository.save(oCourse.get());
+        return new Response().builder()
+                .isSuccess(true)
+                .message("Status changed")
+                .httpStatus(HttpStatus.OK)
+                .build();
     }
 }

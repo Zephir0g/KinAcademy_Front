@@ -39,6 +39,8 @@ import {TabViewModule} from "primeng/tabview";
 import {ButtonModule} from "primeng/button";
 import { IndexUnauthorizedComponent } from './components/index/index-unauthorized/index-unauthorized.component';
 import { SearchComponent } from './components/search/search.component';
+import {TieredMenuModule} from "primeng/tieredmenu";
+import {CheckboxModule} from "primeng/checkbox";
 
 @NgModule({
   declarations: [
@@ -62,28 +64,30 @@ import { SearchComponent } from './components/search/search.component';
     IndexUnauthorizedComponent,
     SearchComponent
   ],
-  imports: [
-    BrowserModule,
-    CKEditorModule,
-    AppRoutingModule,
-    HttpClientModule,
-    FormsModule,
-    FontAwesomeModule,
-    BrowserAnimationsModule,
-    NgxSpinnerModule,
-    MatFormFieldModule,
-    MatDialogModule,
-    MatInputModule,
-    MatButtonModule,
-    VgCoreModule,
-    VgControlsModule,
-    VgOverlayPlayModule,
-    VgBufferingModule,
-    NgxFileDropModule,
-    AvatarModule,
-    TabViewModule,
-    ButtonModule
-  ],
+    imports: [
+        BrowserModule,
+        CKEditorModule,
+        AppRoutingModule,
+        HttpClientModule,
+        FormsModule,
+        FontAwesomeModule,
+        BrowserAnimationsModule,
+        NgxSpinnerModule,
+        MatFormFieldModule,
+        MatDialogModule,
+        MatInputModule,
+        MatButtonModule,
+        VgCoreModule,
+        VgControlsModule,
+        VgOverlayPlayModule,
+        VgBufferingModule,
+        NgxFileDropModule,
+        AvatarModule,
+        TabViewModule,
+        ButtonModule,
+        TieredMenuModule,
+        CheckboxModule
+    ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [],
   bootstrap: [AppComponent]

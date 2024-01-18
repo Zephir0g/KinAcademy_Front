@@ -14,7 +14,7 @@
       <div class="videos">
         <ul *ngFor="let video of section.videos; let i = index">
           <li>
-
+            <p-checkbox [binary]="true" inputId="binary"></p-checkbox>
             <button class="btn video" (click)="openVideo(video.urlToVideo)">
               {{video.name}}
             </button>
@@ -25,3 +25,5 @@
   </div>
 
 </div>
+
+{{JSON.stringify(course)}}

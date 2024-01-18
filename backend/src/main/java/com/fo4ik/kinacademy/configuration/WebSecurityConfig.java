@@ -19,17 +19,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 @EnableMethodSecurity
 public class WebSecurityConfig {
-    // White list of URLs that are allowed without authentication
-    private static final String[] WHITE_LIST_URL = {
-            "/api/v1/auth/**",
-            "/api/v1/components/**",
-            "/v1/api-docs/**",
-            "/v1/api-docs",
-            "/swagger-resources",
-            "/swagger-resources/**",
-            "/swagger-ui/**",
-            "/swagger-ui.html"};
-
     // Filter responsible for JWT authentication
     private final JwtAuthFilter jwtAuthfilter;
     private final UserService userService;
@@ -44,12 +33,6 @@ public class WebSecurityConfig {
                 // Disables CSRF protection
                 .addFilterBefore(jwtAuthfilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf(AbstractHttpConfigurer::disable)
-                /*.authorizeHttpRequests((requests) -> {
-                    // Configures authorization rules for specific URLs
-                    requests.requestMatchers(WHITE_LIST_URL).permitAll()
-                            // Requires authentication for any other request
-                            .anyRequest().authenticated();
-                });*/
                 .sessionManagement(customizer -> customizer
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider); // Sets the authentication provider;

@@ -69,7 +69,7 @@ public class CourseDto {
     Double rating;
 
     @Schema(description = "Course sections", example = "See SectionDto")
-    List<Section> sections;
+    List<SectionsDto> sections;
 
 
 }

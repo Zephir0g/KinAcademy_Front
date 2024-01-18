@@ -28,4 +28,5 @@ export class CourseVideoPanelComponent {
   }
 
   protected readonly faArrowRight = faArrowRight;
+  protected readonly JSON = JSON;
 }

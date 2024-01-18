@@ -2,6 +2,7 @@ package com.fo4ik.kinacademy.entity.user;
 
 
 import com.fo4ik.kinacademy.entity.course.Course;
+import com.fo4ik.kinacademy.entity.course.Video;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -74,6 +75,14 @@ public class User implements UserDetails {
     @CollectionTable(name = "user_courses", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "course_id")
     List<Long> coursesId = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_watched_videos",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "video_id")
+    )
+    private List<Video> watchedVideos;
 
 
     @Override
