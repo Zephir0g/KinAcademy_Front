@@ -59,6 +59,7 @@ public class CoursesController {
 
     /**
      * Get courseDto by course url
+     *
      * @param courseUrl
      * @param username
      * @return CourseDto or error message
@@ -226,7 +227,7 @@ public class CoursesController {
             @RequestParam("courseUrl") String courseUrl,
             @RequestParam("videoUrl") String videoUrl
     ) {
-        Response isUserHaveAccessToCourse = courseService.changeStatusWatchedVideo(username, courseUrl, videoUrl);
+        Response isUserHaveAccessToCourse = courseService.isUserHaveAccessToCourse(username, courseUrl);
         if (!isUserHaveAccessToCourse.isSuccess()) {
             return ResponseEntity.status(isUserHaveAccessToCourse.getHttpStatus()).body(isUserHaveAccessToCourse.getMessage());
         }

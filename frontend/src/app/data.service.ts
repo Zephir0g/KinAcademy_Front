@@ -263,4 +263,14 @@ export class DataService {
       {}
     )
   }
+
+  async changeStatusWatchedVideo(user: any, courseUrl: string, videoUrd: string) {
+
+    return this.axiosService.requestWithHeaderAuth(
+      "POST",
+      "/course/change-status-watched-video?username=" + user.username + "&courseUrl=" + courseUrl + "&videoUrl=" + videoUrd,
+      null,
+      user.secure_TOKEN
+    )
+  }
 }

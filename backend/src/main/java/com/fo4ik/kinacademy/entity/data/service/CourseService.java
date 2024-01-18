@@ -290,63 +290,66 @@ public class CourseService {
 
     public Response changeStatusWatchedVideo(String username, String courseUrl, String videoUrl) {
 
-        Response response = isUserHaveAccessToCourse(username, courseUrl);
-        if (!response.isSuccess()) {
-            return response;
-        }
-
-        Optional<Course> oCourse = courseRepository.findByUrl(courseUrl);
-        if (oCourse.isEmpty()) {
-            return new Response().builder()
-                    .isSuccess(false)
-                    .message("Course not found")
-                    .httpStatus(HttpStatus.NOT_FOUND)
-                    .build();
-        }
-
+        // Find the user by username
         Optional<User> oUser = userService.findByUsername(username);
         if (oUser.isEmpty()) {
-            return new Response().builder()
+            return Response.builder()
                     .isSuccess(false)
                     .message("User not found")
                     .httpStatus(HttpStatus.NOT_FOUND)
                     .build();
         }
 
-        if (!oUser.get().getCoursesId().contains(oCourse.get().getId())) {
-            return new Response().builder()
+        // Find the course by courseUrl
+        Optional<Course> oCourse = courseRepository.findByUrl(courseUrl);
+        if (oCourse.isEmpty()) {
+            return Response.builder()
                     .isSuccess(false)
-                    .message("You not joined this course")
-                    .httpStatus(HttpStatus.CONFLICT)
+                    .message("Course not found")
+                    .httpStatus(HttpStatus.NOT_FOUND)
                     .build();
         }
 
-        Video video = oCourse.get().getSections().stream()
-                .flatMap(section -> section.getVideos().stream())
-                .filter(video1 -> video1.getUrlToVideo().equals(videoUrl))
-                .findFirst()
-                .orElseThrow(() -> null);
+        // Find the video within the course by videoUrl
+        Course course = oCourse.get();
+        Video videoToUpdate = null;
+        for (Section section : course.getSections()) {
+            for (Video video : section.getVideos()) {
+                if (video.getUrlToVideo().equals(videoUrl)) {
+                    videoToUpdate = video;
+                    break;
+                }
+            }
+        }
 
-        if (video == null) {
-            return new Response().builder()
+        if (videoToUpdate == null) {
+            return Response.builder()
                     .isSuccess(false)
                     .message("Video not found")
                     .httpStatus(HttpStatus.NOT_FOUND)
                     .build();
         }
 
-        if (video.getUsersWhoWatched().contains(oUser.get())) {
-            video.getUsersWhoWatched().remove(oUser.get());
+        // Update the user's watched videos list
+        User user = oUser.get();
+        if (user.getWatchedVideos().contains(videoToUpdate)) {
+            user.getWatchedVideos().remove(videoToUpdate);
+            userService.save(user); // Save the updated user
+
+            return Response.builder()
+                    .isSuccess(true)
+                    .message("Video marked as not watched")
+                    .httpStatus(HttpStatus.OK)
+                    .build();
         } else {
-            video.getUsersWhoWatched().add(oUser.get());
+            user.getWatchedVideos().add(videoToUpdate);
+            userService.save(user); // Save the updated user
+
+            return Response.builder()
+                    .isSuccess(true)
+                    .message("Video marked as watched")
+                    .httpStatus(HttpStatus.OK)
+                    .build();
         }
-
-
-        courseRepository.save(oCourse.get());
-        return new Response().builder()
-                .isSuccess(true)
-                .message("Status changed")
-                .httpStatus(HttpStatus.OK)
-                .build();
     }
 }
