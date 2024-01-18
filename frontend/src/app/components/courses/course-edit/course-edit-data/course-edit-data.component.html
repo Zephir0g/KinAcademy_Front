@@ -32,8 +32,11 @@
           </ng-container>
           <ng-container *ngIf="isEdit">
             <option value="">Select category</option>
-            <option *ngFor="let category of categories" [value]="category.name">
-              {{ category.name }}
+<!--            <option *ngFor="let category of categories" [value]="category.name">-->
+<!--              {{ category.label }}-->
+<!--            </option>-->
+            <option *ngFor="let category of getEmptyItems(categories)" [value]="category.name">
+              {{ category.label }}
             </option>
           </ng-container>
         </select>

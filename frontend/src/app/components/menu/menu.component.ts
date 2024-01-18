@@ -24,6 +24,8 @@ export class MenuComponent implements OnInit {
   searchText: string = "";
   categorySearch: string = "";
 
+  menuCategoryItems: any[] = [];
+
   constructor(private route: ActivatedRoute,
               private router: Router,
               private data: DataService) {
@@ -38,25 +40,32 @@ export class MenuComponent implements OnInit {
   ngOnInit(): void {
     this.user = this.data.getUser();
     this.categories = this.data.getCategories();
+
   }
 
   addNameToSearch() {
-    this.route.queryParams.subscribe(params => {
-      const updatedParams = {...params, name: this.searchText};
-      this.router.navigate(['/search'], {queryParams: updatedParams}).then(r => {
-        window.location.reload()
+    if (this.searchText.trim() !== '') {
+      this.route.queryParams.subscribe(params => {
+        const updatedParams = {...params, name: this.searchText};
+        this.router.navigate(['/search'], {queryParams: updatedParams}).then(() => {
+          window.location.reload();
+        });
       });
-    });
+    } else {
+      window.location.href = '/search?name=' + this.searchText;
+    }
   }
 
 
   addCategoryToSearch(category: any) {
     this.route.queryParams.subscribe(params => {
       const updatedParams = {...params, category: category};
+      this.categorySearch = category;
       this.router.navigate(['/search'], {queryParams: updatedParams}).then(r => {
         window.location.reload()
       });
     });
   }
+
 
 }

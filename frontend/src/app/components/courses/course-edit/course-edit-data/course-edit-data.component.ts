@@ -76,6 +76,19 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
     }
   }
 
+  getEmptyItems(categoryList: any): Array<any>{
+    let emptyLabels = [];
+    for (const category of categoryList) {
+      if (category.items.length === 0) {
+        emptyLabels.push(category);
+      }
+      if (category.items.length > 0) {
+        emptyLabels = emptyLabels.concat(this.getEmptyItems(category.items));
+      }
+    }
+    return emptyLabels.sort();
+  }
+
   loadCourseDetails() {
     this.languages = this.data.getLanguages();
     this.courseImage = this.course.imageUrl || this.imageNotFound;
@@ -83,7 +96,7 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
     this.courseShortDescription = this.course.shortDescription;
     this.courseName = this.course.name;
     this.courseLanguage = this.course.language;
-    this.courseCategory = this.course.category;
+    this.courseCategory = this.searchCategoryByName(this.categories, this.course.category).label;
     this.sections = this.course.sections;
   }
 
@@ -102,6 +115,21 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
       }
     }
     this.sectionInputName = '';
+  }
+
+  searchCategoryByName(categoryList: any[], categoryName: string): any | null {
+    for (const category of categoryList) {
+      if (category.name === categoryName) {
+        return category;
+      }
+      if (category.items && category.items.length > 0) {
+        const subCategory = this.searchCategoryByName(category.items, categoryName);
+        if (subCategory) {
+          return subCategory;
+        }
+      }
+    }
+    return null;
   }
 
   hideSpinner() {

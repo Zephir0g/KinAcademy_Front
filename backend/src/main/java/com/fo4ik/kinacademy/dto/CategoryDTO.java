@@ -1,8 +1,27 @@
 package com.fo4ik.kinacademy.dto;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-public record CategoryDTO(
-        @Schema(description = "Category name", example = "Web Development", name = "name")
-        String name) {
+import java.util.ArrayList;
+import java.util.List;
+
+
+@Data
+@AllArgsConstructor
+public class CategoryDTO {
+    private String name;
+    private String label;
+    private List<CategoryDTO> items;
+
+    public CategoryDTO(String name, String label) {
+        this.name = name;
+        this.label = label;
+        this.items = new ArrayList<CategoryDTO>();
+    }
+
+    public CategoryDTO() {
+        this.items = new ArrayList<CategoryDTO>();
+    }
 }
+

@@ -25,10 +25,21 @@
                 Categories
               </a>
               <ul class="dropdown-menu dropdown-menu-light dropdown-first">
-                <li *ngFor="let category of categories" (click)="addCategoryToSearch(category.name)"
+                <!--<li *ngFor="let category of categories" (click)="addCategoryToSearch(category.label)"
                     class="dropdown-item">
-                  <span>{{category.name}}</span>
-                </li>
+                  <span>{{category.label}}</span>
+                </li>-->
+                <p-tieredMenu [model]="categories">
+                  <ng-template let-category pTemplate="item">
+                    <li *ngIf="!category.items.length" (click)="addCategoryToSearch(category.name)">
+                      {{ category.label }}
+                    </li>
+                    <li *ngIf="category.items.length">
+                      {{ category.label }}
+                    </li>
+                  </ng-template>
+                </p-tieredMenu>
+
 
               </ul>
             </li>

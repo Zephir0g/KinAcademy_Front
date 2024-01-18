@@ -59,7 +59,7 @@ public class Components {
 
     @RequestMapping(value = "/categories", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Get categories", description = "Get categories from file using current language", tags = {"Components"})
-    public ResponseEntity<List<CategoryDTO>> getCategories(
+    public ResponseEntity<?> getCategories(
             @Parameter(description = "User language", example = "English")
             @RequestParam("language") String language
     ) {
@@ -67,19 +67,104 @@ public class Components {
         ResourceBundle resourceBundle = ResourceBundle.getBundle("bundles/category", locale);
 
 
-        List<CategoryDTO> categoryDTO = new ArrayList<>();
+       /* List<CategoryDTO> categoryDTO = new ArrayList<>();
         for (String key : resourceBundle.keySet()) {
             String value = resourceBundle.getString(key);
             categoryDTO.add(new CategoryDTO(value));
         }
-        //TODO SORT ALPHABETICALLY
 
-        Collections.sort(categoryDTO, (category1, category2) -> category1.getName().compareToIgnoreCase(category2.getName()));
+        Collections.sort(categoryDTO, (category1, category2) -> category1.getName().compareToIgnoreCase(category2.getName()));*/
 
-//        Collections.sort(categoryDTO, Comparator.comparing(CategoryDTO::getName));
+//        List<CategoryDTO> categories = buildCategoriesFromResourceBundle(resourceBundle);
+        return ResponseEntity.ok(buildCategoriesFromResourceBundle(resourceBundle));
+    }
+
+    private Object buildCategoriesFromResourceBundle(ResourceBundle resourceBundle) {
+        Enumeration<String> keys = resourceBundle.getKeys();
+        List<CategoryDTO> categoryDTOS = new ArrayList<>();
 
 
-        return ResponseEntity.ok(categoryDTO);
+//        Map<String, Object> parent = new HashMap<>();
+        List<CategoryDTO> parent = new ArrayList<>();
+
+        while (keys.hasMoreElements()) {
+            String key = keys.nextElement();
+            String value = resourceBundle.getString(key);
+            String[] parts = key.split("\\.");
+
+
+            List<CategoryDTO> subCategories = new ArrayList<>();
+            List<CategoryDTO> categories = new ArrayList<>();
+            try {
+                if (parts.length == 1) {
+                    CategoryDTO categoryDTO = checkCategory(parts[0], parent);
+                    if (categoryDTO == null) {
+                        parent.add(new CategoryDTO(parts[0], value));
+                    } else {
+                        categoryDTO.setLabel(value);
+                    }
+                }
+                if (parts.length == 2) {
+                    CategoryDTO categoryDTO = checkCategory(parts[0], parent);
+                    CategoryDTO categoryDTOSub = new CategoryDTO();
+                    if (categoryDTO == null) {
+                        categoryDTO = new CategoryDTO(parts[0], "temp");
+                        parent.add(categoryDTO);
+                    }
+
+                    categoryDTOSub = checkCategory(parts[1], categoryDTO.getItems());
+                    if (categoryDTOSub == null) {
+                        categoryDTOSub = new CategoryDTO(parts[1], value);
+                        parent.get(parent.indexOf(categoryDTO)).getItems().add(categoryDTOSub);
+                    } else {
+                        categoryDTOSub.setLabel(value);
+                    }
+
+
+                }
+
+                if (parts.length == 3) {
+                    CategoryDTO categoryDTO = checkCategory(parts[0], parent);
+                    CategoryDTO categoryDTOSub = new CategoryDTO();
+                    if (categoryDTO == null) {
+                        categoryDTO = new CategoryDTO(parts[0], "temp");
+                        parent.add(categoryDTO);
+                    }
+
+                    categoryDTOSub = checkCategory(parts[1], categoryDTO.getItems());
+                    if (categoryDTOSub == null) {
+                        categoryDTOSub = new CategoryDTO(parts[1], "temp");
+                        parent.get(parent.indexOf(categoryDTO)).getItems().add(categoryDTOSub);
+                    }
+
+                    CategoryDTO categoryDTOSubSub = new CategoryDTO();
+                    categoryDTOSubSub = checkCategory(parts[2], categoryDTOSub.getItems());
+                    if (categoryDTOSubSub == null) {
+                        categoryDTOSubSub = new CategoryDTO(parts[2], value);
+                        parent.get(parent.indexOf(categoryDTO)).getItems().get(parent.get(parent.indexOf(categoryDTO)).getItems().indexOf(categoryDTOSub)).getItems().add(categoryDTOSubSub);
+                    } else {
+                        categoryDTOSubSub.setLabel(value);
+                    }
+                }
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body("Error while parsing categories");
+            }
+        }
+
+
+        return parent;
+    }
+
+    private CategoryDTO checkCategory(String name, List<CategoryDTO> categories) {
+        if (categories == null) {
+            return null;
+        }
+        for (CategoryDTO category : categories) {
+            if (category.getName().equals(name)) {
+                return category;
+            }
+        }
+        return null;
     }
 
     @RequestMapping(value = "/authorname", method = RequestMethod.GET)
@@ -92,17 +177,5 @@ public class Components {
         }
 
         return ResponseEntity.ok(user.getFirstName() + " " + user.getSurname());
-    }
-
-    public static class CategoryDTO {
-        private String name;
-
-        public CategoryDTO(String name) {
-            this.name = name;
-        }
-
-        public String getName() {
-            return name;
-        }
     }
 }
