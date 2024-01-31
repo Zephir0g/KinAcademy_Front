@@ -265,8 +265,8 @@ public class CourseService {
                 .build();
     }
 
-    public List<Course> getUserCourses(User user) {
-        return courseRepository.findAllById(user.getCoursesId());
+    public List<CourseDto> getUserCourses(User user) {
+        return courseMapper.coursesToCoursesDto(courseRepository.findAllById(user.getCoursesId()));
     }
 
     public List<CourseDto> searchCourses(String name, String category) {

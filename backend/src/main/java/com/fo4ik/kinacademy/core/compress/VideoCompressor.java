@@ -78,6 +78,7 @@ public class VideoCompressor {
                     }
                 });
                 mp4Thread.start();
+                Files.delete(videoInputPath);
                 return videoName;
             case "avi":
                 videoName = UUID.randomUUID() + ".avi";
@@ -90,9 +91,21 @@ public class VideoCompressor {
                     }
                 });
                 aviThread.start();
+                Files.delete(videoInputPath);
                 return videoName;
             case "webm":
-//                return compressWebm(video, folder);
+                videoName = UUID.randomUUID() + ".webm";
+                path = Path.of(folder + "/" + videoName);
+                outputVideoPath = String.valueOf(path);
+                Thread webmThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        compressWebm(probeResult, executor, video, folder, outputVideoPath, Path.of(inputVideo));
+                    }
+                });
+                webmThread.start();
+                Files.delete(videoInputPath);
+                return videoName;
             default:
                 return null;
         }
@@ -184,6 +197,42 @@ public class VideoCompressor {
                 Files.delete(videoInputPath);
             }
         } catch (Exception e) {
+            // Handle any exceptions that may occur during the compression process
+            System.out.println("Error: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    @Async("AsyncTaskExecutor")
+    void compressWebm(FFmpegProbeResult probeResult, FFmpegExecutor executor,
+                      MultipartFile video, Path folder, String outputVideoPath,
+                      Path videoInputPath){
+        try{
+            // Configure FFmpegBuilder for video compression
+            FFmpegBuilder builder = new FFmpegBuilder()
+                    .setInput(probeResult)
+                    .addOutput(outputVideoPath.toString())
+                    .setAudioCodec("libvorbis")
+                    .setVideoCodec("libvpx-vp9")
+                    .setFormat("webm")
+                    .setVideoFrameRate(FFmpeg.FPS_30)
+                    .setAudioChannels(FFmpeg.AUDIO_STEREO)
+                    .setStrict(FFmpegBuilder.Strict.EXPERIMENTAL)
+                    .addExtraArgs("-tile-columns", "6")
+                    .done();
+
+            // Create and run FFmpegJob
+            FFmpegJob job = executor.createJob(builder);
+            job.run();
+
+            // Delete the original video file after compression
+            Files.delete(videoInputPath);
+
+            // Check if the file deletion was successful and delete again if needed
+            if (Files.exists(videoInputPath)) {
+                Files.delete(videoInputPath);
+            }
+        } catch (Exception e){
             // Handle any exceptions that may occur during the compression process
             System.out.println("Error: " + e.getMessage());
             e.printStackTrace();

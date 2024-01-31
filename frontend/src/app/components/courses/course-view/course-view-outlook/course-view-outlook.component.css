@@ -16,6 +16,7 @@ details[open] .summary {
   border-radius: 0 0 .375rem .375rem !important;
   border-top: 0 !important;
 }
+
 .summary {
   display: block; /* This hides the summary's ::marker pseudo-element */
   border: 1px solid #ccced1;
@@ -25,33 +26,38 @@ details[open] .summary {
 
 }
 
-.arrow{
+.arrow {
   float: right;
   padding-right: 0.375rem;
   transition: .25s transform ease;
 }
-details[open] .arrow{
+
+details[open] .arrow {
   transform: rotate(90deg);
   transition: .25s transform ease;
 
 }
 
-.videos{
+.videos {
   border: 1px solid #ccced1;
   border-top: 0;
   border-radius: 0 0 .375rem .375rem;
 }
 
-.videos ul{
+.videos ul {
   padding-top: 0.6rem;
 }
 
-.video{
+.video {
   text-align: left;
   width: 100%;
 }
 
-.video:hover{
-  background-color: #f3f3f3;
+.video:hover {
   cursor: pointer;
+}
+
+.watched {
+  background-color: gray;
+  border-radius: 0.375rem;
 }

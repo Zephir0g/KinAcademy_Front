@@ -3,22 +3,27 @@ import {AxiosService} from "../../axios.service";
 import {Router} from '@angular/router';
 import {DataService} from "../../data.service";
 import {NgxSpinnerService} from "ngx-spinner";
+import {MessageService, PrimeNGConfig} from "primeng/api";
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css'],
+  providers: [MessageService]
 })
 export class LoginComponent implements OnInit {
 
   constructor(private axiosService: AxiosService,
               private router: Router,
+              private messageService: MessageService,
+              private primengConfig: PrimeNGConfig,
               private data: DataService,
               private spinner: NgxSpinnerService) {
   }
 
   ngOnInit(): void {
     // Get the user's preferred languages
+    this.primengConfig.ripple = true;
     const userLangs = navigator.languages;
 
     // Create a display name object for languages
@@ -38,19 +43,21 @@ export class LoginComponent implements OnInit {
   userLanguage: string = "";
 
   internalization: any = {};
-
-  errorMessages: string[] = [];
+  isError: boolean = false;
 
 
   tabSwitch(tab: string): void {
     this.active = tab;
+    this.password = "";
+    this.username = "";
   }
+
 
   onSubmitLogin(): void {
     this.spinner.show();
-    this.errorMessages = [];
     if (this.username == "" || this.password == "") {
-      this.errorMessages.push("Please fill required fields")
+      this.isError = true;
+      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Please fill required fields'});
       this.spinner.hide();
       return;
     }
@@ -63,7 +70,8 @@ export class LoginComponent implements OnInit {
       },
     ).catch((error) => {
       this.spinner.hide();
-      this.errorMessages.push(error.response.data.message)
+      this.isError = true;
+      this.messageService.add({severity: 'error', summary: 'Error', detail: error.response.data});
     })
       .then((response) => {
         if (response) {
@@ -81,7 +89,13 @@ export class LoginComponent implements OnInit {
 
   onSubmitRegister() {
     this.spinner.show();
-    this.errorMessages = [];
+
+    if (this.username == "" || this.password == "" || this.email == "" || this.firstName == "" || this.surname == "") {
+      this.isError = true;
+      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Please fill required fields'});
+      this.spinner.hide();
+      return;
+    }
     this.axiosService.request(
       "POST",
       "/auth/register",
@@ -95,7 +109,9 @@ export class LoginComponent implements OnInit {
       },
     ).catch((error) => {
 
-      this.spinner.hide().then(r => this.errorMessages.push(error.response.data.message));
+      this.spinner.hide();
+      this.isError = true;
+      this.messageService.add({severity: 'error', summary: 'Error', detail: error.response.data});
     }).then((response) => {
       if (response) {
         this.spinner.hide().then(r => this.active = "login");

@@ -1,6 +1,7 @@
 package com.fo4ik.kinacademy.restControllers;
 
 import com.fo4ik.kinacademy.core.Response;
+import com.fo4ik.kinacademy.dto.course.CourseDto;
 import com.fo4ik.kinacademy.dto.user.UserDto;
 import com.fo4ik.kinacademy.entity.course.Course;
 import com.fo4ik.kinacademy.entity.data.service.CourseService;
@@ -57,7 +58,7 @@ public class Users {
         }
 
         User user = userService.getUserByUsername(username);
-        List<Course> userCourses = courseService.getUserCourses(user);
+        List<CourseDto> userCourses = courseService.getUserCourses(user);
 
         return ResponseEntity.ok(userCourses);
     }

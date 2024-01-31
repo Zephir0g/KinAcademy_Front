@@ -13,6 +13,7 @@ export class CourseVideoPanelComponent {
   user = JSON.parse(localStorage.getItem('user') || '{}');
   isSidebarOpen: boolean = true;
   faXmark = faXmark;
+  internalization = this.data.getInternalization();
 
 
   constructor(private data: DataService) {

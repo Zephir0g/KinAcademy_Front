@@ -1,6 +1,17 @@
-.error{
-    color: red;
-    font-size: 14px;
-    font-weight: bold;
-    margin-top: 10px;
+.password {
+  width: 100%;
 }
+
+.required {
+  border: 1px solid red;
+  border-radius: 5px;
+}
+
+::ng-deep .p-password {
+  width: 100%;
+}
+
+::ng-deep .p-inputtext {
+  width: 100%;
+}
+

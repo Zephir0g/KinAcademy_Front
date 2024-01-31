@@ -28,11 +28,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     // This method is called for each incoming HTTP request.
     @Override
     protected void doFilterInternal(
-             HttpServletRequest request,
-             HttpServletResponse response,
-             FilterChain filterChain
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
     ) throws ServletException, IOException {
         if (request.getServletPath().contains("/api/v1/auth")) {
+            System.out.println("auth");
             filterChain.doFilter(request, response);
             return;
         }
@@ -51,14 +52,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         // Check if the "Authorization" header is missing or doesn't start with the token prefix.
         if (authHeader == null || !authHeader.startsWith(bearer)) {
-            response.sendError(401,"No Authorization header");
+            response.sendError(401, "No Authorization header");
             return;
         }
 
         // Extract the JWT token from the header.
         jwt = authHeader.replace(bearer, "");
         // Extract the username from the JWT token.
-        try{
+        try {
             username = jwtService.extractUsername(jwt);
         } catch (Exception e) {
             response.sendError(401, "Token is not valid");
@@ -104,7 +105,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Continue processing the request.
-        filterChain.doFilter(request, response);
+        try {
+            // Continue processing the request.
+            filterChain.doFilter(request, response);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

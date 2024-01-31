@@ -21,7 +21,8 @@
       <div [ngClass]="active == 'login' ? 'tab-pane fade show active' : 'tab-pane fade'">
         <form (ngSubmit)="onSubmitLogin()" #loginForm="ngForm">
           <div class="form-group mb-4">
-            <input class="form-control" type="text" id="loginName" name="login" [(ngModel)]="username" placeholder="Login">
+            <input class="form-control" type="text" id="loginName" name="login" [(ngModel)]="username"
+                   placeholder="Login">
           </div>
           <div class="form-group mb-4">
             <input class="form-control" type="password" id="loginPassword" name="loginPassword" [(ngModel)]="password"
@@ -35,20 +36,26 @@
       <div [ngClass]="active == 'register' ? 'tab-pane fade show active' : 'tab-pane fade'">
         <form (ngSubmit)="onSubmitRegister()" #loginForm="ngForm">
           <div class="input-group mb-4">
-            <input type="text" aria-label="First name" class="form-control" id="firstName" name="firstName"
+            <input pInputText type="text" aria-label="First name" [ngClass]="isError ? 'required form-control' : 'form-control' " id="firstName"
+                   name="firstName"
                    [(ngModel)]="firstName" placeholder="First name">
-            <input type="text" aria-label="Last name" class="form-control" id="surname" name="surname"
+            <input pInputText type="text" aria-label="Last name" [ngClass]="isError ? 'required form-control' : 'form-control' " id="surname"
+                   name="surname"
                    [(ngModel)]="surname" placeholder="Surnamee">
           </div>
           <div class="input-group mb-4">
-            <input class="form-control" type="text" id="login" name="login" [(ngModel)]="username" placeholder="Login">
+            <input pInputText [ngClass]="isError ? 'required form-control' : 'form-control' " type="text" id="login" name="login" [(ngModel)]="username"
+                   placeholder="Login">
           </div>
           <div class="input-group mb-4">
-            <input class="form-control" type="email" id="email" name="email" [(ngModel)]="email" placeholder="Email">
+            <input pInputText [ngClass]="isError ? 'required form-control' : 'form-control' " type="email"
+                   id="email" name="email" [(ngModel)]="email"
+                   placeholder="Email">
           </div>
           <div class="input-group mb-4">
-            <input class="form-control" type="password" id="password" name="password" [(ngModel)]="password"
-                   placeholder="Password">
+            <p-password [ngClass]="isError ? 'required' : '' " [style.width]="'100%'" [(ngModel)]="password"
+                        [toggleMask]="true" name="password"
+                        id="password"></p-password>
           </div>
           <button class="btn btn-primary bg-block mb-4" type="submit">Register</button>
         </form>
@@ -57,10 +64,11 @@
     </div>
   </div>
 
-  <div class="row justify-content-center">
-    <!--TODO do it pretty-->
+  <!--<div class="row justify-content-center">
+    &lt;!&ndash;TODO do it pretty&ndash;&gt;
     <span class="col-4 mt-4 error" *ngIf="errorMessages.length>0">{{errorMessages}}</span>
-  </div>
+  </div>-->
+  <p-toast [life]="5000"></p-toast>
 
   <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="square-jelly-box" [fullScreen]="true"><p
     style="color: white"> Loading... </p></ngx-spinner>

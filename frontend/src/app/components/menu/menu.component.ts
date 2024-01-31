@@ -21,7 +21,7 @@ export class MenuComponent implements OnInit {
   categories: any = {};
   showFullscreenSearch: boolean = false;
 
-  searchText: string = "";
+  searchText!: string;
   categorySearch: string = "";
 
   menuCategoryItems: any[] = [];

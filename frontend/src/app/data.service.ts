@@ -226,9 +226,9 @@ export class DataService {
     return this.categories;
   }
 
-  getListOfUserCoursesFromServer() {
+  async getListOfUserCoursesFromServer() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (user.username !== undefined) {
+    if (user.username !== '{}') {
       return this.axiosService.requestWithHeaderAuth(
         "GET",
         "user/courses?username=" + user.username,

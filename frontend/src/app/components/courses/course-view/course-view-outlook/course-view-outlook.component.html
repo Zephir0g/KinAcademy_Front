@@ -62,7 +62,7 @@
 
         <div>
 
-          <h3 class="mt-4">Lessons</h3>
+          <h3 class="mt-4">{{internalization['lessons']}}</h3>
           <div *ngFor="let section of course.sections; let i = index">
             <details>
               <summary class="summary">
@@ -72,9 +72,8 @@
               <div class="videos">
                 <ul *ngFor="let video of section.videos; let i = index">
                   <li>
-
-                    <button class="btn video" (click)="openVideo(video.urlToVideo)">
-                      {{video.name}}
+                    <button class="btn video"  (click)="openVideo(video.urlToVideo)">
+                      {{video.isWatched ? '✔️' : '' }} {{video.name}}
                     </button>
                   </li>
                 </ul>

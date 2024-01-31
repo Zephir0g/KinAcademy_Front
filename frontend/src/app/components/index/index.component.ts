@@ -29,9 +29,8 @@ export class IndexComponent implements OnInit {
     this.isPageLoading = true;
     this.spinner.show().then(r => {
       this.getData().then(() => {
-        if (Object.keys(this.user).length !== 0) {
-          this.userCourses = this.data.getListsOfUserCourses();
-
+        if (this.user.username !== '{}' || this.user.username !== undefined || this.user.username !== null) {
+          this.userCourses = JSON.parse(localStorage.getItem('userCourses') || '{}');
           this.userCourses.forEach((course: any) => {
             this.getAuthorName(course).then((response: any) => {
               if (response) {
@@ -40,7 +39,6 @@ export class IndexComponent implements OnInit {
             });
           })
         }
-
         this.spinner.hide();
         this.isPageLoading = false;
       });
@@ -55,7 +53,7 @@ export class IndexComponent implements OnInit {
         //this.data.checkIsTokenValid(),
         this.getLanguage(),
         this.getCategories(),
-        this.data.getListOfUserCoursesFromServer()
+        this.getListOfUserCoursesFromServer(this.user)
       ]);
     } catch (error) {
       console.error("Error occurred:", error);
@@ -80,6 +78,11 @@ export class IndexComponent implements OnInit {
   async getCategories() {
     this.categories = this.data.getCategoriesFromServer(this.user.language || "English");
     return this.categories;
+  }
+
+  async getListOfUserCoursesFromServer(user: any) {
+    this.userCourses = this.data.getListOfUserCoursesFromServer();
+    return this.userCourses;
   }
 
   getAuthorName(course: any) {

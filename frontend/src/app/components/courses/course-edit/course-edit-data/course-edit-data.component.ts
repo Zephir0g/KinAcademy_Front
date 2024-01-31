@@ -2,9 +2,6 @@ import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core'
 // import Editor from "ckeditor5-custom-build";
 import Editor from 'ckeditor5-custom-build';
 import {faArrowRight, faPlus} from "@fortawesome/free-solid-svg-icons";
-import {Router} from "@angular/router";
-import {Title} from "@angular/platform-browser";
-import {AxiosService} from "../../../../axios.service";
 import {DataService} from "../../../../data.service";
 import {NgxSpinnerService} from "ngx-spinner";
 import {MatDialog} from "@angular/material/dialog";
@@ -31,12 +28,11 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
   languages: any;
   @Input() isEdit: boolean | undefined;
   @Input() courseUrl !: string;
-  @Input() course : any = {};
+  @Input() course: any = {};
   @Input() categories: any = {};
 
   imageNotFound: string = environment.imageNotFound;
   isImageDropped = false;
-
 
 
   courseImage: string = '';
@@ -76,7 +72,7 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
     }
   }
 
-  getEmptyItems(categoryList: any): Array<any>{
+  getEmptyItems(categoryList: any): Array<any> {
     let emptyLabels = [];
     for (const category of categoryList) {
       if (category.items.length === 0) {

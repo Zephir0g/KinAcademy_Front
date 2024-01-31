@@ -41,6 +41,11 @@ import { IndexUnauthorizedComponent } from './components/index/index-unauthorize
 import { SearchComponent } from './components/search/search.component';
 import {TieredMenuModule} from "primeng/tieredmenu";
 import {CheckboxModule} from "primeng/checkbox";
+import {ToastModule} from "primeng/toast";
+import {RippleModule} from "primeng/ripple";
+import {PasswordModule} from "primeng/password";
+import {InputTextModule} from "primeng/inputtext";
+import {MessageModule} from "primeng/message";
 
 @NgModule({
   declarations: [
@@ -64,30 +69,35 @@ import {CheckboxModule} from "primeng/checkbox";
     IndexUnauthorizedComponent,
     SearchComponent
   ],
-    imports: [
-        BrowserModule,
-        CKEditorModule,
-        AppRoutingModule,
-        HttpClientModule,
-        FormsModule,
-        FontAwesomeModule,
-        BrowserAnimationsModule,
-        NgxSpinnerModule,
-        MatFormFieldModule,
-        MatDialogModule,
-        MatInputModule,
-        MatButtonModule,
-        VgCoreModule,
-        VgControlsModule,
-        VgOverlayPlayModule,
-        VgBufferingModule,
-        NgxFileDropModule,
-        AvatarModule,
-        TabViewModule,
-        ButtonModule,
-        TieredMenuModule,
-        CheckboxModule
-    ],
+  imports: [
+    BrowserModule,
+    CKEditorModule,
+    AppRoutingModule,
+    HttpClientModule,
+    FormsModule,
+    FontAwesomeModule,
+    BrowserAnimationsModule,
+    NgxSpinnerModule,
+    MatFormFieldModule,
+    MatDialogModule,
+    MatInputModule,
+    MatButtonModule,
+    VgCoreModule,
+    VgControlsModule,
+    VgOverlayPlayModule,
+    VgBufferingModule,
+    NgxFileDropModule,
+    AvatarModule,
+    TabViewModule,
+    ButtonModule,
+    TieredMenuModule,
+    CheckboxModule,
+    ToastModule,
+    RippleModule,
+    PasswordModule,
+    InputTextModule,
+    MessageModule
+  ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   providers: [],
   bootstrap: [AppComponent]
