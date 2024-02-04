@@ -24,6 +24,7 @@ export class CreateCourseComponent implements OnInit {
   coursePolicy: boolean = true;
   courseUrl: String = '';
   error: String = '';
+  categories: any;
 
 
   constructor(private axiosService: AxiosService,
@@ -36,6 +37,7 @@ export class CreateCourseComponent implements OnInit {
 
   ngOnInit(): void {
     this.isPageLoading = true;
+    this.categories = this.data.getCategories();
     this.spinner.show().then(r => {
       this.user = this.data.getUser();
       this.languages = this.data.getLanguages();
@@ -51,6 +53,19 @@ export class CreateCourseComponent implements OnInit {
         this.isPageLoading = false;
       }
     );
+  }
+
+  getEmptyItems(categoryList: any): Array<any> {
+    let emptyLabels = [];
+    for (const category of categoryList) {
+      if (category.items.length === 0) {
+        emptyLabels.push(category);
+      }
+      if (category.items.length > 0) {
+        emptyLabels = emptyLabels.concat(this.getEmptyItems(category.items));
+      }
+    }
+    return emptyLabels.sort();
   }
 
   onCreate() {

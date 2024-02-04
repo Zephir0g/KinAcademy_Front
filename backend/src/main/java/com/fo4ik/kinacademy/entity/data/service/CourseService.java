@@ -46,6 +46,9 @@ public class CourseService {
         course.setAuthorUsername(username);
         course.setLastUpdateDate(new Date());
         course.setStatus(Status.INACTIVE);
+        User user = userService.getUserByUsername(username);
+        user.getCoursesId().add(course.getId());
+        userService.save(user);
 
         //if singUpCourseDto.url() is exist in db, throw exception
         Optional<Course> oCourseByUrl = courseRepository.findByUrl(singUpCourseDto.url());
@@ -266,7 +269,9 @@ public class CourseService {
     }
 
     public List<CourseDto> getUserCourses(User user) {
-        return courseMapper.coursesToCoursesDto(courseRepository.findAllById(user.getCoursesId()));
+        List<Course> courses = courseRepository.findAllById(user.getCoursesId());
+        List<CourseDto> courseDtos = courseMapper.coursesToCoursesDto(courses);
+        return courseDtos;
     }
 
     public List<CourseDto> searchCourses(String name, String category) {

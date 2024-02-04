@@ -29,8 +29,9 @@ export class IndexComponent implements OnInit {
     this.isPageLoading = true;
     this.spinner.show().then(r => {
       this.getData().then(() => {
-        if (this.user.username !== '{}' || this.user.username !== undefined || this.user.username !== null) {
+        if (this.user.username !== undefined && this.user.username !== '') {
           this.userCourses = JSON.parse(localStorage.getItem('userCourses') || '{}');
+          console.log("user course", this.userCourses);
           this.userCourses.forEach((course: any) => {
             this.getAuthorName(course).then((response: any) => {
               if (response) {
@@ -61,12 +62,12 @@ export class IndexComponent implements OnInit {
   }
 
   async getUser() {
-    this.user = this.data.getUser()
+    this.user = JSON.parse(localStorage.getItem('user') || '{}');
     return this.user;
   }
 
   async getInternalization() {
-    this.internalization = this.data.getInternalization()
+    this.internalization = JSON.parse(localStorage.getItem('internalization') || '{}');
     return this.internalization;
   }
 
@@ -81,8 +82,10 @@ export class IndexComponent implements OnInit {
   }
 
   async getListOfUserCoursesFromServer(user: any) {
-    this.userCourses = this.data.getListOfUserCoursesFromServer();
-    return this.userCourses;
+    if (this.user !== '{}') {
+      this.userCourses = this.data.getListOfUserCoursesFromServer();
+      return this.userCourses;
+    }
   }
 
   getAuthorName(course: any) {

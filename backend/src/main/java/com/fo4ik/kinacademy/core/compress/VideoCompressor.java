@@ -18,7 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.UUID;
 
 
@@ -58,10 +59,17 @@ public class VideoCompressor {
             }
         }
 
-        Path videoInputPath = Path.of(inputVideo);
-        Files.write(videoInputPath, video.getBytes());
+        Path videoInputPath = Path.of(folderDirectory + "/" + inputVideo);
+        try{
+            //Wrire video to the folder as a file
+            video.transferTo(videoInputPath);
+            Thread.sleep(1000);
 
-        FFmpegProbeResult probeResult = ffprobe.probe(inputVideo);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        FFmpegProbeResult probeResult = ffprobe.probe(videoInputPath.toString());
         Path path;
         String outputVideoPath;
         String videoName;
@@ -74,11 +82,10 @@ public class VideoCompressor {
                 Thread mp4Thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        compressMp4(probeResult, executor, video, folder, outputVideoPath, Path.of(inputVideo));
+                        compressMp4(probeResult, executor, video, folder, outputVideoPath, videoInputPath);
                     }
                 });
                 mp4Thread.start();
-                Files.delete(videoInputPath);
                 return videoName;
             case "avi":
                 videoName = UUID.randomUUID() + ".avi";
@@ -87,13 +94,12 @@ public class VideoCompressor {
                 Thread aviThread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        compressAvi(probeResult, executor, video, folder, outputVideoPath, Path.of(inputVideo));
+                        compressAvi(probeResult, executor, video, folder, outputVideoPath, videoInputPath);
                     }
                 });
                 aviThread.start();
-                Files.delete(videoInputPath);
                 return videoName;
-            case "webm":
+            /*case "webm":
                 videoName = UUID.randomUUID() + ".webm";
                 path = Path.of(folder + "/" + videoName);
                 outputVideoPath = String.valueOf(path);
@@ -105,7 +111,7 @@ public class VideoCompressor {
                 });
                 webmThread.start();
                 Files.delete(videoInputPath);
-                return videoName;
+                return videoName;*/
             default:
                 return null;
         }
@@ -206,8 +212,8 @@ public class VideoCompressor {
     @Async("AsyncTaskExecutor")
     void compressWebm(FFmpegProbeResult probeResult, FFmpegExecutor executor,
                       MultipartFile video, Path folder, String outputVideoPath,
-                      Path videoInputPath){
-        try{
+                      Path videoInputPath) {
+        try {
             // Configure FFmpegBuilder for video compression
             FFmpegBuilder builder = new FFmpegBuilder()
                     .setInput(probeResult)
@@ -232,7 +238,7 @@ public class VideoCompressor {
             if (Files.exists(videoInputPath)) {
                 Files.delete(videoInputPath);
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             // Handle any exceptions that may occur during the compression process
             System.out.println("Error: " + e.getMessage());
             e.printStackTrace();

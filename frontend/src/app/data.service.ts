@@ -228,7 +228,7 @@ export class DataService {
 
   async getListOfUserCoursesFromServer() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (user.username !== '{}') {
+    if (user !== '{}') {
       return this.axiosService.requestWithHeaderAuth(
         "GET",
         "user/courses?username=" + user.username,
@@ -244,11 +244,12 @@ export class DataService {
       }).catch((error) => {
         if (error) {
           console.log(error.response.data);
+          this.userCourses = [];
+          return this.userCourses;
         }
         // window.location.href = "/login";
       });
     }
-    return null;
   }
 
   getListsOfUserCourses() {
