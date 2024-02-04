@@ -50,7 +50,7 @@
             <div class="col-md-6">
               <label for="courseCategory" class="form-label">Category <span class="text-danger">*</span></label>
               <select class="form-select" id="courseCategory" name="courseCategory" [(ngModel)]="courseCategory">
-                <option value="">Select category</option>
+<!--                <option value="">Select category</option>-->
                 <option *ngFor="let category of getEmptyItems(categories)" [value]="category.name">
                   {{ category.label }}
                 </option>

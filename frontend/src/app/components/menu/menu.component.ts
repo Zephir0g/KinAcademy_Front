@@ -17,7 +17,7 @@ export class MenuComponent implements OnInit {
   faSearch = faSearch
 
   user: any = {};
-  internalization: any = {};
+  internalization: any = JSON.parse(localStorage.getItem('internalization') || '{}');
   categories: any = {};
   showFullscreenSearch: boolean = false;
 

@@ -41,7 +41,6 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
   courseName: String = '';
   courseLanguage: String = '';
   courseCategory: String = '';
-  courseCategoryName: String = '';
   sections: any;
   sectionInputName: string = '';
   videoInputName: string = '';
@@ -94,7 +93,6 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
     this.courseName = this.course.name;
     this.courseLanguage = this.course.language;
     this.courseCategory = this.searchCategoryByName(this.categories, this.course.category).label;
-    this.courseCategoryName = this.searchCategoryByName(this.categories, this.course.category).name ;
     this.sections = this.course.sections;
   }
 
@@ -187,7 +185,7 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
   }
 
   saveCourse() {
-    this.course.category = this.courseCategoryName;
+    this.course.category = this.courseCategory;
     this.course.language = this.courseLanguage;
     //if this.courseImage equal to imageNotFound then set empty string
     this.course.imageUrl = this.courseImage === this.imageNotFound ? '' : this.courseImage;

@@ -19,6 +19,7 @@ export class CourseEditComponent implements OnInit {
 
   course: any = {};
   categories: any = {};
+  internalization = JSON.parse(localStorage.getItem('internalization') || '{}');
 
 
   constructor(public dialog: MatDialog,
