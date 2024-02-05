@@ -1,6 +1,7 @@
 package com.fo4ik.kinacademy.entity.data.service;
 
 import com.fo4ik.kinacademy.core.Response;
+import com.fo4ik.kinacademy.dto.CategoryDTO;
 import com.fo4ik.kinacademy.dto.course.CourseDto;
 import com.fo4ik.kinacademy.dto.course.SectionsDto;
 import com.fo4ik.kinacademy.dto.course.SingUpCourseDto;
@@ -93,6 +94,7 @@ public class CourseService {
         CourseDto courseDto = courseMapper.courseToCourseDto(oCourse.get());
         Optional<User> oUser = userService.findByUsername(username);
 
+
         /// Get the list of watched videos for the user
         List<Video> watchedVideos = courseRepository.findVideosWatchedByUser(username);
 
@@ -103,7 +105,6 @@ public class CourseService {
             }
         }
 
-//        return courseMapper.courseToCourseDto(oCourse.get());
         return courseDto;
     }
 
@@ -356,5 +357,9 @@ public class CourseService {
                     .httpStatus(HttpStatus.OK)
                     .build();
         }
+    }
+
+    public List<CourseDto> getPopularCourses() {
+        return courseMapper.coursesToCoursesDto(courseRepository.findTop5CoursesByStudentsCount());
     }
 }

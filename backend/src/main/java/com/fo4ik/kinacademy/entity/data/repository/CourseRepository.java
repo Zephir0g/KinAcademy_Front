@@ -29,4 +29,7 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 
     @Query("SELECT DISTINCT v FROM Course c JOIN c.sections s JOIN s.videos v JOIN v.usersWhoWatched u WHERE u.username = :username")
     List<Video> findVideosWatchedByUser(@Param("username") String username);
+
+    @Query("SELECT c FROM Course c ORDER BY c.studentsCount DESC")
+    List<Course> findTop5CoursesByStudentsCount();
 }

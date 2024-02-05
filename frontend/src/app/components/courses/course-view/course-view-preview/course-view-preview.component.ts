@@ -31,14 +31,18 @@ export class CourseViewPreviewComponent {
   }
 
   async joinCourse() {
-
-    this.data.joinCourse(this.course.url).then((response: any) => {
-      this.user.coursesId.push(this.course.id);
-      localStorage.setItem("user", JSON.stringify(this.user));
-      window.location.reload();
-    }).catch((error: any) => {
-      console.log(error.response);
-    })
+    if (this.user.username === undefined) {
+      this.router.navigate(['/login'], {queryParams: {course: this.course.url}});
+      return;
+    } else {
+      this.data.joinCourse(this.course.url).then((response: any) => {
+        this.user.coursesId.push(this.course.id);
+        localStorage.setItem("user", JSON.stringify(this.user));
+        window.location.reload();
+      }).catch((error: any) => {
+        console.log(error.response);
+      })
+    }
 
   }
 

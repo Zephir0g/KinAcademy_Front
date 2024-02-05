@@ -3,6 +3,8 @@ package com.fo4ik.kinacademy.restControllers;
 import com.fo4ik.kinacademy.core.Config;
 import com.fo4ik.kinacademy.dto.CategoryDTO;
 import com.fo4ik.kinacademy.dto.LanguagesDto;
+import com.fo4ik.kinacademy.dto.course.CourseDto;
+import com.fo4ik.kinacademy.entity.data.service.CourseService;
 import com.fo4ik.kinacademy.entity.data.service.UserService;
 import com.fo4ik.kinacademy.entity.user.User;
 import com.fo4ik.kinacademy.exceptions.AppException;
@@ -13,10 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
@@ -27,6 +26,7 @@ import java.util.*;
 public class Components {
 
     private final UserService userService;
+    private final CourseService courseService;
 
 
     @RequestMapping(value = "/internationalization", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -177,5 +177,20 @@ public class Components {
         }
 
         return ResponseEntity.ok(user.getFirstName() + " " + user.getSurname());
+    }
+
+    @RequestMapping(value = "/popular", method = RequestMethod.GET)
+    public ResponseEntity<List<CourseDto>> getPopularCourses() {
+
+        return ResponseEntity.ok(courseService.getPopularCourses());
+    }
+
+    @RequestMapping(value = "/course/{course-url}", method = RequestMethod.GET)
+    public ResponseEntity<CourseDto> getCourseByUrl(
+            @PathVariable("course-url") String url
+    ) {
+        CourseDto courseDto = courseService.getCourseByUrl(url);
+        courseDto.setSections(null);
+        return ResponseEntity.ok(courseDto);
     }
 }

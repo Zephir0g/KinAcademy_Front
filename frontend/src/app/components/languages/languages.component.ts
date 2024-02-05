@@ -55,7 +55,7 @@ export class LanguagesComponent implements OnInit {
 
   updateUserOnServer(language: string) {
     this.axiosService.requestWithHeaderAuth(
-      "POST",
+      "GET",
       "/users/update",
       {
         "id": this.user.id,

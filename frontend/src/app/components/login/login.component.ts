@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {AxiosService} from "../../axios.service";
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {DataService} from "../../data.service";
 import {NgxSpinnerService} from "ngx-spinner";
 import {MessageService, PrimeNGConfig} from "primeng/api";
@@ -18,6 +18,7 @@ export class LoginComponent implements OnInit {
               private messageService: MessageService,
               private primengConfig: PrimeNGConfig,
               private data: DataService,
+              private route: ActivatedRoute,
               private spinner: NgxSpinnerService) {
   }
 
@@ -44,6 +45,7 @@ export class LoginComponent implements OnInit {
 
   internalization: any = {};
   isError: boolean = false;
+  params: string = "";
 
 
   tabSwitch(tab: string): void {
@@ -61,6 +63,10 @@ export class LoginComponent implements OnInit {
       this.spinner.hide();
       return;
     }
+
+    this.checkParams();
+
+
     this.axiosService.request(
       "POST",
       "/auth/login",
@@ -80,7 +86,11 @@ export class LoginComponent implements OnInit {
 
           this.data.getInternalizationFromServerWithLanguage(response.data.language).then((internalization) => {
             this.data.getLanguagesFromServer().then((languages) => {
-              this.router.navigate(['/']);
+              if(this.params !== "") {
+                this.router.navigate([this.params]);
+              }else {
+                this.router.navigate(['/']);
+              }
             });
           });
         }
@@ -96,6 +106,8 @@ export class LoginComponent implements OnInit {
       this.spinner.hide();
       return;
     }
+
+    this.checkParams();
     this.axiosService.request(
       "POST",
       "/auth/register",
@@ -117,6 +129,18 @@ export class LoginComponent implements OnInit {
         this.spinner.hide().then(r => this.active = "login");
       }
     })
+  }
+
+  checkParams() {
+    this.route.queryParams.subscribe(params => {
+      // Use switch to handle different query parameters
+      switch (true) {
+        case 'course' in params:
+          const courseParam = params['course'];
+          this.params = "/course/" + courseParam;
+          break;
+      }
+    });
   }
 
 

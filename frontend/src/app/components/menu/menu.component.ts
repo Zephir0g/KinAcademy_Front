@@ -17,7 +17,7 @@ export class MenuComponent implements OnInit {
   faSearch = faSearch
 
   user: any = {};
-  internalization: any = JSON.parse(localStorage.getItem('internalization') || '{}');
+  internalization: any = {};
   categories: any = {};
   showFullscreenSearch: boolean = false;
 
@@ -40,7 +40,9 @@ export class MenuComponent implements OnInit {
   ngOnInit(): void {
     this.user = this.data.getUser();
     this.categories = this.data.getCategories();
-
+    this.data.getInternalizationFromServerWithLanguage(this.user.language).then(r => {
+      this.internalization = JSON.parse(localStorage.getItem('internalization') || '{}');
+    });
   }
 
   addNameToSearch() {

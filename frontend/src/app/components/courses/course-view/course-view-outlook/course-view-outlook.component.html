@@ -72,7 +72,7 @@
               <div class="videos">
                 <ul *ngFor="let video of section.videos; let i = index">
                   <li>
-                    <button class="btn video"  (click)="openVideo(video.urlToVideo)">
+                    <button class="btn video" (click)="openVideo(video.urlToVideo)">
                       {{video.isWatched ? '✔️' : '' }} {{video.name}}
                     </button>
                   </li>

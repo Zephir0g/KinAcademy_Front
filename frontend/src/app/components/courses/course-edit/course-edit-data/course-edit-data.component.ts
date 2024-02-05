@@ -7,6 +7,9 @@ import {NgxSpinnerService} from "ngx-spinner";
 import {MatDialog} from "@angular/material/dialog";
 import {NgxFileDropEntry} from "ngx-file-drop";
 import {environment} from "../../../../../../environments/environment";
+import {MatSelectModule} from "@angular/material/select";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 
 export interface DialogData {
@@ -17,7 +20,7 @@ export interface DialogData {
 @Component({
   selector: 'app-course-edit-data',
   templateUrl: './course-edit-data.component.html',
-  styleUrls: ['./course-edit-data.component.css']
+  styleUrls: ['./course-edit-data.component.css'],
 })
 export class CourseEditDataComponent implements OnInit, OnChanges {
   Editor = Editor;
@@ -46,6 +49,8 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
   videoInputName: string = '';
   selectedFileUrl: string = '';
   selectedFile: any;
+
+  selectedCategory: string = '';
 
 
   constructor(private data: DataService,

@@ -5,11 +5,13 @@ import {DataService} from "../../../data.service";
 import {Title} from "@angular/platform-browser";
 import {NgxSpinnerService} from "ngx-spinner";
 import {Router} from "@angular/router";
+import {MessageService, PrimeNGConfig} from "primeng/api";
 
 @Component({
   selector: 'app-create-course',
   templateUrl: './create-course.component.html',
-  styleUrls: ['./create-course.component.css']
+  styleUrls: ['./create-course.component.css'],
+  providers: [MessageService]
 })
 export class CreateCourseComponent implements OnInit {
   isPageLoading = false;
@@ -31,12 +33,15 @@ export class CreateCourseComponent implements OnInit {
               private data: DataService,
               private titleService: Title,
               private spinner: NgxSpinnerService,
+              private messageService: MessageService,
+              private primengConfig: PrimeNGConfig,
               private router: Router) {
     this.titleService.setTitle("Create course");
   }
 
   ngOnInit(): void {
     this.isPageLoading = true;
+    this.primengConfig.ripple = true;
     this.categories = this.data.getCategories();
     this.spinner.show().then(r => {
       this.user = this.data.getUser();
@@ -71,7 +76,7 @@ export class CreateCourseComponent implements OnInit {
   onCreate() {
     this.error = '';
     if (this.courseName == '' || this.courseShortDescription == '' || this.courseDescription == '' || this.courseLanguage == '' || this.courseCategory == '' || this.courseUrl == '') {
-      this.error = "Please fill required fields";
+      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Please fill required fields'});
       return;
     } else {
       this.courseUrl = this.courseUrl.replace(/\s+/g, '-').toLowerCase();
