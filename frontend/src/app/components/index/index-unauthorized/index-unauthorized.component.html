@@ -30,7 +30,7 @@
     </div>
   </div>
 
-  <div class="row justify-content-center">
+  <div class="row justify-content-center" >
     <h2 class="text-center mt-5">Popular Courses</h2>
     <div *ngFor="let course of popularCourses.slice(0, 3)" class="col-6 col-md-4 col-lg-4 courses">
       <p-card header="{{course.name}}" subheader="{{course.language}}" [style]="{ 'max-width': '20vw', 'width': 'auto' }">

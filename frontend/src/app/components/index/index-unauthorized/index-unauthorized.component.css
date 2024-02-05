@@ -28,6 +28,10 @@
   margin: 0 .5rem 0 .5rem;
 }
 
+.p-card {
+  height: 100%;
+}
+
 button {
   background-color: #3B82F6 !important;
 }

@@ -25,8 +25,9 @@
                    placeholder="Login">
           </div>
           <div class="form-group mb-4">
-            <input class="form-control" type="password" id="loginPassword" name="loginPassword" [(ngModel)]="password"
-                   placeholder="Password">
+            <p-password id="loginPassword" name="loginPassword"
+                        [(ngModel)]="password" [feedback]="false" [toggleMask]="true"
+                        placeholder="Password"></p-password>
           </div>
           <button class="btn btn-primary bg-block mb-4" type="submit">Sign in</button>
         </form>
@@ -34,22 +35,25 @@
 
       <!--Register form-->
       <div [ngClass]="active == 'register' ? 'tab-pane fade show active' : 'tab-pane fade'">
-        <form (ngSubmit)="onSubmitRegister()" #loginForm="ngForm">
+        <form  (ngSubmit)="onSubmitRegister()" #loginForm="ngForm">
           <div class="input-group mb-4">
-            <input pInputText type="text" aria-label="First name" [ngClass]="isError ? 'required form-control' : 'form-control' " id="firstName"
-                   name="firstName"
+            <input pInputText type="text" aria-label="First name"
+                   [ngClass]="isError ? 'required form-control' : 'form-control' " id="firstName"
+                   name="firstName" required
                    [(ngModel)]="firstName" placeholder="First name">
-            <input pInputText type="text" aria-label="Last name" [ngClass]="isError ? 'required form-control' : 'form-control' " id="surname"
-                   name="surname"
+            <input pInputText type="text" aria-label="Last name"
+                   [ngClass]="isError ? 'required form-control' : 'form-control' " id="surname"
+                   name="surname" required
                    [(ngModel)]="surname" placeholder="Surnamee">
           </div>
           <div class="input-group mb-4">
-            <input pInputText [ngClass]="isError ? 'required form-control' : 'form-control' " type="text" id="login" name="login" [(ngModel)]="username"
+            <input pInputText [ngClass]="isError ? 'required form-control' : 'form-control' " type="text" id="login"
+                   required name="login" [(ngModel)]="username"
                    placeholder="Login">
           </div>
           <div class="input-group mb-4">
             <input pInputText [ngClass]="isError ? 'required form-control' : 'form-control' " type="email"
-                   id="email" name="email" [(ngModel)]="email"
+                   id="email" name="email" [(ngModel)]="email" required
                    placeholder="Email">
           </div>
           <div class="input-group mb-4">
@@ -58,7 +62,7 @@
                         id="password"></p-password>-->
 
             <p-password [ngClass]="isError ? 'required' : '' " [style.width]="'100%'" [(ngModel)]="password"
-                        [toggleMask]="true" name="password"
+                        [toggleMask]="true" name="password" required
                         id="password">
               <ng-template pTemplate="header">
                 <h6>Pick a password</h6>
