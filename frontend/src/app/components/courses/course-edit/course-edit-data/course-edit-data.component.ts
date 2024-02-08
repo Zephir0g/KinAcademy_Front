@@ -1,16 +1,15 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 // import Editor from "ckeditor5-custom-build";
 import Editor from 'ckeditor5-custom-build';
-import {faPlus, faArrowRight} from "@fortawesome/free-solid-svg-icons";
-import {Router} from "@angular/router";
-import {Title} from "@angular/platform-browser";
-import {AxiosService} from "../../../../axios.service";
+import {faArrowRight, faPlus} from "@fortawesome/free-solid-svg-icons";
 import {DataService} from "../../../../data.service";
 import {NgxSpinnerService} from "ngx-spinner";
 import {MatDialog} from "@angular/material/dialog";
 import {NgxFileDropEntry} from "ngx-file-drop";
 import {environment} from "../../../../../../environments/environment";
-
+import {MatSelectModule} from "@angular/material/select";
+import {MatFormFieldModule} from "@angular/material/form-field";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 
 
 export interface DialogData {
@@ -21,7 +20,7 @@ export interface DialogData {
 @Component({
   selector: 'app-course-edit-data',
   templateUrl: './course-edit-data.component.html',
-  styleUrls: ['./course-edit-data.component.css']
+  styleUrls: ['./course-edit-data.component.css'],
 })
 export class CourseEditDataComponent implements OnInit, OnChanges {
   Editor = Editor;
@@ -29,16 +28,15 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
   user = JSON.parse(localStorage.getItem('user') || '{}');
   internalization = JSON.parse(localStorage.getItem('internalization') || '{}');
   faArrowRight = faArrowRight;
-  course: any = {};
   languages: any;
-  isLoading: boolean = true;
   @Input() isEdit: boolean | undefined;
   @Input() courseUrl !: string;
+  @Input() course: any = {};
+  @Input() categories: any = {};
 
   imageNotFound: string = environment.imageNotFound;
   isImageDropped = false;
 
-  categories: any = {};
 
   courseImage: string = '';
   courseDescription: String = '';
@@ -47,27 +45,23 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
   courseLanguage: String = '';
   courseCategory: String = '';
   sections: any;
-
-
   sectionInputName: string = '';
   videoInputName: string = '';
   selectedFileUrl: string = '';
   selectedFile: any;
 
+  selectedCategory: string = '';
 
-  constructor(private router: Router,
-              private titleService: Title,
-              private axiosService: AxiosService,
-              private data: DataService,
+
+  constructor(private data: DataService,
               private spinner: NgxSpinnerService,
               public dialog: MatDialog) {
 
   }
 
   ngOnInit(): void {
-    this.showSpinner();
-    this.loadCourseData();
-    this.categories = this.data.getCategories();
+    this.loadCourseDetails();
+
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -83,53 +77,32 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
     }
   }
 
-  loadCourseData() {
-    this.fetchCourseDataFromServer();
-  }
-
-  fetchCourseDataFromServer() {
-    this.getCourseData(this.courseUrl)
-      .then((response) => {
-        if (response) {
-          //TODO Fix title
-          this.titleService.setTitle(response.data.name + " | Course");
-          this.course = response.data;
-          this.hideSpinner();
-          this.loadCourseDetails();
-        }
-      })
-      .catch((error) => {
-        console.log(error.response.data.message);
-        this.hideSpinner();
-      });
+  getEmptyItems(categoryList: any): Array<any> {
+    let emptyLabels = [];
+    for (const category of categoryList) {
+      if (category.items.length === 0) {
+        emptyLabels.push(category);
+      }
+      if (category.items.length > 0) {
+        emptyLabels = emptyLabels.concat(this.getEmptyItems(category.items));
+      }
+    }
+    return emptyLabels.sort();
   }
 
   loadCourseDetails() {
-    if (!this.userIsAuthor()) {
-      this.router.navigate(['/course/' + this.courseUrl]);
-    }
-    this.hideSpinner();
     this.languages = this.data.getLanguages();
     this.courseImage = this.course.imageUrl || this.imageNotFound;
     this.courseDescription = this.course.description;
     this.courseShortDescription = this.course.shortDescription;
     this.courseName = this.course.name;
     this.courseLanguage = this.course.language;
-    this.courseCategory = this.course.category;
+    this.courseCategory = this.searchCategoryByName(this.categories, this.course.category).label;
     this.sections = this.course.sections;
   }
 
   userIsAuthor(): boolean {
     return this.user.username === this.course.authorUsername;
-  }
-
-  getCourseData(url: string): Promise<any> {
-    return this.axiosService.requestWithHeaderAuth(
-      "GET",
-      "/course/" + url + "?username=" + this.user.username,
-      null,
-      this.user.secure_TOKEN
-    );
   }
 
   addSection() {
@@ -145,14 +118,22 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
     this.sectionInputName = '';
   }
 
-  showSpinner() {
-    this.spinner.show();
-    this.isLoading = true;
+  searchCategoryByName(categoryList: any[], categoryName: string): any {
+    for (const category of categoryList) {
+      if (category.name === categoryName) {
+        return category;
+      }
+      if (category.items && category.items.length > 0) {
+        const subCategory = this.searchCategoryByName(category.items, categoryName);
+        if (subCategory) {
+          return subCategory;
+        }
+      }
+    }
   }
 
   hideSpinner() {
     this.spinner.hide();
-    this.isLoading = false;
   }
 
   onVideoUploaded(event: any) {

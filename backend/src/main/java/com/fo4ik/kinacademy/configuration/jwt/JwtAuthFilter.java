@@ -1,12 +1,12 @@
 package com.fo4ik.kinacademy.configuration.jwt;
 
+import com.fo4ik.kinacademy.core.Response;
+import com.fo4ik.kinacademy.entity.data.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,19 +23,25 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService; // JWT service for token operations
     private final UserDetailsService userDetailsService; // UserDetailsService to load user details
+    private final UserService userService;
 
     // This method is called for each incoming HTTP request.
     @Override
     protected void doFilterInternal(
-            @NotNull HttpServletRequest request,
-            @NotNull HttpServletResponse response,
-            @NotNull FilterChain filterChain
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
     ) throws ServletException, IOException {
         if (request.getServletPath().contains("/api/v1/auth")) {
+            System.out.println("auth");
             filterChain.doFilter(request, response);
             return;
         }
-        if (request.getServletPath().contains("/api/v1/components")) {
+        if (request.getServletPath().contains("/api/v1/components/")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        if (request.getServletPath().contains("/api/v1/course/search")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -46,14 +52,26 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         // Check if the "Authorization" header is missing or doesn't start with the token prefix.
         if (authHeader == null || !authHeader.startsWith(bearer)) {
-            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized");
+            response.sendError(401, "No Authorization header");
             return;
         }
 
         // Extract the JWT token from the header.
         jwt = authHeader.replace(bearer, "");
         // Extract the username from the JWT token.
-        username = jwtService.extractUsername(jwt);
+        try {
+            username = jwtService.extractUsername(jwt);
+        } catch (Exception e) {
+            response.sendError(401, "Token is not valid");
+            return;
+        }
+
+        Response isUserActive = userService.isUserActive(username);
+
+        if (!isUserActive.isSuccess()) {
+            response.sendError(isUserActive.getHttpStatus().value(), isUserActive.getMessage());
+            return;
+        }
 
         // Check if the user is not already authenticated and the token is valid.
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -87,7 +105,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Continue processing the request.
-        filterChain.doFilter(request, response);
+        try {
+            // Continue processing the request.
+            filterChain.doFilter(request, response);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

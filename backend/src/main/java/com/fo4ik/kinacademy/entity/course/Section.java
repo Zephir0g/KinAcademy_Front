@@ -20,6 +20,7 @@ public class Section {
     @Column(nullable = false)
     private String name;
 
+
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Video> videos;
 

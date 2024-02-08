@@ -1,6 +1,6 @@
 <div>
   <div class="d-flex align-items-center justify-content-between">
-    <p class="mb-0">Lessons: </p>
+    <p class="mb-0">{{internalization['lessons']}}:</p>
     <button class="btn" (click)="toggleSidebar()">
       <fa-icon [icon]="faXmark" style="font-size: 1.5rem;"></fa-icon>
     </button>
@@ -14,7 +14,8 @@
       <div class="videos">
         <ul *ngFor="let video of section.videos; let i = index">
           <li>
-
+            <p-checkbox [binary]="true" [(ngModel)]="video.isWatched" (click)="onCheckboxChange(video)"
+                        inputId="binary"></p-checkbox>
             <button class="btn video" (click)="openVideo(video.urlToVideo)">
               {{video.name}}
             </button>

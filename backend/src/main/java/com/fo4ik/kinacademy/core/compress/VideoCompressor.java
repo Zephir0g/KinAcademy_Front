@@ -18,7 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Objects;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
 import java.util.UUID;
 
 
@@ -39,7 +40,7 @@ public class VideoCompressor {
 
 
     @Async("AsyncTaskExecutor")
-    public Path getVideoExtension(MultipartFile video, Path folder) throws IOException {
+    public String getVideoExtension(MultipartFile video, Path folder) throws IOException {
         String extension = FilenameUtils.getExtension(video.getOriginalFilename());
 
         FFmpeg ffmpeg = new FFmpeg(String.valueOf(FFMPEG_PATH));
@@ -58,148 +59,126 @@ public class VideoCompressor {
             }
         }
 
-        Path videoInputPath = Path.of(inputVideo);
-        Files.write(videoInputPath, video.getBytes());
+        Path videoInputPath = Path.of(folderDirectory + "/" + inputVideo);
+        try{
+            //Wrire video to the folder as a file
+            video.transferTo(videoInputPath);
+            Thread.sleep(1000);
 
-        FFmpegProbeResult probeResult = ffprobe.probe(inputVideo);
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+
+        FFmpegProbeResult probeResult = ffprobe.probe(videoInputPath.toString());
         Path path;
         String outputVideoPath;
+        String videoName;
 
         switch (extension) {
             case "mp4":
-                path = Path.of(folder + "/" + UUID.randomUUID() + ".mp4");
+                videoName = UUID.randomUUID() + ".mp4";
+                path = Path.of(folder + "/" + videoName);
                 outputVideoPath = String.valueOf(path);
-                Runnable parallelTask = () -> {
-                };
-                Thread thread = new Thread(new Runnable() {
+                Thread mp4Thread = new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        compressMp4(probeResult, executor, video, folder, outputVideoPath, Path.of(inputVideo));
+                        compressMp4(probeResult, executor, video, folder, outputVideoPath, videoInputPath);
                     }
                 });
-                thread.start();
-                return path;
+                mp4Thread.start();
+                return videoName;
             case "avi":
-                //return compressAVI(video, folder);
-            case "webm":
-//                return compressWebm(video, folder);
+                videoName = UUID.randomUUID() + ".avi";
+                path = Path.of(folder + "/" + videoName);
+                outputVideoPath = String.valueOf(path);
+                Thread aviThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        compressAvi(probeResult, executor, video, folder, outputVideoPath, videoInputPath);
+                    }
+                });
+                aviThread.start();
+                return videoName;
+            /*case "webm":
+                videoName = UUID.randomUUID() + ".webm";
+                path = Path.of(folder + "/" + videoName);
+                outputVideoPath = String.valueOf(path);
+                Thread webmThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        compressWebm(probeResult, executor, video, folder, outputVideoPath, Path.of(inputVideo));
+                    }
+                });
+                webmThread.start();
+                Files.delete(videoInputPath);
+                return videoName;*/
             default:
                 return null;
         }
     }
 
+
+    /**
+     * Asynchronously compresses an AVI video file using FFmpeg.
+     *
+     * @param probeResult     The FFmpegProbeResult for the input video
+     * @param executor        The FFmpegExecutor for executing FFmpeg commands
+     * @param video           The input video file
+     * @param folder          The folder where the compressed video will be stored
+     * @param outputVideoPath The path for the compressed video file
+     * @param videoInputPath  The path for the input video file
+     */
     @Async("AsyncTaskExecutor")
-    Path compressMp4(MultipartFile video, Path folder) {
+    void compressAvi(FFmpegProbeResult probeResult, FFmpegExecutor executor,
+                     MultipartFile video, Path folder, String outputVideoPath,
+                     Path videoInputPath) {
         try {
-            //set ffmpeg and ffprobe path
-            FFmpeg ffmpeg = new FFmpeg(String.valueOf(FFMPEG_PATH));
-            FFprobe ffprobe = new FFprobe(String.valueOf(FFPROBE_PATH));
-
-
-            FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
-            String inputVideo = UUID.randomUUID() + "-" + video.getOriginalFilename();
-            Path path = Path.of(folder + "/" + UUID.randomUUID() + ".mp4");
-            String outputVideoPath = String.valueOf(path);
-
-            Path folderDirectory = Path.of(currentDirectory + "/" + folder);
-            if (!Files.exists(folderDirectory)) {
-                try {
-                    System.out.println("Creating directory: " + folderDirectory);
-                    Files.createDirectory(folderDirectory);
-                } catch (Exception e) {
-                    System.out.println("Error: " + e.getMessage());
-                }
-            }
-
-
-            Path videoInputPath = Path.of(inputVideo);
-            Files.write(videoInputPath, video.getBytes());
-
-            FFmpegProbeResult in = ffprobe.probe(inputVideo);
-
+            // Configure FFmpegBuilder for video compression
             FFmpegBuilder builder = new FFmpegBuilder()
-                    .setInput(in)
-                    .addOutput(outputVideoPath.toString())
-                    .setAudioCodec("aac")
-                    .setVideoCodec("libx265")
-                    .setFormat("mp4")
+                    .setInput(probeResult)
+                    .addOutput(outputVideoPath)
+                    .setAudioCodec("libmp3lame")
+                    .setVideoCodec("mpeg4")
+                    .setFormat("avi")
                     .setVideoFrameRate(FFmpeg.FPS_30)
                     .setAudioChannels(FFmpeg.AUDIO_STEREO)
                     .setStrict(FFmpegBuilder.Strict.EXPERIMENTAL)
-                    .addExtraArgs("-tile-columns", "6")
                     .done();
 
-
+            // Create and run FFmpegJob
             FFmpegJob job = executor.createJob(builder);
             job.run();
 
-            /*job = executor.createJob(builder, new ProgressListener() {
-                final double duration_ns = in.getFormat().duration * TimeUnit.SECONDS.toNanos(1);
-
-                @Override
-                public void progress(Progress progress) {
-                    if (!"N/A".equals(progress.out_time_ns)) {
-                        double percentage = (progress.out_time_ns / duration_ns) * 100;
-                        System.out.println("Progress: " + (int) percentage + "%");
-                    } else {
-                        throw new AppException("Error while compressing video", HttpStatus.INTERNAL_SERVER_ERROR);
-                    }
-                }
-            });
-
-            job.run();
-            if (job.getState() == FFmpegJob.State.FAILED) {
-                throw new AppException("Error while compressing video", HttpStatus.INTERNAL_SERVER_ERROR);
-            }*/
-
+            // Delete the original video file after compression
             Files.delete(videoInputPath);
-            //check if file deleted
+
+            // Check if the file deletion was successful and delete again if needed
             if (Files.exists(videoInputPath)) {
                 Files.delete(videoInputPath);
             }
-
-            return Path.of(outputVideoPath);
         } catch (Exception e) {
+            // Handle any exceptions that may occur during the compression process
+            System.out.println("Error: " + e.getMessage());
             e.printStackTrace();
-            System.out.println("Error: " + e.getMessage());
-            return null;
         }
     }
 
-
+    /**
+     * Asynchronously compresses an MP4 video file using FFmpeg.
+     *
+     * @param probeResult     The FFmpegProbeResult for the input video
+     * @param executor        The FFmpegExecutor for executing FFmpeg commands
+     * @param video           The input video file
+     * @param folder          The folder where the compressed video will be stored
+     * @param outputVideoPath The path for the compressed video file
+     * @param videoInputPath  The path for the input video file
+     */
     @Async("AsyncTaskExecutor")
-    void compressAvi(FFmpegProbeResult probeResult, FFmpegExecutor executor, MultipartFile video, Path folder, String outputVideoPath, Path videoInputPath) {
+    void compressMp4(FFmpegProbeResult probeResult, FFmpegExecutor executor,
+                     MultipartFile video, Path folder, String outputVideoPath,
+                     Path videoInputPath) {
         try {
-
-            FFmpegBuilder builder = new FFmpegBuilder()
-                    .setInput(probeResult)
-                    .addOutput(outputVideoPath)
-                    .setAudioCodec("libmp3lame")
-                    .setVideoCodec("mpeg4")
-                    .setFormat("avi")
-                    .setVideoFrameRate(FFmpeg.FPS_30)
-                    .setAudioChannels(FFmpeg.AUDIO_STEREO)
-                    .setStrict(FFmpegBuilder.Strict.EXPERIMENTAL)
-                    .done();
-
-            FFmpegJob job = executor.createJob(builder);
-            job.run();
-
-            Files.delete(videoInputPath);
-            //check if file deleted
-            if (Files.exists(videoInputPath)) {
-                Files.delete(videoInputPath);
-            }
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-            System.out.println("Error: " + e.getStackTrace());
-        }
-    }
-
-    @Async("AsyncTaskExecutor")
-    void compressMp4(FFmpegProbeResult probeResult, FFmpegExecutor executor, MultipartFile video, Path folder, String outputVideoPath, Path videoInputPath) {
-        try {
-
+            // Configure FFmpegBuilder for video compression
             FFmpegBuilder builder = new FFmpegBuilder()
                     .setInput(probeResult)
                     .addOutput(outputVideoPath.toString())
@@ -212,92 +191,34 @@ public class VideoCompressor {
                     .addExtraArgs("-tile-columns", "6")
                     .done();
 
+            // Create and run FFmpegJob
             FFmpegJob job = executor.createJob(builder);
             job.run();
 
+            // Delete the original video file after compression
             Files.delete(videoInputPath);
-            //check if file deleted
+
+            // Check if the file deletion was successful and delete again if needed
             if (Files.exists(videoInputPath)) {
                 Files.delete(videoInputPath);
             }
         } catch (Exception e) {
+            // Handle any exceptions that may occur during the compression process
             System.out.println("Error: " + e.getMessage());
-            System.out.println("Error: " + e.getStackTrace());
+            e.printStackTrace();
         }
     }
 
-
     @Async("AsyncTaskExecutor")
-    Path compressAVI(MultipartFile video, Path folder) {
+    void compressWebm(FFmpegProbeResult probeResult, FFmpegExecutor executor,
+                      MultipartFile video, Path folder, String outputVideoPath,
+                      Path videoInputPath) {
         try {
-            FFmpeg ffmpeg = new FFmpeg(Objects.requireNonNull(getClass().getResource("/ffmpeg/bin/ffmpeg.exe")).getPath());
-            FFprobe ffprobe = new FFprobe(Objects.requireNonNull(getClass().getResource("/ffmpeg/bin/ffprobe.exe")).getPath());
-
-            FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
-            String videoInputPath = UUID.randomUUID() + "-" + video.getOriginalFilename();
-            Path path = Path.of(folder + "/" + UUID.randomUUID() + ".avi");
-            String outputVideoPath = String.valueOf(path);
-
-            //save video to file by path
-            Files.write(Path.of(videoInputPath), video.getBytes());
-
-            FFmpegProbeResult in = ffprobe.probe(videoInputPath);
-
+            // Configure FFmpegBuilder for video compression
             FFmpegBuilder builder = new FFmpegBuilder()
-                    .setInput(in)
-                    .addOutput(outputVideoPath)
-                    .setAudioCodec("libmp3lame")
-                    .setVideoCodec("mpeg4")
-                    .setFormat("avi")
-                    .setVideoFrameRate(FFmpeg.FPS_30)
-                    .setAudioChannels(FFmpeg.AUDIO_STEREO)
-                    .setStrict(FFmpegBuilder.Strict.EXPERIMENTAL)
-                    .done();
-
-           /* Files.delete(Path.of(videoInputPath));
-            if (Files.exists(videoInputPath)) {
-                Files.delete(videoInputPath);
-            }*/
-
-            return Path.of(outputVideoPath);
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
-            System.out.println("Error: " + e.getStackTrace());
-            return null;
-        }
-    }
-
-
-    @Async("AsyncTaskExecutor")
-    Path compressWebm(MultipartFile video, Path folder) {
-        FFmpegJob job = null;
-        try {
-            FFmpeg ffmpeg = new FFmpeg(String.valueOf(FFMPEG_PATH));
-            FFprobe ffprobe = new FFprobe(String.valueOf(FFPROBE_PATH));
-
-            FFmpegExecutor executor = new FFmpegExecutor(ffmpeg, ffprobe);
-            String inputVideo = UUID.randomUUID() + "-" + video.getOriginalFilename();
-            Path path = Path.of(folder + "/" + UUID.randomUUID() + ".webm");
-            String outputVideoPath = String.valueOf(path);
-
-            Path folderDirectory = Path.of(currentDirectory + "/" + folder);
-            if (!Files.exists(folderDirectory)) {
-                try {
-                    Files.createDirectory(folderDirectory);
-                } catch (Exception e) {
-                    System.out.println("Error: " + e.getMessage());
-                }
-            }
-
-            Path videoInputPath = Path.of(inputVideo);
-            Files.write(videoInputPath, video.getBytes());
-
-            FFmpegProbeResult in = ffprobe.probe(inputVideo);
-
-            FFmpegBuilder builder = new FFmpegBuilder()
-                    .setInput(in)
-                    .addOutput(outputVideoPath)
-                    .setAudioCodec("libopus")
+                    .setInput(probeResult)
+                    .addOutput(outputVideoPath.toString())
+                    .setAudioCodec("libvorbis")
                     .setVideoCodec("libvpx-vp9")
                     .setFormat("webm")
                     .setVideoFrameRate(FFmpeg.FPS_30)
@@ -306,20 +227,22 @@ public class VideoCompressor {
                     .addExtraArgs("-tile-columns", "6")
                     .done();
 
-            job = executor.createJob(builder);
+            // Create and run FFmpegJob
+            FFmpegJob job = executor.createJob(builder);
             job.run();
 
+            // Delete the original video file after compression
             Files.delete(videoInputPath);
-            //check if file deleted
+
+            // Check if the file deletion was successful and delete again if needed
             if (Files.exists(videoInputPath)) {
                 Files.delete(videoInputPath);
             }
-
-            return Path.of(outputVideoPath);
         } catch (Exception e) {
+            // Handle any exceptions that may occur during the compression process
             System.out.println("Error: " + e.getMessage());
             e.printStackTrace();
-            return null;
         }
     }
+
 }

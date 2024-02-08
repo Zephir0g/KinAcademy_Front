@@ -1,5 +1,6 @@
 package com.fo4ik.kinacademy.entity.course;
 
+import com.fo4ik.kinacademy.entity.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,15 +21,12 @@ public class Video {
     @Column(nullable = false)
     private String name;
 
-    @ElementCollection
+//    @ElementCollection
     @Setter(AccessLevel.NONE)
-    private List<Long> usersIdWitchWatchedThisVideo;
+    @ManyToMany(mappedBy = "watchedVideos")
+    private List<User> usersWhoWatched;
 
     @Column(nullable = false)
     private String urlToVideo;
-
-    public void addUserIdWitchWatchedThisVideo(Long id) {
-        this.usersIdWitchWatchedThisVideo.add(id);
-    }
 
 }

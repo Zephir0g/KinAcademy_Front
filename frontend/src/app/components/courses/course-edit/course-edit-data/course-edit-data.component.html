@@ -1,19 +1,15 @@
-<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="large" color="#fff" type="square-jelly-box" [fullScreen]="true"><p
-  style="color: white"> Loading... </p></ngx-spinner>
-
-
 <!--Edit test of course-->
-<section class="row mt-2" *ngIf="!isLoading">
+<section class="row mt-2">
   <div class="col-12 col-md-7 col-xl-8">
     <!--course name-->
     <div class="mb-1">
-      <label class="form-label" for="courseName">Name: </label>
+      <label class="form-label" for="courseName">{{internalization['name']}}: </label>
       <input class="form-control" [ngModel]="courseName" name="courseName" id="courseName" disabled>
     </div>
     <!--course language and category-->
     <div class="mb-1 row">
       <div class="col-6">
-        <label class="form-label" for="courseLanguage">Language: </label>
+        <label class="form-label" for="courseLanguage">{{internalization['languageWord']}}: </label>
         <select class="form-control" name="courseLanguage" id="courseLanguage" [disabled]="!isEdit"
                 [(ngModel)]="courseLanguage">
           <ng-container *ngIf="!isEdit">
@@ -28,25 +24,45 @@
         </select>
       </div>
       <div class="col-6">
-        <label class="form-label" for="courseCategory">Category: </label>
+        <label class="form-label" for="courseCategory">{{internalization['category']}}: </label>
         <select class="form-control" name="courseCategory" id="courseCategory" [disabled]="!isEdit"
                 [(ngModel)]="courseCategory">
           <ng-container *ngIf="!isEdit">
             <option>{{ courseCategory }}</option>
           </ng-container>
           <ng-container *ngIf="isEdit">
-            <option value="">Select category</option>
-            <option *ngFor="let category of categories" [value]="category.name">
-              {{ category.name }}
+            <option *ngFor="let category of getEmptyItems(categories)" [value]="category.name">
+              {{ category.label }}
             </option>
           </ng-container>
         </select>
+
+        <!--<p-dropdown
+          [options]="getEmptyItems(categories)"
+          [(ngModel)]="courseCategory"
+          optionLabel="name"
+          [filter]="true"
+          filterBy="name"
+          [showClear]="true"
+          placeholder="Select a Country"
+        >
+          <ng-template pTemplate="selectedItem">
+            <div class="country-item country-item-value" *ngIf="selectedCategory">
+              <div>{{ selectedCategory }}</div>
+            </div>
+          </ng-template>
+          <ng-template let-country pTemplate="item">
+            <div class="country-item">
+              <div>{{ country.name }}</div>
+            </div>
+          </ng-template>
+        </p-dropdown>-->
       </div>
     </div>
 
     <!--course picture url-->
     <div class="mb-1">
-      <label class="form-label" for="coursePicture">Picture URL: </label>
+      <label class="form-label" for="coursePicture">{{internalization['pictureUrl']}}: </label>
       <input class="form-control" name="coursePicture" id="coursePicture" [disabled]="!isEdit"
              [ngModel]="courseImage == imageNotFound ? '' : courseImage"
              (ngModelChange)="courseImage = $event">
@@ -65,128 +81,127 @@
 
     </ngx-file-drop>
   </div>
-</section>
 
-<!--course description-->
-<section class="row mt-2">
-  <details>
-    <summary class="summary">
-      {{internalization['shortDescription']}}
-      <fa-icon [icon]="faArrowRight" class="arrow"></fa-icon>
-    </summary>
-    <textarea class="form-control" name="courseShortDescription" id="courseShortDescription" [disabled]="!isEdit"
-              [(ngModel)]="courseShortDescription" [maxlength]="200"></textarea>
-  </details>
-  <details>
-    <summary class="summary">
-      {{internalization['description']}}
-      <fa-icon [icon]="faArrowRight" class="arrow"></fa-icon>
-    </summary>
-    <ckeditor [editor]="Editor" id="courseDescription" name="courseDescription" [disabled]="!isEdit"
-              [(ngModel)]="courseDescription"></ckeditor>
-  </details>
-</section>
+  <!--course description-->
+  <section class="row mt-2">
+    <details>
+      <summary class="summary">
+        {{internalization['shortDescription']}}
+        <fa-icon [icon]="faArrowRight" class="arrow"></fa-icon>
+      </summary>
+      <textarea class="form-control" name="courseShortDescription" id="courseShortDescription" [disabled]="!isEdit"
+                [(ngModel)]="courseShortDescription" [maxlength]="200"></textarea>
+    </details>
+    <details>
+      <summary class="summary">
+        {{internalization['description']}}
+        <fa-icon [icon]="faArrowRight" class="arrow"></fa-icon>
+      </summary>
+      <ckeditor [editor]="Editor" id="courseDescription" name="courseDescription" [disabled]="!isEdit"
+                [(ngModel)]="courseDescription"></ckeditor>
+    </details>
+  </section>
 
-<!--course Sections-->
-<section class="mt-3 mx-2">
-  <div class="row sectionsEdit mx-0 align-items-center summary">
-    <div class="col-10 col-md-11">
-      <label class="sectionsEditText" [ngStyle]="{'color': isEdit ? 'black' : '#515152'}">Edit sections</label>
-    </div>
-    <div class="col-2 col-md-1 d-flex justify-content-center align-items-center">
-      <label class="sectionsEditText">
-        <button *ngIf="isEdit">
-          <fa-icon [icon]="faPlus" class="add" data-bs-toggle="modal"
-                   data-bs-target="#addSectionModal"></fa-icon>
-        </button>
-        <button *ngIf="!isEdit" style="cursor: default;">
-          <fa-icon [icon]="faPlus" style="color: #515152"
-                   data-bs-target="#addSectionModal"></fa-icon>
-        </button>
-
-      </label>
-    </div>
-  </div>
-
-  <div class="row mx-0">
-    <div *ngFor="let section of sections" class="section mt-2">
-
-      <div class="row">
-        <div class="col-11">
-          <h5>{{section.name}}</h5>
-        </div>
-        <div class="col-1">
-          <h5>
-            <button *ngIf="isEdit">
-              <fa-icon [icon]="faPlus" class="add" data-bs-toggle="modal"
-                       data-bs-target="#addVideoModal"
-                       [attr.data-bs-target]="'#addVideoModal-' + section.name"></fa-icon>
+  <!--course Sections-->
+  <section class="mt-3 mx-2">
+    <div class="row sectionsEdit align-items-center summary">
+      <div class="col align-items-center">
+        <div class="d-flex justify-content-between align-items-center">
+          <label class="sectionsEditText"
+                 [ngStyle]="{'color': isEdit ? 'black' : '#515152'}">{{internalization['editSections']}}</label>
+          <div class="text-end ms-auto">
+            <button *ngIf="isEdit" class="add">
+              <fa-icon [icon]="faPlus" class="add" data-bs-toggle="modal" data-bs-target="#addSectionModal"></fa-icon>
             </button>
-            <button *ngIf="!isEdit" style="cursor: default;">
-              <fa-icon [icon]="faPlus" style="color: #515152"></fa-icon>
+            <button *ngIf="!isEdit" class="add" style="cursor: default;">
+              <fa-icon [icon]="faPlus" style="color: #515152" data-bs-target="#addSectionModal"></fa-icon>
             </button>
-          </h5>
+          </div>
         </div>
       </div>
+    </div>
 
-      <!--Add video modal window-->
-      <div class="modal fade" [id]="'addVideoModal-' + section.name" tabindex="-1"
-           aria-labelledby="'addVideoModal-' + section.name" aria-hidden="true">
-        <div class="modal-dialog modal-xl modal-dialog-centered">
-          <div class="modal-content">
-            <form #videoForm="ngForm" (ngSubmit)="onSubmitVideo(section.name)">
-              <div class="modal-body">
-                <div class="row align-items-center justify-content-center">
-                  <div class="col-12 col-md-6 col-xl-4">
-                    <label class="form-label" for="videoInputName">Video name: </label>
-                    <input class="form-control" [(ngModel)]="videoInputName" name="videoInputName" id="videoInputName">
+    <!--Sections-->
+    <div class="row mx-0" class="sections">
+      <div *ngFor="let section of sections" class="section mt-2">
 
-                    <label class="form-label" for="videoInputFile">Video file: </label>
-                    <input class="form-control" type="file" (change)="onVideoUploaded($event)"
-                           accept="video/mp4, video/avi, video/webm"
-                           name="videoInputFile" id="videoInputFile">
-                    <label class="form-label" for="videoInputFile">
-                      Max file size: 5GB
-                    </label>
-                  </div>
-                  <div class="col-12 col-md-6 col-xl-8" *ngIf="selectedFileUrl">
-                    <app-video [selectedFile]="selectedFileUrl"></app-video>
+        <div class="row">
+          <div class="col-11">
+            <h5>{{section.name}}</h5>
+          </div>
+          <div class="col-1">
+            <h5>
+              <button *ngIf="isEdit">
+                <fa-icon [icon]="faPlus" class="add" data-bs-toggle="modal"
+                         data-bs-target="#addVideoModal"
+                         [attr.data-bs-target]="'#addVideoModal-' + section.name"></fa-icon>
+              </button>
+              <button *ngIf="!isEdit" style="cursor: default;">
+                <fa-icon [icon]="faPlus" style="color: #515152"></fa-icon>
+              </button>
+            </h5>
+          </div>
+        </div>
+
+        <!--Add video modal window-->
+        <div class="modal fade" [id]="'addVideoModal-' + section.name" tabindex="-1"
+             aria-labelledby="'addVideoModal-' + section.name" aria-hidden="true">
+          <div class="modal-dialog modal-xl modal-dialog-centered">
+            <div class="modal-content">
+              <form #videoForm="ngForm" (ngSubmit)="onSubmitVideo(section.name)">
+                <div class="modal-body">
+                  <div class="row align-items-center justify-content-center">
+                    <div class="col-12 col-md-6 col-xl-4">
+                      <label class="form-label" for="videoInputName">Video name: </label>
+                      <input class="form-control" [(ngModel)]="videoInputName" name="videoInputName"
+                             id="videoInputName">
+
+                      <label class="form-label" for="videoInputFile">Video file: </label>
+                      <input class="form-control" type="file" (change)="onVideoUploaded($event)"
+                             accept="video/mp4, video/avi, video/webm"
+                             name="videoInputFile" id="videoInputFile">
+                      <label class="form-label" for="videoInputFile">
+                        Max file size: 5GB
+                      </label>
+                    </div>
+                    <div class="col-12 col-md-6 col-xl-8" *ngIf="selectedFileUrl">
+                      <app-video [selectedFile]="selectedFileUrl"></app-video>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-primary" data-bs-dismiss="modal"
-                        [disabled]="!(videoInputName && selectedFileUrl)">
-                  Save changes
-                </button>
-              </div>
-            </form>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary" data-bs-dismiss="modal"
+                          [disabled]="!(videoInputName && selectedFileUrl)">
+                    Save changes
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div *ngFor="let video of section.videos">
-        <div class="row mx-0 mt-1 videoEditText">
-          <div class="col">
-            {{video.name}}
-          </div>
-          <div class="col" *ngIf="video.urlToVideo === ''">
-            Loading...
+        <div *ngFor="let video of section.videos" class="videos">
+          <div class="row mx-0 mt-1 video">
+            <div class="col">
+              {{video.name}}
+            </div>
+            <div class="col" *ngIf="video.urlToVideo === ''">
+              Loading...
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 </section>
-
 
 <!--Add section modal window-->
 <div class="modal fade" id="addSectionModal" tabindex="-1" aria-labelledby="addSectionModal" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-body">
-        <label class="form-label" for="sectionInputName">Section name: </label>
+        <label class="form-label" for="sectionInputName">{{internalization['sectionName']}}: </label>
         <input class="form-control" [(ngModel)]="sectionInputName" name="sectionInputName" id="sectionInputName">
       </div>
       <div class="modal-footer">

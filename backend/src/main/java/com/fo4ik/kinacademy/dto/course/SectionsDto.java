@@ -1,6 +1,5 @@
 package com.fo4ik.kinacademy.dto.course;
 
-import com.fo4ik.kinacademy.entity.course.Video;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
@@ -23,6 +22,6 @@ public class SectionsDto {
     String name;
 
     @Schema(description = "Section videos", example = "See VideoDto")
-    List<Video> videos;
+    List<VideoDto> videos;
 
 }

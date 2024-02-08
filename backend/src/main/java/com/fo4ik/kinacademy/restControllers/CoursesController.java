@@ -6,7 +6,6 @@ import com.fo4ik.kinacademy.core.Response;
 import com.fo4ik.kinacademy.core.compress.VideoCompressor;
 import com.fo4ik.kinacademy.dto.course.CourseDto;
 import com.fo4ik.kinacademy.dto.course.SingUpCourseDto;
-import com.fo4ik.kinacademy.entity.course.Course;
 import com.fo4ik.kinacademy.entity.data.service.CourseService;
 import com.fo4ik.kinacademy.entity.data.service.UserService;
 import com.fo4ik.kinacademy.exceptions.AppException;
@@ -14,6 +13,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,17 +41,6 @@ public class CoursesController {
     private final CourseService courseService;
     private final VideoCompressor videoCompressor;
 
-    @Operation(summary = "Search courses", tags = {"Courses"})
-    @GetMapping("/search")
-    public List<Course> search(@RequestParam String query) {
-        List<Course> courses = new ArrayList<>();
-        courses.add(Course.builder().id(1L).name("Course 1").category("Category 1").build());
-        courses.add(Course.builder().id(2L).name("Course 2").category("Category 2").build());
-
-        List<Course> answer = new ArrayList<>();
-
-        return courses;
-    }
 
     @Operation(summary = "Create course", description = "Create course by using CourseDto, need SECURE_TOKEN", tags = {"Courses"})
     @RequestMapping(value = "/create", method = RequestMethod.POST)
@@ -69,20 +57,37 @@ public class CoursesController {
         return ResponseEntity.ok(course.getUrl());
     }
 
+    /**
+     * Get courseDto by course url
+     *
+     * @param courseUrl
+     * @param username
+     * @return CourseDto or error message
+     */
+
     @RequestMapping(value = "/{course-url}", method = RequestMethod.GET, produces = "application/json")
-    @Operation(summary = "Get course by url", description = "Get course by url and need SECURE_TOKEN", tags = {"Courses"})
+    @Operation(summary = "Get course by url", description = "Get course by url and need SECURE_TOKEN",
+            tags = {"Courses"})
     public ResponseEntity<?> getCourse(
             @Parameter(description = "Course url", required = true)
             @PathVariable("course-url") String courseUrl,
             @Parameter(description = "User username", required = true)
             @RequestParam("username") String username) {
 
+        // Check if the 'username' parameter is null and return a BAD_REQUEST response if it is.
+        if (username == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is null");
+        }
 
+        // Calls a service method to check if the user has access to the requested course.
         Response response = courseService.isUserHaveAccessToCourse(username, courseUrl);
         if (!response.isSuccess()) {
+            // If the user don`t have access, return 'response' object data.
             return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
         }
-        CourseDto course = courseService.getCourseByUrl(courseUrl);
+        // If the user has access, retrieve the course data using the 'courseUrl'.
+        CourseDto course = courseService.getCourseByUrl(courseUrl, username);
+        // Return an OK response with the course data as the body.
         return ResponseEntity.ok(course);
     }
 
@@ -96,14 +101,34 @@ public class CoursesController {
         Response isUserHaveAccessToCourse = courseService.isUserHaveAccessToCourse(username, courseUrl);
 
         if (!isUserHaveAccessToCourse.isSuccess()) {
-//            return ResponseEntity.status(isUserHaveAccessToCourse.getHttpStatus()).body(isUserHaveAccessToCourse.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You have not access to this course");
         }
 
         Response joinCourse = courseService.joinCourse(username, courseUrl);
 
         if (!joinCourse.isSuccess()) {
-            System.out.println("joinCourse = " + joinCourse.getMessage());
+            return ResponseEntity.status(joinCourse.getHttpStatus()).body(joinCourse.getMessage());
+        }
+
+        return ResponseEntity.ok(joinCourse.getMessage());
+    }
+
+    @RequestMapping(value = "/{course-url}/logout", method = RequestMethod.POST)
+    public ResponseEntity<?> logoutCourse(
+            @Parameter(description = "Course url", required = true)
+            @PathVariable("course-url") String courseUrl,
+            @Parameter(description = "User username", required = true)
+            @RequestParam("username") String username) {
+
+        Response isUserHaveAccessToCourse = courseService.isUserHaveAccessToCourse(username, courseUrl);
+
+        if (!isUserHaveAccessToCourse.isSuccess()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("You have not access to this course");
+        }
+
+        Response joinCourse = courseService.logoutCourse(username, courseUrl);
+
+        if (!joinCourse.isSuccess()) {
             return ResponseEntity.status(joinCourse.getHttpStatus()).body(joinCourse.getMessage());
         }
 
@@ -148,7 +173,7 @@ public class CoursesController {
         }
 
 
-        Path videoPath = VideoCompressor.builder().build().getVideoExtension(video, Path.of("data/" + courseUrl));
+        String videoPath = VideoCompressor.builder().build().getVideoExtension(video, Path.of("data/" + courseUrl));
 
 
         if (videoPath == null) {
@@ -183,5 +208,35 @@ public class CoursesController {
             return ResponseEntity.notFound().build();
         }
 
+    }
+
+    @Operation(summary = "Search courses", tags = {"Courses"})
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    public ResponseEntity<List<CourseDto>> searchCourses(
+            @PathParam("name") String name,
+            @PathParam("category") String category
+    ) {
+
+        //List<Course> courses = courseService.searchCourses(name, category);'
+        return ResponseEntity.ok(courseService.searchCourses(name, category));
+    }
+
+    @RequestMapping(value = "/change-status-watched-video", method = RequestMethod.POST)
+    public ResponseEntity<?> changeStatusWatchedVideo(
+            @RequestParam("username") String username,
+            @RequestParam("courseUrl") String courseUrl,
+            @RequestParam("videoUrl") String videoUrl
+    ) {
+        Response isUserHaveAccessToCourse = courseService.isUserHaveAccessToCourse(username, courseUrl);
+        if (!isUserHaveAccessToCourse.isSuccess()) {
+            return ResponseEntity.status(isUserHaveAccessToCourse.getHttpStatus()).body(isUserHaveAccessToCourse.getMessage());
+        }
+
+        Response isStatusChanged = courseService.changeStatusWatchedVideo(username, courseUrl, videoUrl);
+        if (!isStatusChanged.isSuccess()) {
+            return ResponseEntity.status(isStatusChanged.getHttpStatus()).body(isStatusChanged.getMessage());
+        }
+
+        return ResponseEntity.ok(isStatusChanged.getMessage());
     }
 }

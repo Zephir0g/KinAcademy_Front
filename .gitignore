@@ -42,10 +42,7 @@ out/
 /frontend/ckeditor5/build/
 
 /backend/src/main/resources/application.properties
-<<<<<<< HEAD
 
 /ckeditor5/build/
 /node_modules/
-=======
 data/
->>>>>>> e1d16e23952ba2b2cf435bee00efa32ea69e7916

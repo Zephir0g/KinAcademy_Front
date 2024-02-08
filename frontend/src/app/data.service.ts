@@ -6,10 +6,11 @@ import {Router} from "@angular/router";
   providedIn: 'root'
 })
 export class DataService {
-  public user: any;
-  public internalization: any;
-  public languages: any;
-  public categories: any;
+  user: any;
+  internalization: any;
+  languages: any;
+  categories: any;
+  userCourses: any;
 
   constructor(private axiosService: AxiosService, private router: Router,) {
     /*this.getInternalizationFromServer();
@@ -176,26 +177,101 @@ export class DataService {
 
   }
 
- async getCategoriesFromServer(lang: any) {
-   return this.axiosService.request(
-     "GET",
-     "/components/categories?language=" + lang || "English",
-     {}
-   ).then((response) => {
-     if (response) {
-       localStorage.removeItem('categories');
-       localStorage.setItem("categories", JSON.stringify(response.data));
-       this.categories = JSON.parse(localStorage.getItem('categories') || '{}')
-       return this.categories;
-     }
-   }).catch((error) => {
-     console.log(error.response.data.message);
-     throw error;
-   })
+  async logoutCourse(courseUrl: any): Promise<any> {
+    return this.axiosService.requestWithHeaderAuth(
+      "POST",
+      "/course/" + courseUrl + "/logout?username=" + this.user.username,
+      null,
+      this.user.secure_TOKEN
+    ).then((response) => {
+      if (response) {
+        return response;
+      }
+    }).catch((error) => {
+      return error.response;
+    })
+
+  }
+
+  async getCategoriesFromServer(lang: any) {
+    return this.axiosService.request(
+      "GET",
+      "/components/categories?language=" + lang || "English",
+      {}
+    ).then((response) => {
+      if (response) {
+        localStorage.removeItem('categories');
+        localStorage.setItem("categories", JSON.stringify(response.data));
+        this.categories = JSON.parse(localStorage.getItem('categories') || '{}')
+        return this.categories;
+      }
+    }).catch((error) => {
+      console.log(error.response.data.message);
+      throw error;
+    })
+  }
+
+  async getCourseData(url: string): Promise<any> {
+    this.user = JSON.parse(localStorage.getItem('user') || '{}');
+    return this.axiosService.requestWithHeaderAuth(
+      "GET",
+      "/course/" + url + "?username=" + this.user.username,
+      null,
+      this.user.secure_TOKEN
+    );
   }
 
   getCategories(): Promise<any> {
     this.categories = JSON.parse(localStorage.getItem('categories') || '{}');
     return this.categories;
+  }
+
+  async getListOfUserCoursesFromServer() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (user !== '{}') {
+      return this.axiosService.requestWithHeaderAuth(
+        "GET",
+        "user/courses?username=" + user.username,
+        {},
+        user.secure_TOKEN
+      ).then((response: any) => {
+        if (response) {
+          localStorage.removeItem('userCourses');
+          localStorage.setItem("userCourses", JSON.stringify(response.data));
+          this.userCourses = JSON.parse(localStorage.getItem('userCourses') || '{}')
+          return this.userCourses;
+        }
+      }).catch((error) => {
+        if (error) {
+          console.log(error.response.data);
+          this.userCourses = [];
+          return this.userCourses;
+        }
+        // window.location.href = "/login";
+      });
+    }
+  }
+
+  getListsOfUserCourses() {
+    this.userCourses = JSON.parse(localStorage.getItem('userCourses') || '{}');
+    return this.userCourses;
+  }
+
+  async search(name: string, category: string) {
+    return this.axiosService.request(
+      "GET",
+      "/course/search?name=" + name + "&category=" + category,
+      {}
+    )
+  }
+
+  async changeStatusWatchedVideo(user: any, courseUrl: string, videoUrd: string) {
+
+    return this.axiosService.requestWithHeaderAuth(
+      "POST",
+      "/course/change-status-watched-video?username=" + user.username + "&courseUrl=" + courseUrl + "&videoUrl=" + videoUrd,
+      null,
+      user.secure_TOKEN
+    )
   }
 }

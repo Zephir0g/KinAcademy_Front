@@ -1,5 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=PT+Serif:ital,wght@0,400;0,700;1,400&display=swap');
-
+@import "primeicons/primeicons.css";
 
 html, body {
   height: 100%;
@@ -47,4 +47,8 @@ button {
   box-shadow: 5px 5px 0 #b3b3b3;
 }
 
+li {
+  list-style-type: none;
+  display: flex;
+}
 

@@ -1,0 +1,37 @@
+.overlay {
+  display: flex;
+  align-items: center;
+  padding-left: .5vw;
+  background: url('/assets/images/banner.svg'); /* Путь к картинке */
+  background-repeat: no-repeat; /* Фон не повторяется */
+  background-size: cover; /* Растягиваем  фон по высоте и ширине */
+  background-position: center; /* Позиция фона по центру */
+  height: auto;
+  min-height: 10vh;
+  max-height: 20vh;
+  border-radius: 5px;
+}
+
+.img-logo {
+  max-width: 15vh;
+  width: auto;
+  height: auto;
+}
+
+.welcome-text {
+  font-size: 2.5vh;
+  color: black;
+  margin-left: 2vw;
+}
+
+.courses {
+  margin: 0 .5rem 0 .5rem;
+}
+
+.p-card {
+  height: 100%;
+}
+
+button {
+  background-color: #3B82F6 !important;
+}

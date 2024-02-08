@@ -6,9 +6,13 @@ import com.fo4ik.kinacademy.entity.course.Course;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 
+import java.util.List;
+
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CourseMapper {
     Course singUpCourseDtoToCourse(SingUpCourseDto singUpCourseDto);
 
     CourseDto courseToCourseDto(Course course);
+
+    List<CourseDto> coursesToCoursesDto(List<Course> courses);
 }

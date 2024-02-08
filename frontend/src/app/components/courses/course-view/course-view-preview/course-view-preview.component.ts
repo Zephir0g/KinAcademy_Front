@@ -31,19 +31,19 @@ export class CourseViewPreviewComponent {
   }
 
   async joinCourse() {
-
-    const response = await this.data.joinCourse(this.course.url)
-    if (response.status === 200) {
-      await this.data.updateUser()
-      this.router.navigate(['/course', this.course.url])
+    if (this.user.username === undefined) {
+      this.router.navigate(['/login'], {queryParams: {course: this.course.url}});
+      return;
     } else {
-      //TODO show error message
-      if (response.data === "User already joined course") {
+      this.data.joinCourse(this.course.url).then((response: any) => {
+        this.user.coursesId.push(this.course.id);
+        localStorage.setItem("user", JSON.stringify(this.user));
         window.location.reload();
-      } else {
-        console.log(response.data)
-      }
+      }).catch((error: any) => {
+        console.log(error.response);
+      })
     }
+
   }
 
 

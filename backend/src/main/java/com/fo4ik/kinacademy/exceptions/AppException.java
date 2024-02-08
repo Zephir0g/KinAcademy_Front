@@ -3,6 +3,7 @@ package com.fo4ik.kinacademy.exceptions;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.io.IOException;
 

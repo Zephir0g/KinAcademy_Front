@@ -65,8 +65,21 @@ export class CourseViewComponent implements OnInit {
       null,
       this.user.secure_TOKEN
     ).catch((error) => {
-      if (error) {
-        this.errorMessage = error.response.data?.message || error.response.data;
+      //TODO fix for unauthorized user
+      if (error.response.status === 403 || error.response.status === 401) {
+        this.axiosService.request(
+          "GET",
+          "/components/course/" + url,
+          null
+        ).then((response) => {
+          this.course = null;
+          this.course = response.data;
+          this.titleService.setTitle(response.data.name + " | Course");
+          this.getAuthorName().then((response) => {
+            this.spinner.hide();
+            this.isLoading = false;
+          });
+        })
       }
     }).then((response) => {
       if (response) {

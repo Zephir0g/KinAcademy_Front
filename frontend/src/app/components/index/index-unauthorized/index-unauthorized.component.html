@@ -1,0 +1,53 @@
+<main class="container justify-content-center">
+  <div class="text-center">
+    <!--<img
+      src="/assets/images/banner.svg"
+      alt="banner" class="img-fluid image">-->
+    <div class="overlay">
+      <img src="/assets/images/logo.png" alt="logo" class="img-logo">
+      <span class="welcome-text">KIN Academy</span>
+    </div>
+  </div>
+
+  <div class="row content mt-4">
+    <div class="col-12 col-md-6 col-lg-8">
+      <h1 class="text-center">Welcome to KIN Academy</h1>
+      <p class="text-center">KIN Academy is a platform that provides a wide range of courses for students to learn and
+        improve their skills. Our courses are designed to help students learn at their own pace and in their own time.
+        We offer a variety of courses in different subjects, including programming, web development, and data science.
+        Our courses are taught by experienced instructors who are passionate about teaching and helping students
+        succeed. We believe that everyone should have access to high-quality education, and we are committed to
+        providing affordable and accessible courses to students around the world.</p>
+    </div>
+    <div class="col-12 col-md-6 col-lg-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Sign Up</h5>
+          <p class="card-text">Sign up to get access to our wide range of courses and start learning today!</p>
+          <a href="/login" class="btn btn-primary">Sign Up</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row justify-content-center" >
+    <h2 class="text-center mt-5">Popular Courses</h2>
+    <div *ngFor="let course of popularCourses.slice(0, 3)" class="col-6 col-md-4 col-lg-4 courses">
+      <p-card header="{{course.name}}" subheader="{{course.language}}" [style]="{ 'max-width': '20vw', 'width': 'auto' }">
+        <ng-template pTemplate="header">
+          <img alt="Card" [src]="course.imageUrl"/>
+        </ng-template>
+        <p>
+          {{course.shortDescription}}
+        </p>
+        <ng-template pTemplate="footer">
+          <div class="text-center">
+            <a [href]="'/course/' + course.url">
+              <button pButton type="button" label="Open" icon="pi pi-check" class="p-button-success"></button>
+            </a>
+          </div>
+        </ng-template>
+      </p-card>
+    </div>
+  </div>
+</main>

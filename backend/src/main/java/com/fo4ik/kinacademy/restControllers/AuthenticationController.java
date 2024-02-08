@@ -39,19 +39,20 @@ public class AuthenticationController {
 
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    @Operation(summary = "Authenticate", description = "Authenticate, needed username (login) and password", tags = {"Authentication"})
-    public ResponseEntity<UserDto> authenticate(
+    @Operation(summary = "Authenticate", description = "Authenticate, needed username (login) and password",
+            tags = {"Authentication"})
+    public ResponseEntity<?> authenticate(
             @Parameter(description = "User login and password by format JSON", required = true)
             @RequestBody CredentialDto credentialDTO) {
 
         Response response = authService.authenticate(credentialDTO);
         if (!response.isSuccess()) {
-            throw new AppException(response.getMessage(), response.getHttpStatus());
+            return ResponseEntity.status(response.getHttpStatus()).body(response.getMessage());
         }
 
         UserDto userDto = userService.getUserByUsernameDto(credentialDTO.username());
-        if(!userDto.getStatus().equals(Status.ACTIVE)) {
-            throw new AppException("User is inactive", HttpStatus.FORBIDDEN);
+        if (!userDto.getStatus().equals(Status.ACTIVE)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("User is inactive");
         }
         userDto.setSECURE_TOKEN(response.getMessage());
 

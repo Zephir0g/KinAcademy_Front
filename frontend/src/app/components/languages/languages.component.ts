@@ -20,18 +20,30 @@ export class LanguagesComponent implements OnInit {
     this.user = this.data.getUser();
   }
 
+   /**
+   * Changes the current language of the application and updates the data accordingly.
+   * @param {string} language - The language code to switch the application to.
+   */
   changeLanguage(language: string) {
 
+    // Requests the server to fetch the categories in the selected language.
     this.data.getCategoriesFromServer(language);
 
+    // Requests the server to fetch the internationalization files for the new language.
+    // Returns a promise that resolves after the request is complete.
     this.data.getInternalizationFromServerWithLanguage(language).then(() => {
+      // After successfully obtaining the internationalization data, the user's language
+      // information is updated.
       this.updateUser(language).then(() => {
+        // Reload the page to apply the language changes.
         window.location.reload();
+      });
+    });
 
-      })
-    })
+    // Updates the user's language preference on the server to persist the choice.
     this.updateUserOnServer(language);
   }
+
 
   async updateUser(language: string) {
     this.user.language = language;
@@ -43,7 +55,7 @@ export class LanguagesComponent implements OnInit {
 
   updateUserOnServer(language: string) {
     this.axiosService.requestWithHeaderAuth(
-      "POST",
+      "GET",
       "/users/update",
       {
         "id": this.user.id,

@@ -5,18 +5,19 @@ import {DataService} from "../../../data.service";
 import {Title} from "@angular/platform-browser";
 import {NgxSpinnerService} from "ngx-spinner";
 import {Router} from "@angular/router";
+import {MessageService, PrimeNGConfig} from "primeng/api";
 
 @Component({
   selector: 'app-create-course',
   templateUrl: './create-course.component.html',
-  styleUrls: ['./create-course.component.css']
+  styleUrls: ['./create-course.component.css'],
+  providers: [MessageService]
 })
 export class CreateCourseComponent implements OnInit {
   isPageLoading = false;
   Editor = Editor;
   user: any;
   languages: any;
-  isUpdate = false;
   courseDescription: String = '';
   courseShortDescription: String = '';
   courseName: String = '';
@@ -25,18 +26,23 @@ export class CreateCourseComponent implements OnInit {
   coursePolicy: boolean = true;
   courseUrl: String = '';
   error: String = '';
+  categories: any;
 
 
   constructor(private axiosService: AxiosService,
               private data: DataService,
               private titleService: Title,
               private spinner: NgxSpinnerService,
+              private messageService: MessageService,
+              private primengConfig: PrimeNGConfig,
               private router: Router) {
     this.titleService.setTitle("Create course");
   }
 
   ngOnInit(): void {
     this.isPageLoading = true;
+    this.primengConfig.ripple = true;
+    this.categories = this.data.getCategories();
     this.spinner.show().then(r => {
       this.user = this.data.getUser();
       this.languages = this.data.getLanguages();
@@ -54,10 +60,23 @@ export class CreateCourseComponent implements OnInit {
     );
   }
 
+  getEmptyItems(categoryList: any): Array<any> {
+    let emptyLabels = [];
+    for (const category of categoryList) {
+      if (category.items.length === 0) {
+        emptyLabels.push(category);
+      }
+      if (category.items.length > 0) {
+        emptyLabels = emptyLabels.concat(this.getEmptyItems(category.items));
+      }
+    }
+    return emptyLabels.sort();
+  }
+
   onCreate() {
     this.error = '';
-    if (this.courseName == '' ||  this.courseShortDescription == '' || this.courseDescription == '' ||this.courseLanguage == '' || this.courseCategory == '' || this.courseUrl == '') {
-      this.error = "Please fill required fields";
+    if (this.courseName == '' || this.courseShortDescription == '' || this.courseDescription == '' || this.courseLanguage == '' || this.courseCategory == '' || this.courseUrl == '') {
+      this.messageService.add({severity: 'error', summary: 'Error', detail: 'Please fill required fields'});
       return;
     } else {
       this.courseUrl = this.courseUrl.replace(/\s+/g, '-').toLowerCase();
@@ -75,14 +94,7 @@ export class CreateCourseComponent implements OnInit {
         },
         this.user.secure_TOKEN
       ).catch((error) => {
-        if (error.response.data.message == "Invalid SECURE_TOKEN" && !this.isUpdate) {
-          this.data.updateUser().then(() => {
-            this.onCreate();
-            this.isUpdate = true;
-          })
-        } else {
-          this.error = error.response.data.message;
-        }
+        this.error = error.response.data.message;
       })
         .then((response) => {
             if (response) {
