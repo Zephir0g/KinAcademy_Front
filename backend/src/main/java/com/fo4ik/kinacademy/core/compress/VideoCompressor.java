@@ -32,9 +32,9 @@ public class VideoCompressor {
     //TODO Optimize this class
 
     @Builder.Default
-    private final Path FFMPEG_PATH = Path.of("backend/ffmpeg/bin/ffmpeg.exe");
+    private final Path FFMPEG_PATH = Path.of("./backend/ffmpeg/macFFMPEG/ffmpeg");
     @Builder.Default
-    private final Path FFPROBE_PATH = Path.of("backend/ffmpeg/bin/ffprobe.exe");
+    private final Path FFPROBE_PATH = Path.of("./backend/ffmpeg/macFFMPEG/ffprobe");
     @Builder.Default
     private final String currentDirectory = System.getProperty("user.dir");
 

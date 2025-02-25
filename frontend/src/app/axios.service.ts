@@ -8,7 +8,7 @@ export class AxiosService {
 
   constructor() {
     // axios.defaults.baseURL = 'http://26.8.137.161:8080/api/v1';
-    axios.defaults.baseURL = 'http://192.168.1.118:8080/api/v1';
+    axios.defaults.baseURL = 'http://localhost:8080/api/v1';
     axios.defaults.headers.post['Content-Type'] = 'application/json';
   }
 
