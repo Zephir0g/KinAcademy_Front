@@ -213,12 +213,14 @@ export class DataService {
 
   async getCourseData(url: string): Promise<any> {
     this.user = JSON.parse(localStorage.getItem('user') || '{}');
-    return this.axiosService.requestWithHeaderAuth(
+    const data = this.axiosService.requestWithHeaderAuth(
       "GET",
       "/course/" + url + "?username=" + this.user.username,
       null,
       this.user.secure_TOKEN
     );
+  console.log("data : " + JSON.stringify(data));
+  return data;
   }
 
   getCategories(): Promise<any> {

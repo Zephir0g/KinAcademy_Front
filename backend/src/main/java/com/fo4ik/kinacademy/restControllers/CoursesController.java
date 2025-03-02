@@ -74,6 +74,8 @@ public class CoursesController {
             @Parameter(description = "User username", required = true)
             @RequestParam("username") String username) {
 
+        System.out.println("Запрос");
+
         // Check if the 'username' parameter is null and return a BAD_REQUEST response if it is.
         if (username == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username is null");
@@ -88,6 +90,8 @@ public class CoursesController {
         // If the user has access, retrieve the course data using the 'courseUrl'.
         CourseDto course = courseService.getCourseByUrl(courseUrl, username);
         // Return an OK response with the course data as the body.
+
+        System.out.println("course :" + course);
         return ResponseEntity.ok(course);
     }
 
@@ -147,7 +151,7 @@ public class CoursesController {
         if (!courseService.isUserIsAuthor(username, courseUrl)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("You are not author of this course");
         }
-
+        System.out.println("CourseDto courseDto + " + courseDto);
         Response response = courseService.updateCourse(courseUrl, courseDto);
 
         if (!response.isSuccess()) {
@@ -200,10 +204,11 @@ public class CoursesController {
         Path videoPath = Paths.get(currentDirectory + "/data/" + courseUrl + "/" + videoUrl);
         File videoFile = new File(String.valueOf(videoPath));
         if (videoFile.exists()) {
-            return ResponseEntity.ok()
+            return ResponseEntity.ok() // этот ретурн менять
                     .contentType(MediaType.APPLICATION_OCTET_STREAM)
                     .header("Content-Disposition", "attachment; filename=\"" + videoFile.getName() + "\"")
                     .body(new FileSystemResource(videoFile));
+
         } else {
             return ResponseEntity.notFound().build();
         }

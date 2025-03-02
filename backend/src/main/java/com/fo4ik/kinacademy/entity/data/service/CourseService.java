@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLOutput;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -46,7 +47,7 @@ public class CourseService {
         Course course = courseMapper.singUpCourseDtoToCourse(singUpCourseDto);
         course.setAuthorUsername(username);
         course.setLastUpdateDate(new Date());
-        course.setStatus(Status.INACTIVE);
+        course.setStatus(Status.ACTIVE);
         User user = userService.getUserByUsername(username);
         user.getCoursesId().add(course.getId());
         userService.save(user);
@@ -138,6 +139,7 @@ public class CourseService {
         course.setImageUrl(courseDto.getImageUrl());
         course.setLastUpdateDate(new Date());
         course.setSections(sectionMapper.sectionsDtoToSections(courseDto.getSections()));
+        System.out.println("COurse sections " + courseDto.getSections());
         courseRepository.save(course);
         return new Response().builder()
                 .isSuccess(true)

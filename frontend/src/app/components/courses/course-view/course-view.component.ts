@@ -85,6 +85,7 @@ export class CourseViewComponent implements OnInit {
       if (response) {
         this.course = null;
         this.course = response.data;
+        console.log("course :" + JSON.stringify(this.course));
         this.titleService.setTitle(response.data.name + " | Course");
         this.checkIsUserJoinedCourse()
         this.getAuthorName().then((response) => {

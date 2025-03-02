@@ -91,13 +91,16 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
   }
 
   loadCourseDetails() {
+    console.log("course : " + JSON.stringify(this.course) + "\n Categories: " + JSON.stringify(this.categories));
     this.languages = this.data.getLanguages();
     this.courseImage = this.course.imageUrl || this.imageNotFound;
     this.courseDescription = this.course.description;
     this.courseShortDescription = this.course.shortDescription;
     this.courseName = this.course.name;
     this.courseLanguage = this.course.language;
-    this.courseCategory = this.searchCategoryByName(this.categories, this.course.category).label;
+//     this.courseCategory = this.searchCategoryByName(this.categories, this.course.category).label;
+    this.courseCategory = this.course.category;
+    console.log("courseCategory : " + this.courseCategory);
     this.sections = this.course.sections;
   }
 
@@ -108,6 +111,7 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
   addSection() {
     this.sectionInputName = this.sectionInputName.trim();
     if (this.sectionInputName !== undefined && this.sectionInputName !== "" && this.sectionInputName.replace(/\s/g, '') !== "") {
+      console.log("this.sectionInputName: " + this.sectionInputName + "; section.name " + this.sections);
       //check if section with this name already exists
       if (this.sections.some((section: any) => section.name === this.sectionInputName)) {
         alert("Section with this name already exists.");
@@ -116,6 +120,7 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
       }
     }
     this.sectionInputName = '';
+    console.log("this.sections " + JSON.stringify(this.sections));
   }
 
   searchCategoryByName(categoryList: any[], categoryName: string): any {
@@ -197,6 +202,7 @@ export class CourseEditDataComponent implements OnInit, OnChanges {
     this.course.description = this.courseDescription;
     this.course.shortDescription = this.courseShortDescription;
     this.course.sections = this.sections;
+    console.log("this.section save" + JSON.stringify(this.sections) + "this.course save" + JSON.stringify(this.course));
     this.data.updateCourse(this.course);
   }
 
