@@ -99,35 +99,11 @@ public class VideoCompressor {
                 });
                 aviThread.start();
                 return videoName;
-            /*case "webm":
-                videoName = UUID.randomUUID() + ".webm";
-                path = Path.of(folder + "/" + videoName);
-                outputVideoPath = String.valueOf(path);
-                Thread webmThread = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        compressWebm(probeResult, executor, video, folder, outputVideoPath, Path.of(inputVideo));
-                    }
-                });
-                webmThread.start();
-                Files.delete(videoInputPath);
-                return videoName;*/
             default:
                 return null;
         }
     }
 
-
-    /**
-     * Asynchronously compresses an AVI video file using FFmpeg.
-     *
-     * @param probeResult     The FFmpegProbeResult for the input video
-     * @param executor        The FFmpegExecutor for executing FFmpeg commands
-     * @param video           The input video file
-     * @param folder          The folder where the compressed video will be stored
-     * @param outputVideoPath The path for the compressed video file
-     * @param videoInputPath  The path for the input video file
-     */
     @Async("AsyncTaskExecutor")
     void compressAvi(FFmpegProbeResult probeResult, FFmpegExecutor executor,
                      MultipartFile video, Path folder, String outputVideoPath,
@@ -163,16 +139,6 @@ public class VideoCompressor {
         }
     }
 
-    /**
-     * Asynchronously compresses an MP4 video file using FFmpeg.
-     *
-     * @param probeResult     The FFmpegProbeResult for the input video
-     * @param executor        The FFmpegExecutor for executing FFmpeg commands
-     * @param video           The input video file
-     * @param folder          The folder where the compressed video will be stored
-     * @param outputVideoPath The path for the compressed video file
-     * @param videoInputPath  The path for the input video file
-     */
     @Async("AsyncTaskExecutor")
     void compressMp4(FFmpegProbeResult probeResult, FFmpegExecutor executor,
                      MultipartFile video, Path folder, String outputVideoPath,
