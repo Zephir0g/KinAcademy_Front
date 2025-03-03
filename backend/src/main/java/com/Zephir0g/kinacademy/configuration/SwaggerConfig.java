@@ -24,8 +24,8 @@ public class SwaggerConfig {
                                 .description("This is a REST API application made with Spring Boot. It is a part of the KIN Academy project. ")
                                 .contact(
                                         new Contact()
-                                                .name("Vladyslav Zinkovskyi")
-                                                .email("zinkovskyi.vladyslav@gmail.com")
+                                                .name("Bohdan Sukhovarov")
+                                                .email("nadgobvoravohus@gmail.com")
                                 )
                                 .license(
                                         new License()
