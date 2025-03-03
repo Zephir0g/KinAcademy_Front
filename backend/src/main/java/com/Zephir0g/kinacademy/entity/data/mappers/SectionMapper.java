@@ -1,7 +1,7 @@
-package com.fo4ik.kinacademy.entity.data.mappers;
+package com.Zephir0g.kinacademy.entity.data.mappers;
 
-import com.fo4ik.kinacademy.dto.course.SectionsDto;
-import com.fo4ik.kinacademy.entity.course.Section;
+import com.Zephir0g.kinacademy.dto.course.SectionsDto;
+import com.Zephir0g.kinacademy.entity.course.Section;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 

@@ -204,14 +204,6 @@ public class CoursesController {
         Path videoPath = Paths.get(currentDirectory + "/data/" + courseUrl + "/" + videoUrl);
         File videoFile = new File(String.valueOf(videoPath));
         if (videoFile.exists()) {
-
-
-            System.out.println("return " + ResponseEntity.ok() // этот ретурн менять
-                    .contentType(MediaType.parseMediaType("video/mp4"))
-                    .header("Content-Disposition", "inline; filename=\"" + videoFile.getName() + "\"") // Воспроизведение в браузере
-                    .body(new FileSystemResource(videoFile)));
-
-
             return ResponseEntity.ok() // этот ретурн менять
                     .contentType(MediaType.parseMediaType("video/mp4"))
                     .header("Content-Disposition", "inline; filename=\"" + videoFile.getName() + "\"") // Воспроизведение в браузере

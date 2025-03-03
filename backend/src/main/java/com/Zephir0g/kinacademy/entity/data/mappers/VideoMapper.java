@@ -1,8 +1,8 @@
-package com.fo4ik.kinacademy.entity.data.mappers;
+package com.Zephir0g.kinacademy.entity.data.mappers;
 
 
-import com.fo4ik.kinacademy.dto.course.VideoDto;
-import com.fo4ik.kinacademy.entity.course.Video;
+import com.Zephir0g.kinacademy.dto.course.VideoDto;
+import com.Zephir0g.kinacademy.entity.course.Video;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 
